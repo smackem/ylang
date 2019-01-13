@@ -102,7 +102,7 @@ func (p *parser) parseDeclaration(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return declStmt{ident: ident, rhs: rhs}, nil
+	return declStmt{ident, rhs}, nil
 }
 
 func (p *parser) parseAssign(ident string) (statement, error) {
@@ -110,7 +110,7 @@ func (p *parser) parseAssign(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return assignStmt{ident: ident, rhs: rhs}, nil
+	return assignStmt{ident, rhs}, nil
 }
 
 func (p *parser) parsePixelAssign() (statement, error) {
@@ -125,7 +125,7 @@ func (p *parser) parsePixelAssign() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return pixelAssignStmt{lhs: lhs, rhs: rhs}, nil
+	return pixelAssignStmt{lhs, rhs}, nil
 }
 
 func (p *parser) parseIf() (statement, error) {
@@ -149,12 +149,14 @@ func (p *parser) parseIf() (statement, error) {
 	}
 
 	var falseStmts []statement
-	if p.next().Type == ttElse {
+	if p.current().Type == ttElse {
+		p.next()
 		if _, err := p.expect(ttLBrace); err != nil {
 			return nil, err
 		}
 		if p.current().Type != ttRBrace {
-			falseStmts, err := p.parseStmtList(ttRBrace)
+			var err error
+			falseStmts, err = p.parseStmtList(ttRBrace)
 			if err != nil {
 				return nil, err
 			}
@@ -163,7 +165,7 @@ func (p *parser) parseIf() (statement, error) {
 			return nil, err
 		}
 	}
-	return ifStmt{cond: cond, trueStmts: trueStmts, falseStmts: falseStmts}, nil
+	return ifStmt{cond, trueStmts, falseStmts}, nil
 }
 
 func (p *parser) parseFor() (statement, error) {
@@ -202,7 +204,7 @@ func (p *parser) parseFor() (statement, error) {
 	if upper != nil {
 		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, stmts: stmts}, nil
 	}
-	return forStmt{ident: identTok.Lexeme, collection: collection, stmts: stmts}, nil
+	return forStmt{identTok.Lexeme, collection, stmts}, nil
 }
 
 func (p *parser) parseYield() (statement, error) {
@@ -210,7 +212,7 @@ func (p *parser) parseYield() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return yieldStmt{result: result}, nil
+	return yieldStmt{result}, nil
 }
 
 func (p *parser) parseLog() (statement, error) {
@@ -224,7 +226,7 @@ func (p *parser) parseLog() (statement, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return logStmt{parameters: parameters}, nil
+	return logStmt{parameters}, nil
 }
 
 func (p *parser) parseParameterList() ([]expression, error) {
@@ -247,7 +249,8 @@ func (p *parser) parseParameterList() ([]expression, error) {
 func (p *parser) parseBlt() (statement, error) {
 	var rect expression
 	if p.next().Type == ttLParen {
-		rect, err := p.parseExpr()
+		var err error
+		rect, err = p.parseExpr()
 		if err != nil {
 			return nil, err
 		}
@@ -255,17 +258,19 @@ func (p *parser) parseBlt() (statement, error) {
 			return nil, err
 		}
 	}
-	return bltStmt{rect: rect}, nil
+	return bltStmt{rect}, nil
 }
 
 func (p *parser) parseExpr() (expression, error) {
-	if err := p.parseOrExpr(); err != nil {
+	cond, err := p.parseOrExpr()
+	if err != nil {
 		return nil, err
 	}
 
 	if p.current().Type == ttQMark {
 		p.next()
-		if err := p.parseOrExpr(); err != nil {
+		trueResult, err := p.parseOrExpr()
+		if err != nil {
 			return nil, err
 		}
 		if _, err := p.expect(ttColon); err != nil {
@@ -275,159 +280,206 @@ func (p *parser) parseExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
+		return ternaryExpr{cond, trueResult, falseResult}, nil
 	}
 
-	return nil, nil
+	return cond, nil
 }
 
-func (p *parser) parseOrExpr() error {
-	if err := p.parseAndExpr(); err != nil {
-		return err
+func (p *parser) parseOrExpr() (expression, error) {
+	left, err := p.parseAndExpr()
+	if err != nil {
+		return nil, err
 	}
 
 	if p.current().Type == ttOr {
 		p.next()
-		if err := p.parseOrExpr(); err != nil {
-			return err
+		right, err := p.parseOrExpr()
+		if err != nil {
+			return nil, err
 		}
+		return orExpr{left, right}, nil
 	}
-	return nil
+	return left, nil
 }
 
-func (p *parser) parseAndExpr() error {
-	if err := p.parseCondExpr(); err != nil {
-		return err
+func (p *parser) parseAndExpr() (expression, error) {
+	left, err := p.parseCondExpr()
+	if err != nil {
+		return nil, err
 	}
 
 	if p.current().Type == ttAnd {
 		p.next()
-		if err := p.parseAndExpr(); err != nil {
-			return err
+		right, err := p.parseAndExpr()
+		if err != nil {
+			return nil, err
 		}
+		return andExpr{left, right}, nil
 	}
-	return nil
+	return left, nil
 }
 
-func (p *parser) parseCondExpr() error {
-	if err := p.parseTermExpr(); err != nil {
-		return err
+func (p *parser) parseCondExpr() (expression, error) {
+	left, err := p.parseTermExpr()
+	if err != nil {
+		return nil, err
 	}
 
 	switch p.current().Type {
 	case ttEqEq:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return eqExpr{left, right}, nil
 	case ttNeq:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return neqExpr{left, right}, nil
 	case ttGt:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return gtExpr{left, right}, nil
 	case ttGe:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return geExpr{left, right}, nil
 	case ttLt:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return ltExpr{left, right}, nil
 	case ttLe:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return leExpr{left, right}, nil
 	}
-	return nil
+	return left, nil
 }
 
-func (p *parser) parseTermExpr() error {
-	if err := p.parseProductExpr(); err != nil {
-		return err
+func (p *parser) parseTermExpr() (expression, error) {
+	left, err := p.parseProductExpr()
+	if err != nil {
+		return nil, err
 	}
 
 	switch p.current().Type {
 	case ttPlus:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return addExpr{left, right}, nil
 	case ttMinus:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return subExpr{left, right}, nil
 	case ttIn:
 		p.next()
-		if err := p.parseTermExpr(); err != nil {
-			return err
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
 		}
+		return inExpr{left, right}, nil
 	}
-	return nil
+	return left, nil
 }
 
-func (p *parser) parseProductExpr() error {
-	if err := p.parseMoleculeExpr(); err != nil {
-		return err
+func (p *parser) parseProductExpr() (expression, error) {
+	left, err := p.parseMoleculeExpr()
+	if err != nil {
+		return nil, err
 	}
 
 	switch p.current().Type {
 	case ttStar:
 		p.next()
-		if err := p.parseProductExpr(); err != nil {
-			return err
+		right, err := p.parseProductExpr()
+		if err != nil {
+			return nil, err
 		}
+		return mulExpr{left, right}, nil
 	case ttSlash:
 		p.next()
-		if err := p.parseProductExpr(); err != nil {
-			return err
+		right, err := p.parseProductExpr()
+		if err != nil {
+			return nil, err
 		}
+		return divExpr{left, right}, nil
 	case ttPercent:
 		p.next()
-		if err := p.parseProductExpr(); err != nil {
-			return err
+		right, err := p.parseProductExpr()
+		if err != nil {
+			return nil, err
 		}
+		return modExpr{left, right}, nil
 	}
-	return nil
+	return left, nil
 }
 
-func (p *parser) parseMoleculeExpr() error {
+func (p *parser) parseMoleculeExpr() (expression, error) {
 	switch p.current().Type {
 	case ttMinus:
 		p.next()
-		return p.parseAtom()
+		inner, err := p.parseAtom()
+		if err != nil {
+			return nil, err
+		}
+		return negExpr{inner}, nil
 	case ttNot:
 		p.next()
-		return p.parseAtom()
+		inner, err := p.parseAtom()
+		if err != nil {
+			return nil, err
+		}
+		return notExpr{inner}, nil
 	}
 
-	if err := p.parseAtom(); err != nil {
-		return err
+	atom, err := p.parseAtom()
+	if err != nil {
+		return nil, err
 	}
 
 	if p.current().Type == ttSemicolon {
 		p.next()
-		if err := p.parseAtom(); err != nil {
-			return err
+		y, err := p.parseAtom()
+		if err != nil {
+			return nil, err
 		}
+		return posExpr{x: atom, y: y}, nil
 	}
 	if p.current().Type == ttDot {
 		p.next()
-		if _, err := p.expect(ttIdent); err != nil {
-			return err
+		memberTok, err := p.expect(ttIdent)
+		if err != nil {
+			return nil, err
 		}
+		return memberExpr{recvr: atom, member: memberTok.Lexeme}, nil
 	}
-	return nil
+	return atom, nil
 }
 
-func (p *parser) parseAtom() error {
+func (p *parser) parseAtom() (expression, error) {
 	tok := p.next()
 	switch tok.Type {
 	case ttLParen:
@@ -435,55 +487,65 @@ func (p *parser) parseAtom() error {
 	case ttAt:
 		return p.parseAtAtom()
 	case ttIdent:
-		return p.parseIdentAtom()
+		return p.parseIdentAtom(tok.Lexeme)
 	case ttNumber:
-		return nil
+		return tok.parseNumber(), nil
 	case ttString:
-		return nil
+		return stringExpr(tok.Lexeme), nil
 	case ttTrue:
-		return nil
+		return boolExpr(true), nil
 	case ttFalse:
-		return nil
+		return boolExpr(false), nil
 	case ttLBracket:
 		return p.parseKernelAtom()
 	}
-	return fmt.Errorf("line %d: unexpected symbol %s", tok.LineNumber, tok.Lexeme)
+	return nil, fmt.Errorf("line %d: unexpected symbol %s", tok.LineNumber, tok.Lexeme)
 }
 
-func (p *parser) parseParenAtom() error {
-	if err := p.parseExpr(); err != nil {
-		return err
+func (p *parser) parseParenAtom() (expression, error) {
+	inner, err := p.parseExpr()
+	if err != nil {
+		return nil, err
 	}
 	if _, err := p.expect(ttRParen); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return inner, nil
 }
 
-func (p *parser) parseAtAtom() error {
-	return p.parseAtom()
+func (p *parser) parseAtAtom() (expression, error) {
+	inner, err := p.parseAtom()
+	if err != nil {
+		return nil, err
+	}
+	return atExpr{inner}, nil
 }
 
-func (p *parser) parseIdentAtom() error {
-	if p.current().Type == ttLParen { // function call
-		if err := p.parseParameterList(); err != nil {
-			return nil
+func (p *parser) parseIdentAtom(ident string) (expression, error) {
+	if p.current().Type == ttLParen {
+		parameters, err := p.parseParameterList()
+		if err != nil {
+			return nil, err
 		}
+		return invokeExpr{funcName: ident, parameters: parameters}, nil
 	}
-	return nil
+	return identExpr(ident), nil
 }
 
-func (p *parser) parseKernelAtom() error {
+func (p *parser) parseKernelAtom() (expression, error) {
+	elements := []expression{}
 	for {
 		switch p.current().Type {
 		case ttRBracket:
 			p.next()
-			return nil
+			return kernelExpr{elements}, nil
 		case ttEOF:
-			return fmt.Errorf("unclosed kernel element list")
+			return nil, fmt.Errorf("unclosed kernel element list")
 		}
-		if err := p.parseMoleculeExpr(); err != nil {
-			return err
+		element, err := p.parseMoleculeExpr()
+		if err != nil {
+			return nil, err
 		}
+		elements = append(elements, element)
 	}
 }
