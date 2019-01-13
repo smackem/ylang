@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "command": "go",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "tasks": [
+        {
+            "label": "build",
+            "args": ["-v"]
+        },
+        {
+            "label": "clean",
+            "args": ["-v"]
+        },
+        {
+            "label": "rebuild",
+            "suppressTaskName": true,
+            "args": ["build", "-v", "-a"]
+        },
+        {
+            "label": "test",
+            "args": ["./..."]
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+Program:
+    | StatementList EOF
+
+StatementList:
+    | Statement StatementList
+    | Statement
+
+Statement:
+    | IDENT COLONEQ Expr
+    | IDENT EQ Expr
+    | AT Atom EQ Expr
+    | IF Expr LBRACE StatementList RBRACE
+    | IF Expr LBRACE StatementList RBRACE ELSE LBRACE StatementList RBRACE
+    | FOR IDENT IN Expr LBRACE StatementList RBRACE
+    | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
+    | YIELD Expr
+    | LOG LPAREN ParameterList RPAREN
+    | BLT LPAREN Expr RPAREN
+    | BLT
+
+Expr:
+    | Expr QMARK Expr COLON Expr
+    | Expr OR AndExpr
+    | AndExpr
+
+AndExpr:
+    | AndExpr AND Cond
+    | Cond
+
+Cond:
+    | Term EQEQ Term
+    | Term NEQ Term
+    | Term GT Term
+    | Term GE Term
+    | Term LT Term
+    | Term LE Term
+    | Term
+
+Term:
+    | Term PLUS Molecule
+    | Term MINUS Molecule
+    | Term STAR Molecule
+    | Term SLASH Molecule
+    | Term PERCENT Molecule
+    | Term IN Molecule
+    | Molecule
+
+Molecule:
+    | MINUS Atom
+    | NOT Atom
+    | Atom SEMICOLON Atom
+    | Atom DOT IDENT
+    | Atom
+
+MoleculeList:
+    | Molecule MoleculeList
+    | Molecule
+
+Atom:
+    | LPAREN Expr RPAREN
+    | AT Atom
+    | IDENT
+    | NUMBER
+    | STRING
+    | TRUE
+    | FALSE
+    | IDENT LPAREN ParameterListOpt RPAREN
+    | LBRACKET MoleculeList RBRACKET
+
+ParameterListOpt:
+    | ParameterList
+    |
+
+ParameterList:
+    | Expr COMMA ParameterList
+    | Expr
