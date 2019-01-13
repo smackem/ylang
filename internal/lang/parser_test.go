@@ -1,6 +1,9 @@
 package lang
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_parse_syntax(t *testing.T) {
 	tests := []struct {
@@ -74,6 +77,39 @@ func Test_parse_syntax(t *testing.T) {
 			tokens, _ := lex(tt.src)
 			if _, err := parse(tokens); (err != nil) != tt.wantErr {
 				t.Errorf("parse() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_parse_ast(t *testing.T) {
+	tests := []struct {
+		name    string
+		src     string
+		want    []statement
+		wantErr bool
+	}{
+		{
+			name: "declaration",
+			src:  "x := 1",
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs:   Number(1),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, _ := lex(tt.src)
+			got, err := parse(tokens)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parse() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parse() = %v, want %v", got, tt.want)
 			}
 		})
 	}
