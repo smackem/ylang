@@ -2,6 +2,7 @@ package lang
 
 import (
 	"fmt"
+	"image"
 )
 
 // Compile compiles the given source code into a executable Program.
@@ -22,6 +23,15 @@ func (prog Program) Execute(bitmap Bitmap) error {
 // Number is the number type used by ylang
 type Number float64
 
+// String is the string type used by the lang interpreter
+type String string
+
+// Position is a x,y position in an image
+type Position image.Point
+
+// Rect holds a rectangle
+type Rect image.Rectangle
+
 // Color represents a color with RGBA channels, each channel value held as a floating-point number
 // with range 0..255. This range can be exceeded as a result of a computation.
 type Color struct {
@@ -32,12 +42,12 @@ type Color struct {
 }
 
 // NewRgba creates a Color from r,g,b,a channel values.
-func NewRgba(scr Number, scg Number, scb Number, sca Number) Color {
+func NewRgba(r Number, g Number, b Number, a Number) Color {
 	return Color{
-		scr,
-		scg,
-		scb,
-		sca,
+		r,
+		g,
+		b,
+		a,
 	}
 }
 

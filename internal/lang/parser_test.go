@@ -99,6 +99,49 @@ func Test_parse_ast(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "multiple_statements",
+			src:  "log(1) blt",
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						Number(1),
+					},
+				},
+				bltStmt{rect: nil},
+			},
+		},
+		{
+			name: "parameter_list",
+			src:  "log(1, 2, 3)",
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						Number(1),
+						Number(2),
+						Number(3),
+					},
+				},
+			},
+		},
+		{
+			name: "molecules",
+			src:  "x := @(1;2).r",
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs: memberExpr{
+						member: "r",
+						recvr: atExpr{
+							inner: posExpr{
+								x: Number(1),
+								y: Number(2),
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

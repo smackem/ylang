@@ -114,10 +114,10 @@ func (t token) String() string {
 	return t.Lexeme
 }
 
-func (t token) parseNumber() float64 {
+func (t token) parseNumber() Number {
 	if t.Type == ttNumber {
-		if number, err := strconv.ParseFloat(t.Lexeme, 64); err == nil {
-			return number
+		if n, err := strconv.ParseFloat(t.Lexeme, 64); err == nil {
+			return Number(n)
 		}
 	}
 
