@@ -20,10 +20,10 @@ func (prog Program) Execute(bitmap Bitmap) error {
 	return fmt.Errorf("Not implemented")
 }
 
-// Number is the number type used by ylang
+// Number is the number type used by the interpreter
 type Number float64
 
-// String is the string type used by the lang interpreter
+// String is the string type used by the interpreter
 type String string
 
 // Position is a x,y position in an image
@@ -31,6 +31,9 @@ type Position image.Point
 
 // Rect holds a rectangle
 type Rect image.Rectangle
+
+// Bool is the boolean type used by the interpreter
+type Bool bool
 
 // Color represents a color with RGBA channels, each channel value held as a floating-point number
 // with range 0..255. This range can be exceeded as a result of a computation.
@@ -110,6 +113,7 @@ type Bitmap interface {
 	Width() int
 	Height() int
 	Convolute(x int, y int, radius int, length int, kernel []Number) Color
+	Blt(rect Rect)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
