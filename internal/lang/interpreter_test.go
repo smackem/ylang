@@ -20,7 +20,7 @@ func compileAndInterpret(src string) (scope, error) {
 	if err != nil {
 		return nil, err
 	}
-	topScope := ir.idents[0]
+	topScope := ir.idents[1]
 	delete(topScope, lastRectIdent)
 	return topScope, nil
 }
@@ -80,7 +80,7 @@ func Test_interpret(t *testing.T) {
 			name: "kernel",
 			src:  "k := [1 2 3 4]",
 			want: scope{
-				"k": kernel{length: 2, radius: 1, values: []Number{Number(1), Number(2), Number(3), Number(4)}},
+				"k": kernel{width: 2, radius: 1, values: []Number{Number(1), Number(2), Number(3), Number(4)}},
 			},
 		},
 		{

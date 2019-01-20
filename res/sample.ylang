@@ -8,6 +8,8 @@ gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-for pos in rect(0,0,800,500) {
-    @pos = -convolute(pos, gauss)
+px := 0
+for pos in IMAGE {
+    px = @pos
+    @pos = rgb(px.b, px.r, px.g)
 }

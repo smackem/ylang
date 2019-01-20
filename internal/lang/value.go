@@ -530,7 +530,7 @@ func (rect Rect) printStr() string {
 //////////////////////////////////////////// lang.Kernel(radius, length, values)
 
 type kernel struct {
-	length int
+	width  int
 	radius int
 	values []Number
 }
@@ -596,10 +596,12 @@ func (k kernel) at(bitmap Bitmap) (value, error) {
 
 func (k kernel) property(ident string) (value, error) {
 	switch ident {
-	case "length":
-		return Number(k.length), nil
+	case "width":
+		return Number(k.width), nil
 	case "radius":
 		return Number(k.radius), nil
+	case "count":
+		return Number(len(k.values)), nil
 	}
 	return nil, fmt.Errorf("unknown property 'kernel.%s'", ident)
 }

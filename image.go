@@ -55,21 +55,21 @@ func (surf *surface) Height() int {
 	return surf.source.Bounds().Dy()
 }
 
-func (surf *surface) Convolute(x int, y int, radius int, length int, kernel []lang.Number) lang.Color {
+func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lang.Number) lang.Color {
 	kernelSum := lang.Number(0.0)
 	r := lang.Number(0.0)
 	g := lang.Number(0.0)
 	b := lang.Number(0.0)
 	a := lang.Number(255)
 	kernelIndex := 0
-	width := surf.Width()
-	height := surf.Height()
+	w := surf.Width()
+	h := surf.Height()
 
-	for kernelY := 0; kernelY < length; kernelY++ {
-		for kernelX := 0; kernelX < length; kernelX++ {
+	for kernelY := 0; kernelY < width; kernelY++ {
+		for kernelX := 0; kernelX < width; kernelX++ {
 			sourceY := y - radius + kernelY
 			sourceX := x - radius + kernelX
-			if sourceX >= 0 && sourceX < width && sourceY >= 0 && sourceY < height {
+			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
 				value := kernel[kernelIndex]
 				px := surf.source.NRGBAAt(sourceX, sourceY)
 				r += value * lang.Number(px.R)

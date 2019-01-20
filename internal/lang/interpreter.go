@@ -25,6 +25,15 @@ func newInterpreter(bitmap Bitmap) *interpreter {
 		bitmap: bitmap,
 	}
 	ir.newIdent(lastRectIdent, Rect{})
+	ir.newIdent("BLACK", NewRgba(0, 0, 0, 255))
+	ir.newIdent("WHITE", NewRgba(255, 255, 255, 255))
+	ir.newIdent("TRANSPARENT", NewRgba(255, 255, 255, 0))
+	if bitmap != nil {
+		ir.newIdent("IMAGE", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
+		ir.newIdent("W", Number(bitmap.Width()))
+		ir.newIdent("H", Number(bitmap.Height()))
+	}
+	ir.pushScope()
 	return ir
 }
 
@@ -452,7 +461,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		rootOfLen := int(math.Sqrt(float64(len(elementNumbers))))
 		return kernel{
 			values: elementNumbers,
-			length: rootOfLen,
+			width:  rootOfLen,
 			radius: rootOfLen / 2,
 		}, nil
 	}
@@ -578,5 +587,5 @@ func (ir *interpreter) invokeConvolute(values []value) (value, error) {
 		return nil, fmt.Errorf(argMismatch)
 	}
 
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.length, kernelVal.values), nil
+	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
 }

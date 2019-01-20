@@ -119,7 +119,7 @@ type Bitmap interface {
 	SetPixel(x int, y int, color Color)
 	Width() int
 	Height() int
-	Convolute(x int, y int, radius int, length int, kernel []Number) Color
+	Convolute(x int, y int, radius int, width int, kernel []Number) Color
 	Blt(rect Rect)
 }
 
