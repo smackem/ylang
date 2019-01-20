@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/smackem/ylang/internal/lang"
 )
 
 const (
@@ -24,23 +27,38 @@ func webMain() {
 }
 
 func main() {
-	sourcePath := flag.String("source", "", "the source image path")
-	targetPath := flag.String("target", "", "the target image path")
+	sourceImgPath := flag.String("image", "", "the source image path")
+	sourceCodePath := flag.String("code", "", "the path of the source code file")
+	targetImgPath := flag.String("out", "", "the target image path")
 	flag.Parse()
 
-	if *sourcePath == "" {
+	if *sourceImgPath == "" {
 		flag.Usage()
 		return
 	}
 
-	img, err := loadImage(*sourcePath)
+	surf, err := loadSurface(*sourceImgPath)
 	if err != nil {
-		log.Fatalf("Error loading image %s: %s", *sourcePath, err.Error())
+		log.Fatalf("error loading image from '%s': %s", *sourceImgPath, err.Error())
+	}
+	src, err := ioutil.ReadFile(*sourceCodePath)
+	if err != nil {
+		log.Fatalf("error loading source code from '%s': %s", *sourceCodePath, err.Error())
 	}
 
-	if err = saveImage(img, *targetPath); err != nil {
-		log.Fatalf("Error saving image %s: %s", *targetPath, err.Error())
+	prog, err := lang.Compile(string(src))
+	if err != nil {
+		log.Fatalf("compilation error: %s", err.Error())
 	}
 
-	log.Printf("Saved image to %s as png", *targetPath)
+	err = prog.Execute(surf)
+	if err != nil {
+		log.Fatalf("execution error: %s", err.Error())
+	}
+
+	if err = saveImage(surf.target, *targetImgPath); err != nil {
+		log.Fatalf("error saving image %s: %s", *targetImgPath, err.Error())
+	}
+
+	log.Printf("Saved image to '%s' as png", *targetImgPath)
 }
