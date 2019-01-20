@@ -5,18 +5,72 @@ import (
 	"fmt"
 	"image"
 	"math"
+	"reflect"
 )
 
+func interpret(program Program, bitmap Bitmap) error {
+	return newInterpreter(bitmap).visitStmtList(program.stmts)
+}
+
+type scope map[string]value
+
 type interpreter struct {
-	idents map[string]value
+	idents []scope
 	bitmap Bitmap
 }
 
-func (ir interpreter) visitProgram(stmts []statement) error {
-	return ir.visitStmtList(stmts)
+func newInterpreter(bitmap Bitmap) *interpreter {
+	ir := &interpreter{
+		idents: []scope{make(scope)},
+		bitmap: bitmap,
+	}
+	ir.newIdent(lastRectIdent, Rect{})
+	return ir
 }
 
-func (ir interpreter) visitStmtList(stmts []statement) error {
+func (ir *interpreter) pushScope() {
+	ir.idents = append(ir.idents, make(scope))
+}
+
+func (ir *interpreter) popScope() {
+	ir.idents = ir.idents[:len(ir.idents)-1]
+}
+
+func (ir interpreter) findIdent(ident string) (value, bool) {
+	last := len(ir.idents) - 1
+	for i := range ir.idents {
+		scope := ir.idents[last-i]
+		val, ok := scope[ident]
+		if ok {
+			return val, true
+		}
+	}
+	return nil, false
+}
+
+func (ir *interpreter) newIdent(ident string, val value) error {
+	_, ok := ir.idents[len(ir.idents)-1][ident]
+	if ok {
+		return fmt.Errorf("identifier '%s' already declared", ident)
+	}
+	ir.idents[len(ir.idents)-1][ident] = val
+	return nil
+}
+
+func (ir *interpreter) assignIdent(ident string, val value) error {
+	last := len(ir.idents) - 1
+	for i := range ir.idents {
+		scope := ir.idents[last-i]
+		_, ok := scope[ident]
+		if ok {
+			scope[ident] = val
+			return nil
+		}
+	}
+	return fmt.Errorf("identifier '%s' not found", ident)
+}
+
+func (ir *interpreter) visitStmtList(stmts []statement) error {
 	for _, s := range stmts {
 		if err := ir.visitStmt(s); err != nil {
 			return err
@@ -25,23 +79,29 @@ func (ir interpreter) visitStmtList(stmts []statement) error {
 	return nil
 }
 
-const lastRectIdent string = "@<lastRect>" // this is safe because its not a valid ident
+const lastRectIdent string = "@:R" // this is safe because its not a valid ident
 
-func (ir interpreter) visitStmt(stmt statement) error {
+func (ir *interpreter) visitStmt(stmt statement) error {
 	switch s := stmt.(type) {
 	case declStmt:
 		v, err := ir.visitExpr(s.rhs)
 		if err != nil {
 			return err
 		}
-		ir.idents[s.ident] = v
+		err = ir.newIdent(s.ident, v)
+		if err != nil {
+			return err
+		}
 
 	case assignStmt:
 		v, err := ir.visitExpr(s.rhs)
 		if err != nil {
 			return err
 		}
-		ir.idents[s.ident] = v
+		err = ir.assignIdent(s.ident, v)
+		if err != nil {
+			return err
+		}
 
 	case pixelAssignStmt:
 		left, err := ir.visitExpr(s.lhs)
@@ -72,9 +132,13 @@ func (ir interpreter) visitStmt(stmt statement) error {
 			return fmt.Errorf("type mismatch: expected if(bool)")
 		}
 		if b {
+			ir.pushScope()
+			defer ir.popScope()
 			return ir.visitStmtList(s.trueStmts)
 		}
 		if s.falseStmts != nil {
+			ir.pushScope()
+			defer ir.popScope()
 			return ir.visitStmtList(s.falseStmts)
 		}
 
@@ -87,14 +151,18 @@ func (ir interpreter) visitStmt(stmt statement) error {
 		if !ok {
 			return fmt.Errorf("type mismatch: expected for ident in rect")
 		}
+		ir.pushScope()
+		defer ir.popScope()
+		ir.newIdent(s.ident, nil)
 		for y := rect.Min.Y; y < rect.Max.Y; y++ {
 			for x := rect.Min.X; x < rect.Max.X; x++ {
-				ir.idents[s.ident] = Position{x, y}
+				ir.assignIdent(s.ident, Position{x, y})
 				if err := ir.visitStmtList(s.stmts); err != nil {
 					return err
 				}
 			}
 		}
+		ir.assignIdent(lastRectIdent, rect)
 
 	case forRangeStmt:
 		lowerVal, err := ir.visitExpr(s.lower)
@@ -113,8 +181,11 @@ func (ir interpreter) visitStmt(stmt statement) error {
 		if !ok {
 			return fmt.Errorf("type mismatch: expected upper number")
 		}
+		ir.pushScope()
+		defer ir.popScope()
+		ir.newIdent(s.ident, nil)
 		for n := lowerN; n < upperN; n++ {
-			ir.idents[s.ident] = n
+			ir.assignIdent(s.ident, n)
 			if err := ir.visitStmtList(s.stmts); err != nil {
 				return err
 			}
@@ -143,7 +214,7 @@ func (ir interpreter) visitStmt(stmt statement) error {
 				return err
 			}
 		} else {
-			expr = ir.idents[lastRectIdent]
+			expr, _ = ir.findIdent(lastRectIdent)
 		}
 		rect, ok := expr.(Rect)
 		if !ok {
@@ -157,7 +228,7 @@ func (ir interpreter) visitStmt(stmt statement) error {
 
 type binaryExprVisitor func(left value, right value) (value, error)
 
-func (ir interpreter) visitBinaryExpr(left expression, right expression, visitor binaryExprVisitor) (value, error) {
+func (ir *interpreter) visitBinaryExpr(left expression, right expression, visitor binaryExprVisitor) (value, error) {
 	leftVal, err := ir.visitExpr(left)
 	if err != nil {
 		return nil, err
@@ -169,7 +240,7 @@ func (ir interpreter) visitBinaryExpr(left expression, right expression, visitor
 	return visitor(leftVal, rightVal)
 }
 
-func (ir interpreter) visitExpr(expr expression) (value, error) {
+func (ir *interpreter) visitExpr(expr expression) (value, error) {
 	switch e := expr.(type) {
 	case ternaryExpr:
 		condVal, err := ir.visitExpr(e.cond)
@@ -327,14 +398,21 @@ func (ir interpreter) visitExpr(expr expression) (value, error) {
 		}
 		return recvrVal.property(e.member)
 
-	case stringExpr:
-		return String(e), nil
+	case String:
+		return e, nil
 
-	case boolExpr:
-		return Bool(e), nil
+	case Bool:
+		return e, nil
+
+	case Number:
+		return e, nil
 
 	case identExpr:
-		return ir.idents[string(e)], nil
+		val, ok := ir.findIdent(string(e))
+		if !ok {
+			return nil, fmt.Errorf("identifier '%s' not found", e)
+		}
+		return val, nil
 
 	case atExpr:
 		val, err := ir.visitExpr(e.inner)
@@ -379,10 +457,10 @@ func (ir interpreter) visitExpr(expr expression) (value, error) {
 		}, nil
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))
 }
 
-func (ir interpreter) invokeFunc(name string, values []value) (value, error) {
+func (ir *interpreter) invokeFunc(name string, values []value) (value, error) {
 	switch name {
 	case "rgb":
 		return ir.invokeRgb(values)
@@ -412,7 +490,7 @@ func getNumbers(values []value, errStr string) ([]Number, error) {
 	return numbers, nil
 }
 
-func (ir interpreter) invokeRgb(values []value) (value, error) {
+func (ir *interpreter) invokeRgb(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: rgb(number, number, number)"
 
 	if len(values) != 3 {
@@ -426,7 +504,7 @@ func (ir interpreter) invokeRgb(values []value) (value, error) {
 	return NewRgba(numbers[0], numbers[1], numbers[2], 255), nil
 }
 
-func (ir interpreter) invokeSrgb(values []value) (value, error) {
+func (ir *interpreter) invokeSrgb(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: srgb(number, number, number)"
 
 	if len(values) != 3 {
@@ -440,7 +518,7 @@ func (ir interpreter) invokeSrgb(values []value) (value, error) {
 	return NewSrgba(numbers[0], numbers[1], numbers[2], 1.0), nil
 }
 
-func (ir interpreter) invokeRgba(values []value) (value, error) {
+func (ir *interpreter) invokeRgba(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: rgba(number, number, number, number)"
 
 	if len(values) != 4 {
@@ -454,7 +532,7 @@ func (ir interpreter) invokeRgba(values []value) (value, error) {
 	return NewRgba(numbers[0], numbers[1], numbers[2], numbers[3]), nil
 }
 
-func (ir interpreter) invokeSrgba(values []value) (value, error) {
+func (ir *interpreter) invokeSrgba(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: srgba(number, number, number, number)"
 
 	if len(values) != 4 {
@@ -468,7 +546,7 @@ func (ir interpreter) invokeSrgba(values []value) (value, error) {
 	return NewSrgba(numbers[0], numbers[1], numbers[2], numbers[3]), nil
 }
 
-func (ir interpreter) invokeRect(values []value) (value, error) {
+func (ir *interpreter) invokeRect(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: rect(x:number, y:number, w:number, h:number)"
 
 	if len(values) != 4 {
@@ -481,11 +559,11 @@ func (ir interpreter) invokeRect(values []value) (value, error) {
 
 	return Rect{
 		Min: image.Point{int(numbers[0] + 0.5), int(numbers[1] + 0.5)},
-		Max: image.Point{int(numbers[2] + 0.5), int(numbers[3] + 0.5)},
+		Max: image.Point{int(numbers[0] + numbers[2] + 0.5), int(numbers[1] + numbers[3] + 0.5)},
 	}, nil
 }
 
-func (ir interpreter) invokeConvolute(values []value) (value, error) {
+func (ir *interpreter) invokeConvolute(values []value) (value, error) {
 	const argMismatch string = "argument mismatch: convolute(position, kernel)"
 
 	if len(values) != 2 {

@@ -2,9 +2,13 @@ package lang
 
 import "fmt"
 
-func parse(input []token) ([]statement, error) {
+func parse(input []token) (Program, error) {
 	parser := parser{input: input, index: 0}
-	return parser.parseProgram()
+	program, err := parser.parseProgram()
+	if err != nil {
+		return Program{nil}, err
+	}
+	return Program{program}, nil
 }
 
 type parser struct {
@@ -491,11 +495,11 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttNumber:
 		return tok.parseNumber(), nil
 	case ttString:
-		return stringExpr(tok.Lexeme), nil
+		return String(tok.Lexeme), nil
 	case ttTrue:
-		return boolExpr(true), nil
+		return Bool(true), nil
 	case ttFalse:
-		return boolExpr(false), nil
+		return Bool(false), nil
 	case ttLBracket:
 		return p.parseKernelAtom()
 	}
@@ -523,8 +527,12 @@ func (p *parser) parseAtAtom() (expression, error) {
 
 func (p *parser) parseIdentAtom(ident string) (expression, error) {
 	if p.current().Type == ttLParen {
+		p.next()
 		parameters, err := p.parseParameterList()
 		if err != nil {
+			return nil, err
+		}
+		if _, err := p.expect(ttRParen); err != nil {
 			return nil, err
 		}
 		return invokeExpr{funcName: ident, parameters: parameters}, nil

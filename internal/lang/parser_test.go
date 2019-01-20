@@ -71,6 +71,11 @@ func Test_parse_syntax(t *testing.T) {
 			src:     "if true { log(1) log(2) } if false { log(3) }",
 			wantErr: false,
 		},
+		{
+			name:    "functions",
+			src:     "r := rect(1, 2, 3, 4) c := rgb(255, 254, 254)",
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -86,40 +91,46 @@ func Test_parse_ast(t *testing.T) {
 	tests := []struct {
 		name    string
 		src     string
-		want    []statement
+		want    Program
 		wantErr bool
 	}{
 		{
 			name: "declaration",
 			src:  "x := 1",
-			want: []statement{
-				declStmt{
-					ident: "x",
-					rhs:   Number(1),
+			want: Program{
+				[]statement{
+					declStmt{
+						ident: "x",
+						rhs:   Number(1),
+					},
 				},
 			},
 		},
 		{
 			name: "multiple_statements",
 			src:  "log(1) blt",
-			want: []statement{
-				logStmt{
-					parameters: []expression{
-						Number(1),
+			want: Program{
+				[]statement{
+					logStmt{
+						parameters: []expression{
+							Number(1),
+						},
 					},
+					bltStmt{rect: nil},
 				},
-				bltStmt{rect: nil},
 			},
 		},
 		{
 			name: "parameter_list",
 			src:  "log(1, 2, 3)",
-			want: []statement{
-				logStmt{
-					parameters: []expression{
-						Number(1),
-						Number(2),
-						Number(3),
+			want: Program{
+				[]statement{
+					logStmt{
+						parameters: []expression{
+							Number(1),
+							Number(2),
+							Number(3),
+						},
 					},
 				},
 			},
@@ -127,15 +138,17 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "molecules",
 			src:  "x := @(1;2).r",
-			want: []statement{
-				declStmt{
-					ident: "x",
-					rhs: memberExpr{
-						member: "r",
-						recvr: atExpr{
-							inner: posExpr{
-								x: Number(1),
-								y: Number(2),
+			want: Program{
+				[]statement{
+					declStmt{
+						ident: "x",
+						rhs: memberExpr{
+							member: "r",
+							recvr: atExpr{
+								inner: posExpr{
+									x: Number(1),
+									y: Number(2),
+								},
 							},
 						},
 					},

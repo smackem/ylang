@@ -1,13 +1,20 @@
 package lang
 
 import (
-	"fmt"
 	"image"
 )
 
 // Compile compiles the given source code into a executable Program.
 func Compile(src string) (Program, error) {
-	return Program{nil}, fmt.Errorf("Not implemented")
+	tokens, err := lex(src)
+	if err != nil {
+		return Program{}, err
+	}
+	prog, err := parse(tokens)
+	if err != nil {
+		return Program{}, err
+	}
+	return prog, nil
 }
 
 // Program is the compiled, executable ylang program.
@@ -17,7 +24,7 @@ type Program struct {
 
 // Execute executes the Program against the specified Bitmap.
 func (prog Program) Execute(bitmap Bitmap) error {
-	return fmt.Errorf("Not implemented")
+	return interpret(prog, bitmap)
 }
 
 // Number is the number type used by the interpreter

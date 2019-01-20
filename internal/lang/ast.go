@@ -98,8 +98,6 @@ type memberExpr struct {
 	recvr  expression
 	member string
 }
-type stringExpr string
-type boolExpr bool
 type identExpr string
 type atExpr unaryExpr
 type invokeExpr struct {
