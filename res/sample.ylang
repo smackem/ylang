@@ -1,6 +1,9 @@
-sobel := [ 1  0 -1
-           2  0 -2
-           1  0 -1]
+sobelX := [ 1  0 -1
+            2  0 -2
+            1  0 -1]
+sobelY := [ 1  2  1
+            0  0  0
+           -1 -2 -1]
 
 gauss := [0 1 2 1 0
           1 2 4 2 1
@@ -8,8 +11,20 @@ gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-px := 0
 for pos in IMAGE {
-    px = @pos
-    @pos = rgb(px.b, px.r, px.g)
+    @pos = -@pos
+} blt
+
+for pos in rect(100,100, 200,200) {
+    @pos = -@pos
+} blt
+
+for pos in rect(200,200, 200,200) {
+    @pos = -@pos
+} blt
+
+for pos in rect(300,300, 200,200) {
+    sx := convolute(pos, sobelX)
+    sy := convolute(pos, sobelY)
+    @pos = sx + sy
 }

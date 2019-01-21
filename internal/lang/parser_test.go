@@ -136,6 +136,32 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "blt",
+			src:  "blt log(1)",
+			want: Program{
+				[]statement{
+					bltStmt{},
+					logStmt{
+						parameters: []expression{Number(1)},
+					},
+				},
+			},
+		},
+		{
+			name: "blt_with_rect",
+			src:  "blt(IMAGE) log(1)",
+			want: Program{
+				[]statement{
+					bltStmt{
+						rect: identExpr("IMAGE"),
+					},
+					logStmt{
+						parameters: []expression{Number(1)},
+					},
+				},
+			},
+		},
+		{
 			name: "molecules",
 			src:  "x := @(1;2).r",
 			want: Program{

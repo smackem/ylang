@@ -81,11 +81,9 @@ func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lan
 					a = lang.Number(px.A)
 				}
 			}
-
 			kernelIndex++
 		}
 	}
-
 	if kernelSum == 0.0 {
 		return lang.NewRgba(r, g, b, a)
 	}
@@ -94,7 +92,15 @@ func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lan
 }
 
 func (surf *surface) Blt(rect lang.Rect) {
-	copy(surf.target.Pix, surf.source.Pix)
+	if rect.Max.X-rect.Min.X == surf.Width() && rect.Max.Y-rect.Min.Y == surf.Height() {
+		copy(surf.source.Pix, surf.target.Pix)
+	} else {
+		for y := rect.Min.Y; y < rect.Max.Y; y++ {
+			for x := rect.Min.X; x < rect.Max.X; x++ {
+				surf.source.SetNRGBA(x, y, surf.target.NRGBAAt(x, y))
+			}
+		}
+	}
 }
 
 func loadImage(sourcePath string) (*image.NRGBA, error) {

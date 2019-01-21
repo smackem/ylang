@@ -58,10 +58,6 @@ func (ir interpreter) findIdent(ident string) (value, bool) {
 }
 
 func (ir *interpreter) newIdent(ident string, val value) error {
-	_, ok := ir.idents[len(ir.idents)-1][ident]
-	if ok {
-		return fmt.Errorf("identifier '%s' already declared", ident)
-	}
 	ir.idents[len(ir.idents)-1][ident] = val
 	return nil
 }

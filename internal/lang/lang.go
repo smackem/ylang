@@ -83,14 +83,19 @@ func (c Color) Clamp() Color {
 
 // Intensity returns the brightness of a color normalized to 0..255.
 func (c Color) Intensity() Number {
-	cc := c.Clamp()
-	return (0.299*cc.R + 0.587*cc.G + 0.114*cc.B) / 255.0
+	result := 0.299*c.R + 0.587*c.G + 0.114*c.B
+	if result > 255 {
+		return 255
+	}
+	if result < 0 {
+		return 0
+	}
+	return result
 }
 
 // ScIntensity returns the brightness of a color normalized to 0..1
 func (c Color) ScIntensity() Number {
-	cc := c.Clamp()
-	return (0.299*cc.R + 0.587*cc.G + 0.114*cc.B) / (255.0 * 255.0)
+	return c.Intensity() / (255.0)
 }
 
 // ScR returns the red channel value normalized to 0..1

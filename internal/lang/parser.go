@@ -252,7 +252,8 @@ func (p *parser) parseParameterList() ([]expression, error) {
 
 func (p *parser) parseBlt() (statement, error) {
 	var rect expression
-	if p.next().Type == ttLParen {
+	if p.current().Type == ttLParen {
+		p.next()
 		var err error
 		rect, err = p.parseExpr()
 		if err != nil {

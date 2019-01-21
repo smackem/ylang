@@ -40,10 +40,11 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
-			name:    "multi_declaration",
-			src:     "x := 1 x := 2",
-			want:    nil,
-			wantErr: true,
+			name: "multi_declaration",
+			src:  "x := 1 x := 2",
+			want: scope{
+				"x": Number(2),
+			},
 		},
 		{
 			name: "rect",
