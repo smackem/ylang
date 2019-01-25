@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>ylang</title>
+        <script src="/pub/script/jquery-3.2.0.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <img id="image" />
+        </div>
+        <div id="message"></div>
+        <div>
+            <input type="text" id="imageUri" /><br />
+            <textarea id="sourceCode"></textarea><br />
+            <input type="button" id="renderBtn" value="Render!" />
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#renderBtn").click(onRender);
+            })
+            function onRender(){
+                $.ajax({url: "/render", method: "POST", data: {
+                    sourceCode: $("#sourceCode").val(),
+                    imageUri: $("#imageUri").val(),
+                }}).then(function(result) {
+                    $("#image").attr({
+                        src: result
+                    });
+                }).fail(function(err) {
+                    $("#message").html("Error: " + err)
+                });
+            };
+        </script>
+    </body>
+</html>

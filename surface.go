@@ -8,6 +8,7 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
+	"io"
 	"log"
 	"os"
 
@@ -19,8 +20,8 @@ type surface struct {
 	target *image.NRGBA
 }
 
-func loadSurface(sourcePath string) (*surface, error) {
-	source, err := loadImage(sourcePath)
+func loadSurface(reader io.Reader) (*surface, error) {
+	source, err := loadImage(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -103,19 +104,13 @@ func (surf *surface) Blt(rect lang.Rect) {
 	}
 }
 
-func loadImage(sourcePath string) (*image.NRGBA, error) {
-	sourceFile, err := os.Open(sourcePath)
+func loadImage(reader io.Reader) (*image.NRGBA, error) {
+	source, encoding, err := image.Decode(reader)
 	if err != nil {
-		return nil, fmt.Errorf("Could not load %s: %s", sourcePath, err.Error())
-	}
-	defer sourceFile.Close()
-
-	source, encoding, err := image.Decode(sourceFile)
-	if err != nil {
-		return nil, fmt.Errorf("Error decoding %s: %s", sourcePath, err.Error())
+		return nil, fmt.Errorf("Error decoding %s: %s", reader, err.Error())
 	}
 
-	log.Printf("Image %s decoded as %s", sourcePath, encoding)
+	log.Printf("Image %s decoded as %s", reader, encoding)
 
 	target := image.NewNRGBA(source.Bounds())
 	draw.Draw(target, target.Bounds(), source, image.Point{0, 0}, draw.Src)

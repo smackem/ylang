@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/smackem/ylang/internal/lang"
 )
@@ -15,14 +16,17 @@ const (
 )
 
 func webMain() {
-	registerHTTP()
+	err := initHTTP()
+	if err != nil {
+		log.Fatalf("error initializing http server: %s", err.Error())
+	}
 
 	srv := http.Server{
 		Addr: fmt.Sprintf(":%d", port),
 	}
 
 	fmt.Printf("Running on port %d. Press Ctrl+C to quit...", port)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	log.Print(err)
 }
 
@@ -33,11 +37,17 @@ func main() {
 	flag.Parse()
 
 	if *sourceImgPath == "" {
-		flag.Usage()
+		webMain()
 		return
 	}
 
-	surf, err := loadSurface(*sourceImgPath)
+	sourceFile, err := os.Open(*sourceImgPath)
+	if err != nil {
+		log.Fatalf("Could not load %s: %s", *sourceImgPath, err.Error())
+	}
+	defer sourceFile.Close()
+
+	surf, err := loadSurface(sourceFile)
 	if err != nil {
 		log.Fatalf("error loading image from '%s': %s", *sourceImgPath, err.Error())
 	}
