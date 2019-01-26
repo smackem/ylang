@@ -8,7 +8,7 @@ import (
 	"reflect"
 )
 
-func interpret(program Program, bitmap Bitmap) error {
+func interpret(program Program, bitmap BitmapContext) error {
 	return newInterpreter(bitmap).visitStmtList(program.stmts)
 }
 
@@ -16,10 +16,10 @@ type scope map[string]value
 
 type interpreter struct {
 	idents []scope
-	bitmap Bitmap
+	bitmap BitmapContext
 }
 
-func newInterpreter(bitmap Bitmap) *interpreter {
+func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir := &interpreter{
 		idents: []scope{make(scope)},
 		bitmap: bitmap,
@@ -469,122 +469,17 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 }
 
 func (ir *interpreter) invokeFunc(name string, values []value) (value, error) {
-	switch name {
-	case "rgb":
-		return ir.invokeRgb(values)
-	case "srgb":
-		return ir.invokeSrgb(values)
-	case "rgba":
-		return ir.invokeRgba(values)
-	case "srgba":
-		return ir.invokeSrgba(values)
-	case "rect":
-		return ir.invokeRect(values)
-	case "convolute":
-		return ir.invokeConvolute(values)
+	f, ok := functions[name]
+	if !ok {
+		return nil, fmt.Errorf("unkown function '%s'", name)
 	}
-	return nil, nil
-}
-
-func getNumbers(values []value, errStr string) ([]Number, error) {
-	numbers := make([]Number, len(values))
-	for i, v := range values {
-		n, ok := v.(Number)
-		if !ok {
-			return nil, fmt.Errorf(errStr)
+	if len(values) != len(f.params) {
+		return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(values))
+	}
+	for i := 0; i < len(values); i++ {
+		if reflect.TypeOf(values[i]) != f.params[i] {
+			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, reflect.TypeOf(values[i]).Name(), f.params[i].Name())
 		}
-		numbers[i] = n
 	}
-	return numbers, nil
-}
-
-func (ir *interpreter) invokeRgb(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: rgb(number, number, number)"
-
-	if len(values) != 3 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	numbers, err := getNumbers(values, argMismatch)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewRgba(numbers[0], numbers[1], numbers[2], 255), nil
-}
-
-func (ir *interpreter) invokeSrgb(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: srgb(number, number, number)"
-
-	if len(values) != 3 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	numbers, err := getNumbers(values, argMismatch)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewSrgba(numbers[0], numbers[1], numbers[2], 1.0), nil
-}
-
-func (ir *interpreter) invokeRgba(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: rgba(number, number, number, number)"
-
-	if len(values) != 4 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	numbers, err := getNumbers(values, argMismatch)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewRgba(numbers[0], numbers[1], numbers[2], numbers[3]), nil
-}
-
-func (ir *interpreter) invokeSrgba(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: srgba(number, number, number, number)"
-
-	if len(values) != 4 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	numbers, err := getNumbers(values, argMismatch)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewSrgba(numbers[0], numbers[1], numbers[2], numbers[3]), nil
-}
-
-func (ir *interpreter) invokeRect(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: rect(x:number, y:number, w:number, h:number)"
-
-	if len(values) != 4 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	numbers, err := getNumbers(values, argMismatch)
-	if err != nil {
-		return nil, err
-	}
-
-	return Rect{
-		Min: image.Point{int(numbers[0] + 0.5), int(numbers[1] + 0.5)},
-		Max: image.Point{int(numbers[0] + numbers[2] + 0.5), int(numbers[1] + numbers[3] + 0.5)},
-	}, nil
-}
-
-func (ir *interpreter) invokeConvolute(values []value) (value, error) {
-	const argMismatch string = "argument mismatch: convolute(position, kernel)"
-
-	if len(values) != 2 {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	posVal, ok := values[0].(Position)
-	if !ok {
-		return nil, fmt.Errorf(argMismatch)
-	}
-	kernelVal, ok := values[1].(kernel)
-	if !ok {
-		return nil, fmt.Errorf(argMismatch)
-	}
-
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	return f.body(ir, values)
 }

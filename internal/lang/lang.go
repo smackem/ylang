@@ -23,7 +23,7 @@ type Program struct {
 }
 
 // Execute executes the Program against the specified Bitmap.
-func (prog Program) Execute(bitmap Bitmap) error {
+func (prog Program) Execute(bitmap BitmapContext) error {
 	return interpret(prog, bitmap)
 }
 
@@ -118,13 +118,17 @@ func (c Color) ScA() Number {
 	return c.A / 255.0
 }
 
-// Bitmap is the surface a Program works on.
-type Bitmap interface {
+// BitmapContext is the surface a Program works on.
+type BitmapContext interface {
 	GetPixel(x int, y int) Color
 	SetPixel(x int, y int, color Color)
 	Width() int
 	Height() int
 	Convolute(x int, y int, radius int, width int, kernel []Number) Color
+	MapRed(x int, y int, radius int, width int, kernel []Number) []Number
+	MapGreen(x int, y int, radius int, width int, kernel []Number) []Number
+	MapBlue(x int, y int, radius int, width int, kernel []Number) []Number
+	MapAlpha(x int, y int, radius int, width int, kernel []Number) []Number
 	Blt(rect Rect)
 }
 

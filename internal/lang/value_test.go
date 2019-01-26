@@ -899,7 +899,7 @@ func TestPosition_neg(t *testing.T) {
 // TODO: mock Bitmap interface
 func TestPosition_at(t *testing.T) {
 	type args struct {
-		bitmap Bitmap
+		bitmap BitmapContext
 	}
 	tests := []struct {
 		name    string

@@ -19,7 +19,7 @@ type value interface {
 	in(other value) (value, error)
 	neg() (value, error)
 	not() (value, error)
-	at(bitmap Bitmap) (value, error)
+	at(bitmap BitmapContext) (value, error)
 	property(ident string) (value, error)
 	printStr() string
 }
@@ -131,7 +131,7 @@ func (n Number) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: found 'not number' instead of 'not bool'")
 }
 
-func (n Number) at(bitmap Bitmap) (value, error) {
+func (n Number) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: found '@number' instead of '@position'")
 }
 
@@ -200,7 +200,7 @@ func (s String) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: not string not supported")
 }
 
-func (s String) at(bitmap Bitmap) (value, error) {
+func (s String) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @string not supported")
 }
 
@@ -302,7 +302,7 @@ func (p Position) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: not position not supported")
 }
 
-func (p Position) at(bitmap Bitmap) (value, error) {
+func (p Position) at(bitmap BitmapContext) (value, error) {
 	return bitmap.GetPixel(p.X, p.Y), nil
 }
 
@@ -407,7 +407,7 @@ func (c Color) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not color' not supported")
 }
 
-func (c Color) at(bitmap Bitmap) (value, error) {
+func (c Color) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @color not supported")
 }
 
@@ -501,7 +501,7 @@ func (rect Rect) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not rect' not supported")
 }
 
-func (rect Rect) at(bitmap Bitmap) (value, error) {
+func (rect Rect) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @rect not supported")
 }
 
@@ -590,7 +590,7 @@ func (k kernel) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not kernel' not supported")
 }
 
-func (k kernel) at(bitmap Bitmap) (value, error) {
+func (k kernel) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @kernel not supported")
 }
 
@@ -667,7 +667,7 @@ func (b Bool) not() (value, error) {
 	return !b, nil
 }
 
-func (b Bool) at(bitmap Bitmap) (value, error) {
+func (b Bool) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @bool not supported")
 }
 

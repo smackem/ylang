@@ -98,6 +98,11 @@ type memberExpr struct {
 	recvr  expression
 	member string
 }
+type indexExpr struct {
+	recvr expression
+	index expression
+}
+
 type identExpr string
 type atExpr unaryExpr
 type invokeExpr struct {

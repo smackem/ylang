@@ -92,6 +92,42 @@ func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lan
 	return lang.NewRgba(r/kernelSum, g/kernelSum, b/kernelSum, a)
 }
 
+func (surf *surface) mapChannel(x, y, radius, width int, kernel []lang.Number, mapper func(color.NRGBA) byte) []lang.Number {
+	result := make([]lang.Number, len(kernel))
+	kernelIndex := 0
+	w := surf.Width()
+	h := surf.Height()
+
+	for kernelY := 0; kernelY < width; kernelY++ {
+		for kernelX := 0; kernelX < width; kernelX++ {
+			sourceY := y - radius + kernelY
+			sourceX := x - radius + kernelX
+			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
+				px := surf.source.NRGBAAt(sourceX, sourceY)
+				result[kernelIndex] = kernel[kernelIndex] * lang.Number(mapper(px))
+			}
+			kernelIndex++
+		}
+	}
+	return result
+}
+
+func (surf *surface) MapRed(x, y, radius, width int, kernel []lang.Number) []lang.Number {
+	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.R })
+}
+
+func (surf *surface) MapGreen(x, y, radius, width int, kernel []lang.Number) []lang.Number {
+	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.G })
+}
+
+func (surf *surface) MapBlue(x, y, radius, width int, kernel []lang.Number) []lang.Number {
+	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.B })
+}
+
+func (surf *surface) MapAlpha(x, y, radius, width int, kernel []lang.Number) []lang.Number {
+	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.A })
+}
+
 func (surf *surface) Blt(rect lang.Rect) {
 	if rect.Max.X-rect.Min.X == surf.Width() && rect.Max.Y-rect.Min.Y == surf.Height() {
 		copy(surf.source.Pix, surf.target.Pix)

@@ -48,8 +48,9 @@ Term:
 Molecule:
     | MINUS Atom
     | NOT Atom
-    | Atom SEMICOLON Atom
-    | Atom DOT IDENT
+    | Molecule SEMICOLON Atom
+    | Molecule DOT IDENT
+    | Molecule AT Atom
     | Atom
 
 MoleculeList:
