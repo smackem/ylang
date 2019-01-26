@@ -501,6 +501,8 @@ func (p *parser) parseAtom() (expression, error) {
 		return Bool(true), nil
 	case ttFalse:
 		return Bool(false), nil
+	case ttColor:
+		return tok.parseColor(), nil
 	case ttLBracket:
 		return p.parseKernelAtom()
 	}

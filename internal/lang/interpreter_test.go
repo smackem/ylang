@@ -78,6 +78,13 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
+			name: "color_literal",
+			src:  "c1 := #011223:f0",
+			want: scope{
+				"c1": NewRgba(0x01, 0x12, 0x23, 0xf0),
+			},
+		},
+		{
 			name: "kernel",
 			src:  "k := [1 2 3 4]",
 			want: scope{

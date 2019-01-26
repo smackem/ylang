@@ -181,6 +181,17 @@ func Test_parse_ast(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "color_literal",
+			src:  "log(#ffee44:0f)",
+			want: Program{
+				[]statement{
+					logStmt{
+						parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

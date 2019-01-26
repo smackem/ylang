@@ -108,6 +108,22 @@ func Test_lex(t *testing.T) {
 			},
 		},
 		{
+			name: "colors",
+			src:  "#1a2b3c #1F2E3D:c0",
+			want: []token{
+				token{
+					Type:       ttColor,
+					Lexeme:     "#1a2b3c",
+					LineNumber: 1,
+				},
+				token{
+					Type:       ttColor,
+					Lexeme:     "#1F2E3D:c0",
+					LineNumber: 1,
+				},
+			},
+		},
+		{
 			name: "for",
 			src:  "for pos in IMAGE {\n    @pos = -@pos\n}",
 			want: []token{
@@ -183,6 +199,38 @@ func Test_lex(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("lex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_token_parseColor(t *testing.T) {
+	tests := []struct {
+		name string
+		t    token
+		want Color
+	}{
+		{
+			name: "rgb",
+			t: token{
+				Type:   ttColor,
+				Lexeme: "#1a2b3c",
+			},
+			want: NewRgba(Number(0x1a), Number(0x2b), Number(0x3c), Number(255)),
+		},
+		{
+			name: "rgb",
+			t: token{
+				Type:   ttColor,
+				Lexeme: "#1F2E3D:c0",
+			},
+			want: NewRgba(Number(0x1f), Number(0x2e), Number(0x3d), Number(0xc0)),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.t.parseColor(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("token.parseColor() = %v, want %v", got, tt.want)
 			}
 		})
 	}

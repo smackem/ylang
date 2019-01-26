@@ -16,6 +16,7 @@ const (
 	ttNumber tokenType = iota
 	ttIdent
 	ttString
+	ttColor
 	ttAnd
 	ttOr
 	ttColonEq
@@ -62,6 +63,7 @@ var tokenTypeNames = []string{
 	"number",
 	"ident",
 	"string",
+	"color",
 	"and",
 	"or",
 	":=",
@@ -122,6 +124,27 @@ func (t token) parseNumber() Number {
 	}
 
 	panic(fmt.Sprintf("error converting %s to number", t.Lexeme))
+}
+
+func (t token) parseColor() Color {
+	if t.Type == ttColor {
+		str := t.Lexeme[1:]
+		if strings.Contains(str, ":") {
+			str = strings.Replace(str, ":", "", -1)
+		} else {
+			str += "ff"
+		}
+		u, err := strconv.ParseUint(str, 16, 32)
+		if err == nil {
+			r := (u & 0xff000000) >> 24
+			g := (u & 0x00ff0000) >> 16
+			b := (u & 0x0000ff00) >> 8
+			a := (u & 0x000000ff) >> 0
+			return NewRgba(Number(r), Number(g), Number(b), Number(a))
+		}
+	}
+
+	panic(fmt.Sprintf("error converting %s to color", t.Lexeme))
 }
 
 // lex walks the specified string and returns an array of lexed Tokens
@@ -241,6 +264,7 @@ var matchers = []matcher{
 	makeMatcher(`{`, func(string) tokenType { return ttLBrace }),
 	makeMatcher(`}`, func(string) tokenType { return ttRBrace }),
 	makeMatcher(`\?`, func(string) tokenType { return ttQMark }),
+	makeMatcher(`#[0-9a-fA-F]{6}(\:[0-9a-fA-F]{2})?`, func(string) tokenType { return ttColor }),
 	makeMatcher(`".*?"`, func(string) tokenType { return ttString }),
 	makeMatcher(`[0-9]+(\.[0-9]+)?\b`, func(string) tokenType { return ttNumber }),
 	makeMatcher(`[a-zA-Z_][a-zA-Z0-9_]*\b`, lookupKeyword),

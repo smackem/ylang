@@ -62,6 +62,7 @@ Atom:
     | IDENT
     | NUMBER
     | STRING
+    | COLOR
     | TRUE
     | FALSE
     | IDENT LPAREN ParameterListOpt RPAREN
