@@ -9,7 +9,8 @@ func parse(input []token) (Program, error) {
 	parser := parser{input: input, index: 0}
 	program, err := parser.parseProgram()
 	if err != nil {
-		return Program{nil}, err
+		tok := parser.current()
+		return Program{nil}, fmt.Errorf("at line %d, near '%s': %s", tok.LineNumber, tok.Lexeme, err)
 	}
 	return Program{program}, nil
 }
@@ -35,7 +36,7 @@ func (p *parser) next() token {
 func (p *parser) assert(tt tokenType) (token, error) {
 	tok := p.current()
 	if tok.Type != tt {
-		return emptyToken, fmt.Errorf("line %d: expected %v, found %v", tok.LineNumber, tokenTypeNames[tt], tok.Lexeme)
+		return emptyToken, fmt.Errorf("expected %v, found %v", tokenTypeNames[tt], tok.Lexeme)
 	}
 	return tok, nil
 }
@@ -43,7 +44,7 @@ func (p *parser) assert(tt tokenType) (token, error) {
 func (p *parser) expect(tt tokenType) (token, error) {
 	tok := p.next()
 	if tok.Type != tt {
-		return emptyToken, fmt.Errorf("line %d: expected %v, found %v", tok.LineNumber, tokenTypeNames[tt], tok.Lexeme)
+		return emptyToken, fmt.Errorf("expected %v, found %v", tokenTypeNames[tt], tok.Lexeme)
 	}
 	return tok, nil
 }
@@ -92,7 +93,7 @@ func (p *parser) parseStmt() (statement, error) {
 	case ttCommit:
 		return p.parseCommit()
 	}
-	return nil, fmt.Errorf("unexpected token at statement begin: %s", tok)
+	return nil, fmt.Errorf("unexpected token at statement begin: '%s'", tok)
 }
 
 func (p *parser) parseIdentStmt(ident string) (statement, error) {
@@ -103,7 +104,7 @@ func (p *parser) parseIdentStmt(ident string) (statement, error) {
 	case ttEq:
 		return p.parseAssign(ident)
 	}
-	return nil, fmt.Errorf("unexpected token %s - expected %s or %s", tok, tokenTypeNames[ttColonEq], tokenTypeNames[ttEq])
+	return nil, fmt.Errorf("unexpected token '%s' - expected %s or %s", tok, tokenTypeNames[ttColonEq], tokenTypeNames[ttEq])
 }
 
 func (p *parser) parseDeclaration(ident string) (statement, error) {
@@ -536,7 +537,7 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttLBracket:
 		return p.parseKernelAtom()
 	}
-	return nil, fmt.Errorf("line %d: unexpected symbol %s", tok.LineNumber, tok.Lexeme)
+	return nil, fmt.Errorf("unexpected symbol '%s'", tok.Lexeme)
 }
 
 func (p *parser) parseParenAtom() (expression, error) {
