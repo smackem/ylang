@@ -119,6 +119,31 @@ func Test_interpret(t *testing.T) {
 				"p": Position{1, 1},
 			},
 		},
+		{
+			name: "kernel_index",
+			src:  "n := [1 2 3 4][1]",
+			want: scope{
+				"n": Number(2),
+			},
+		},
+		{
+			name: "kernel_index_2",
+			src:  "n := [1 2 3 4][0;1]",
+			want: scope{
+				"n": Number(3),
+			},
+		},
+		{
+			name: "sort",
+			src:  "k := sort([4 1 3 2])",
+			want: scope{
+				"k": kernel{
+					width:  2,
+					radius: 1,
+					values: []Number{1, 2, 3, 4},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

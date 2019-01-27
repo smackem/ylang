@@ -111,23 +111,31 @@ func invokeSort(ir *interpreter, params []value) (value, error) {
 func invokeMapR(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	result := kernelVal
+	result.values = ir.bitmap.MapRed(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	return result, nil
 }
 
 func invokeMapG(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	result := kernelVal
+	result.values = ir.bitmap.MapGreen(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	return result, nil
 }
 
 func invokeMapB(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	result := kernelVal
+	result.values = ir.bitmap.MapBlue(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	return result, nil
 }
 
 func invokeMapA(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	result := kernelVal
+	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	return result, nil
 }

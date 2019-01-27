@@ -403,6 +403,27 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		}
 		return recvrVal.property(e.member)
 
+	case indexExpr:
+		recvr, err := ir.visitExpr(e.recvr)
+		if err != nil {
+			return nil, err
+		}
+		k, ok := recvr.(kernel)
+		if !ok {
+			return nil, fmt.Errorf("type mismatch: expected kernel@index but found %s@index", recvr)
+		}
+		index, err := ir.visitExpr(e.index)
+		if err != nil {
+			return nil, err
+		}
+		switch i := index.(type) {
+		case Number:
+			return k.values[int(i)], nil
+		case Position:
+			return k.values[i.Y*k.width+i.X], nil
+		}
+		return nil, fmt.Errorf("type mismatch: expected kernel@number or kernel@position but found kernel@%s", index)
+
 	case String:
 		return e, nil
 
@@ -478,7 +499,7 @@ func (ir *interpreter) invokeFunc(name string, values []value) (value, error) {
 	}
 	for i := 0; i < len(values); i++ {
 		if reflect.TypeOf(values[i]) != f.params[i] {
-			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, reflect.TypeOf(values[i]).Name(), f.params[i].Name())
+			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, f.params[i].Name(), reflect.TypeOf(values[i]).Name())
 		}
 	}
 	return f.body(ir, values)

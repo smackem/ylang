@@ -50,7 +50,7 @@ Molecule:
     | NOT Atom
     | Molecule SEMICOLON Atom
     | Molecule DOT IDENT
-    | Molecule AT Atom
+    | Molecule LBRACKET Expr RBRACKET
     | Atom
 
 MoleculeList:

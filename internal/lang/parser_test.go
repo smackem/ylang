@@ -107,6 +107,32 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "pixel_assign",
+			src:  "x := sort(a(1)) @p = 2",
+			want: Program{
+				[]statement{
+					declStmt{
+						ident: "x",
+						rhs: invokeExpr{
+							funcName: "sort",
+							parameters: []expression{
+								invokeExpr{
+									funcName: "a",
+									parameters: []expression{
+										Number(1),
+									},
+								},
+							},
+						},
+					},
+					pixelAssignStmt{
+						lhs: identExpr("p"),
+						rhs: Number(2),
+					},
+				},
+			},
+		},
+		{
 			name: "multiple_statements",
 			src:  "log(1) blt",
 			want: Program{
@@ -182,12 +208,56 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "molecules_2",
+			src:  "x := k[1;2].m",
+			want: Program{
+				[]statement{
+					declStmt{
+						ident: "x",
+						rhs: memberExpr{
+							member: "m",
+							recvr: indexExpr{
+								recvr: identExpr("k"),
+								index: posExpr{
+									x: Number(1),
+									y: Number(2),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "color_literal",
 			src:  "log(#ffee44:0f)",
 			want: Program{
 				[]statement{
 					logStmt{
 						parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
+					},
+				},
+			},
+		},
+		{
+			name: "functions",
+			src:  "log(sort(map_b(1)))",
+			want: Program{
+				[]statement{
+					logStmt{
+						parameters: []expression{
+							invokeExpr{
+								funcName: "sort",
+								parameters: []expression{
+									invokeExpr{
+										funcName: "map_b",
+										parameters: []expression{
+											Number(1),
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},

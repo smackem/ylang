@@ -1,6 +1,9 @@
 package lang
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func parse(input []token) (Program, error) {
 	parser := parser{input: input, index: 0}
@@ -446,14 +449,14 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 	switch p.current().Type {
 	case ttMinus:
 		p.next()
-		inner, err := p.parseAtom()
+		inner, err := p.parseMoleculeExpr()
 		if err != nil {
 			return nil, err
 		}
 		return negExpr{inner}, nil
 	case ttNot:
 		p.next()
-		inner, err := p.parseAtom()
+		inner, err := p.parseMoleculeExpr()
 		if err != nil {
 			return nil, err
 		}
@@ -465,23 +468,36 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 		return nil, err
 	}
 
-	if p.current().Type == ttSemicolon {
-		p.next()
-		y, err := p.parseAtom()
-		if err != nil {
-			return nil, err
+	for {
+		switch p.current().Type {
+		case ttSemicolon:
+			p.next()
+			y, err := p.parseAtom()
+			if err != nil {
+				return nil, err
+			}
+			atom = posExpr{x: atom, y: y}
+		case ttDot:
+			p.next()
+			memberTok, err := p.expect(ttIdent)
+			if err != nil {
+				return nil, err
+			}
+			atom = memberExpr{recvr: atom, member: memberTok.Lexeme}
+		case ttLBracket:
+			p.next()
+			index, err := p.parseExpr()
+			if err != nil {
+				return nil, err
+			}
+			atom = indexExpr{recvr: atom, index: index}
+			if _, err := p.expect(ttRBracket); err != nil {
+				return nil, err
+			}
+		default:
+			return atom, nil
 		}
-		return posExpr{x: atom, y: y}, nil
 	}
-	if p.current().Type == ttDot {
-		p.next()
-		memberTok, err := p.expect(ttIdent)
-		if err != nil {
-			return nil, err
-		}
-		return memberExpr{recvr: atom, member: memberTok.Lexeme}, nil
-	}
-	return atom, nil
 }
 
 func (p *parser) parseAtom() (expression, error) {
@@ -548,6 +564,10 @@ func (p *parser) parseKernelAtom() (expression, error) {
 	for {
 		switch p.current().Type {
 		case ttRBracket:
+			width := math.Sqrt(float64(len(elements)))
+			if width-math.Trunc(width) != 0 {
+				return nil, fmt.Errorf("kernel defined in kernel expression must be quadratic")
+			}
 			p.next()
 			return kernelExpr{elements}, nil
 		case ttEOF:
