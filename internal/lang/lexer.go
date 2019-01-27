@@ -55,6 +55,7 @@ const (
 	ttColon
 	ttLog
 	ttBlt
+	ttCommit
 	ttEOF
 )
 
@@ -102,6 +103,7 @@ var tokenTypeNames = []string{
 	":",
 	"log",
 	"blt",
+	"commit",
 	"eof",
 }
 
@@ -216,18 +218,19 @@ func makeMatcher(pattern string, lookup tokenLookup) matcher {
 }
 
 var keywordTokens = map[string]tokenType{
-	"and":   ttAnd,
-	"or":    ttOr,
-	"not":   ttNot,
-	"for":   ttFor,
-	"in":    ttIn,
-	"yield": ttYield,
-	"if":    ttIf,
-	"else":  ttElse,
-	"true":  ttTrue,
-	"false": ttFalse,
-	"log":   ttLog,
-	"blt":   ttBlt,
+	"and":    ttAnd,
+	"or":     ttOr,
+	"not":    ttNot,
+	"for":    ttFor,
+	"in":     ttIn,
+	"yield":  ttYield,
+	"if":     ttIf,
+	"else":   ttElse,
+	"true":   ttTrue,
+	"false":  ttFalse,
+	"log":    ttLog,
+	"blt":    ttBlt,
+	"commit": ttCommit,
 }
 
 func lookupKeyword(lexeme string) tokenType {

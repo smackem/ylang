@@ -16,7 +16,8 @@ Statement:
     | YIELD Expr
     | LOG LPAREN ParameterList RPAREN
     | BLT LPAREN Expr RPAREN
-    | BLT
+    | COMMIT LPAREN Expr RPAREN
+    | COMMIT
 
 Expr:
     | Expr QMARK Expr COLON Expr

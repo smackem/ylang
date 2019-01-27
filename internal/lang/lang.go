@@ -129,7 +129,8 @@ type BitmapContext interface {
 	MapGreen(x int, y int, radius int, width int, kernel []Number) []Number
 	MapBlue(x int, y int, radius int, width int, kernel []Number) []Number
 	MapAlpha(x int, y int, radius int, width int, kernel []Number) []Number
-	Blt(rect Rect)
+	BltToTarget(x, y, width, height int)
+	BltToSource(x, y, width, height int)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -134,7 +134,7 @@ func Test_parse_ast(t *testing.T) {
 		},
 		{
 			name: "multiple_statements",
-			src:  "log(1) blt",
+			src:  "log(1) commit",
 			want: Program{
 				[]statement{
 					logStmt{
@@ -142,7 +142,7 @@ func Test_parse_ast(t *testing.T) {
 							Number(1),
 						},
 					},
-					bltStmt{rect: nil},
+					commitStmt{rect: nil},
 				},
 			},
 		},
@@ -163,10 +163,12 @@ func Test_parse_ast(t *testing.T) {
 		},
 		{
 			name: "blt",
-			src:  "blt log(1)",
+			src:  "blt(BOUNDS) log(1)",
 			want: Program{
 				[]statement{
-					bltStmt{},
+					bltStmt{
+						rect: identExpr("BOUNDS"),
+					},
 					logStmt{
 						parameters: []expression{Number(1)},
 					},

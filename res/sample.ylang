@@ -11,37 +11,41 @@ gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-//for pos in IMAGE {
-//    @pos = -@pos
-//} blt
-//
-//for pos in rect(100,100, 200,200) {
-//    @pos = -@pos
-//} blt
-//
-//for pos in rect(200,200, 200,200) {
-//    @pos = -@pos
-//} blt
-//
-
-median := [1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1]
-center := (median.radius);(median.radius)
-for pos in IMAGE {
-    rs := sort(map_r(pos, median))
-    gs := sort(map_g(pos, median))
-    bs := sort(map_b(pos, median))
-    @pos = rgb(rs[center], gs[center], bs[center])
-} blt
-
-for pos in IMAGE {
-    sx := convolute(pos, sobelX)
-    sy := convolute(pos, sobelY)
-    @pos = rgb(sx.i, sy.i, 0)
+for pos in BOUNDS {
+    @pos = -@pos
 }
+commit
+
+for pos in rect(100,100, 200,200) {
+    @pos = -@pos
+}
+commit
+
+for pos in rect(200,200, 200,200) {
+    @pos = -@pos
+}
+commit
+
+
+//median := [1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1]
+//center := (median.radius);(median.radius)
+//for pos in BOUNDS {
+//    rs := sort(map_r(pos, median))
+//    gs := sort(map_g(pos, median))
+//    bs := sort(map_b(pos, median))
+//    @pos = rgb(rs[center], gs[center], bs[center])
+//}
+//commit
+//
+//for pos in BOUNDS {
+//    sx := convolute(pos, sobelX)
+//    sy := convolute(pos, sobelY)
+//    @pos = rgb(sx.i, sy.i, 0)
+//}

@@ -51,6 +51,10 @@ type logStmt struct {
 }
 
 type bltStmt struct {
+	rect expression
+}
+
+type commitStmt struct {
 	rect expression // nillable
 }
 

@@ -128,13 +128,25 @@ func (surf *surface) MapAlpha(x, y, radius, width int, kernel []lang.Number) []l
 	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.A })
 }
 
-func (surf *surface) Blt(rect lang.Rect) {
-	if rect.Max.X-rect.Min.X == surf.Width() && rect.Max.Y-rect.Min.Y == surf.Height() {
+func (surf *surface) BltToTarget(x, y, width, height int) {
+	if width == surf.Width() && height == surf.Height() {
+		copy(surf.target.Pix, surf.source.Pix)
+	} else {
+		for iy := y; iy < height; iy++ {
+			for ix := x; ix < width; ix++ {
+				surf.target.SetNRGBA(ix, iy, surf.source.NRGBAAt(x, y))
+			}
+		}
+	}
+}
+
+func (surf *surface) BltToSource(x, y, width, height int) {
+	if width == surf.Width() && height == surf.Height() {
 		copy(surf.source.Pix, surf.target.Pix)
 	} else {
-		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			for x := rect.Min.X; x < rect.Max.X; x++ {
-				surf.source.SetNRGBA(x, y, surf.target.NRGBAAt(x, y))
+		for iy := y; iy < height; iy++ {
+			for ix := x; ix < width; ix++ {
+				surf.source.SetNRGBA(ix, iy, surf.target.NRGBAAt(x, y))
 			}
 		}
 	}
@@ -143,10 +155,10 @@ func (surf *surface) Blt(rect lang.Rect) {
 func loadImage(reader io.Reader) (*image.NRGBA, error) {
 	source, encoding, err := image.Decode(reader)
 	if err != nil {
-		return nil, fmt.Errorf("Error decoding %s: %s", reader, err.Error())
+		return nil, err
 	}
 
-	log.Printf("Image %s decoded as %s", reader, encoding)
+	log.Printf("Image decoded as %s", encoding)
 
 	target := image.NewNRGBA(source.Bounds())
 	draw.Draw(target, target.Bounds(), source, image.Point{0, 0}, draw.Src)
@@ -157,12 +169,12 @@ func loadImage(reader io.Reader) (*image.NRGBA, error) {
 func saveImage(img image.Image, targetPath string) error {
 	targetFile, err := os.Create(targetPath)
 	if err != nil {
-		return fmt.Errorf("Could not create file %s: %s", targetPath, err)
+		return fmt.Errorf("error creating file %s: %s", targetPath, err)
 	}
 	defer targetFile.Close()
 
 	if err = png.Encode(targetFile, img); err != nil {
-		return fmt.Errorf("Could not encode target image: %s", err)
+		return fmt.Errorf("error encoding target image: %s", err)
 	}
 
 	return nil

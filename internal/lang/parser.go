@@ -89,6 +89,8 @@ func (p *parser) parseStmt() (statement, error) {
 		return p.parseLog()
 	case ttBlt:
 		return p.parseBlt()
+	case ttCommit:
+		return p.parseCommit()
 	}
 	return nil, fmt.Errorf("unexpected token at statement begin: %s", tok)
 }
@@ -254,6 +256,18 @@ func (p *parser) parseParameterList() ([]expression, error) {
 }
 
 func (p *parser) parseBlt() (statement, error) {
+	p.next()
+	rect, err := p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttRParen); err != nil {
+		return nil, err
+	}
+	return bltStmt{rect}, nil
+}
+
+func (p *parser) parseCommit() (statement, error) {
 	var rect expression
 	if p.current().Type == ttLParen {
 		p.next()
@@ -266,7 +280,7 @@ func (p *parser) parseBlt() (statement, error) {
 			return nil, err
 		}
 	}
-	return bltStmt{rect}, nil
+	return commitStmt{rect}, nil
 }
 
 func (p *parser) parseExpr() (expression, error) {

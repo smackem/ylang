@@ -29,7 +29,7 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir.newIdent("WHITE", NewRgba(255, 255, 255, 255))
 	ir.newIdent("TRANSPARENT", NewRgba(255, 255, 255, 0))
 	if bitmap != nil {
-		ir.newIdent("IMAGE", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
+		ir.newIdent("BOUNDS", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
 		ir.newIdent("W", Number(bitmap.Width()))
 		ir.newIdent("H", Number(bitmap.Height()))
 	}
@@ -211,6 +211,17 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		fmt.Printf("%s", buf.String())
 
 	case bltStmt:
+		expr, err := ir.visitExpr(s.rect)
+		if err != nil {
+			return err
+		}
+		rect, ok := expr.(Rect)
+		if !ok {
+			return fmt.Errorf("type mismatch: blt expects rect")
+		}
+		ir.bitmap.BltToTarget(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
+
+	case commitStmt:
 		var expr expression
 		if s.rect != nil {
 			var err error
@@ -223,9 +234,9 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		}
 		rect, ok := expr.(Rect)
 		if !ok {
-			return fmt.Errorf("type mismatch: blt expects rect")
+			return fmt.Errorf("type mismatch: commit expects rect")
 		}
-		ir.bitmap.Blt(rect)
+		ir.bitmap.BltToSource(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
 	}
 
 	return nil
