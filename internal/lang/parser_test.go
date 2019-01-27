@@ -76,6 +76,11 @@ func Test_parse_syntax(t *testing.T) {
 			src:     "r := rect(1, 2, 3, 4) c := rgb(255, 254, 254)",
 			wantErr: false,
 		},
+		{
+			name:    "error_constant_assignment",
+			src:     "NUM := 1 NUM = 2",
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

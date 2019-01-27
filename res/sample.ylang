@@ -1,17 +1,17 @@
-sobelX := [ 1  0 -1
+SobelX := [ 1  0 -1
             2  0 -2
             1  0 -1]
-sobelY := [ 1  2  1
+SobelY := [ 1  2  1
             0  0  0
            -1 -2 -1]
 
-gauss := [0 1 2 1 0
+Gauss := [0 1 2 1 0
           1 2 4 2 1
           2 4 8 4 2
           1 2 4 2 1
           0 1 2 1 0]
 
-for pos in BOUNDS {
+for pos in Bounds {
     @pos = -@pos
 }
 commit
@@ -27,25 +27,25 @@ for pos in rect(200,200, 200,200) {
 commit
 
 
-//median := [1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1]
-//center := (median.radius);(median.radius)
-//for pos in BOUNDS {
-//    rs := sort(map_r(pos, median))
-//    gs := sort(map_g(pos, median))
-//    bs := sort(map_b(pos, median))
-//    @pos = rgb(rs[center], gs[center], bs[center])
-//}
-//commit
-//
-//for pos in BOUNDS {
-//    sx := convolute(pos, sobelX)
-//    sy := convolute(pos, sobelY)
-//    @pos = rgb(sx.i, sy.i, 0)
-//}
+Median := [1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1
+           1 1 1 1 1 1 1 1]
+Center := (Median.radius);(Median.radius)
+for pos in Bounds {
+    rs := sort(map_r(pos, Median))
+    gs := sort(map_g(pos, Median))
+    bs := sort(map_b(pos, Median))
+    @pos = rgb(rs[Center], gs[Center], bs[Center])
+}
+commit
+
+for pos in Bounds {
+    sx := convolute(pos, SobelX)
+    sy := convolute(pos, SobelY)
+    @pos = rgb(sx.i, sy.i, 0)
+}

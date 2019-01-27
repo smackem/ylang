@@ -3,6 +3,7 @@ package lang
 import (
 	"fmt"
 	"math"
+	"unicode"
 )
 
 func parse(input []token) (Program, error) {
@@ -116,6 +117,9 @@ func (p *parser) parseDeclaration(ident string) (statement, error) {
 }
 
 func (p *parser) parseAssign(ident string) (statement, error) {
+	if unicode.IsUpper(rune(ident[0])) {
+		return nil, fmt.Errorf("identifier '%s' is a constant and cannot be assigned to", ident)
+	}
 	rhs, err := p.parseExpr()
 	if err != nil {
 		return nil, err

@@ -25,11 +25,11 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 		bitmap: bitmap,
 	}
 	ir.newIdent(lastRectIdent, Rect{})
-	ir.newIdent("BLACK", NewRgba(0, 0, 0, 255))
-	ir.newIdent("WHITE", NewRgba(255, 255, 255, 255))
-	ir.newIdent("TRANSPARENT", NewRgba(255, 255, 255, 0))
+	ir.newIdent("Black", NewRgba(0, 0, 0, 255))
+	ir.newIdent("White", NewRgba(255, 255, 255, 255))
+	ir.newIdent("Transparent", NewRgba(255, 255, 255, 0))
 	if bitmap != nil {
-		ir.newIdent("BOUNDS", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
+		ir.newIdent("Bounds", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
 		ir.newIdent("W", Number(bitmap.Width()))
 		ir.newIdent("H", Number(bitmap.Height()))
 	}
