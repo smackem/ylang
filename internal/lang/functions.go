@@ -2,6 +2,7 @@ package lang
 
 import (
 	"image"
+	"math"
 	"reflect"
 	"sort"
 )
@@ -59,6 +60,50 @@ var functions = map[string]functionDecl{
 	"map_a": functionDecl{
 		body:   invokeMapA,
 		params: []reflect.Type{positionType, kernelType},
+	},
+	"sin": functionDecl{
+		body:   invokeSin,
+		params: []reflect.Type{numberType},
+	},
+	"cos": functionDecl{
+		body:   invokeCos,
+		params: []reflect.Type{numberType},
+	},
+	"tan": functionDecl{
+		body:   invokeTan,
+		params: []reflect.Type{numberType},
+	},
+	"asin": functionDecl{
+		body:   invokeAsin,
+		params: []reflect.Type{numberType},
+	},
+	"acos": functionDecl{
+		body:   invokeAcos,
+		params: []reflect.Type{numberType},
+	},
+	"atan": functionDecl{
+		body:   invokeAtan,
+		params: []reflect.Type{numberType},
+	},
+	"atan2": functionDecl{
+		body:   invokeAtan,
+		params: []reflect.Type{numberType, numberType},
+	},
+	"sqrt": functionDecl{
+		body:   invokeSqrt,
+		params: []reflect.Type{numberType},
+	},
+	"abs": functionDecl{
+		body:   invokeAbs,
+		params: []reflect.Type{numberType},
+	},
+	"min": functionDecl{
+		body:   invokeMin,
+		params: []reflect.Type{kernelType},
+	},
+	"max": functionDecl{
+		body:   invokeMax,
+		params: []reflect.Type{kernelType},
 	},
 }
 
@@ -138,4 +183,62 @@ func invokeMapA(ir *interpreter, params []value) (value, error) {
 	result := kernelVal
 	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
 	return result, nil
+}
+
+func invokeSin(ir *interpreter, params []value) (value, error) {
+	return Number(math.Sin(float64(params[0].(Number)))), nil
+}
+
+func invokeCos(ir *interpreter, params []value) (value, error) {
+	return Number(math.Cos(float64(params[0].(Number)))), nil
+}
+
+func invokeTan(ir *interpreter, params []value) (value, error) {
+	return Number(math.Tan(float64(params[0].(Number)))), nil
+}
+
+func invokeAsin(ir *interpreter, params []value) (value, error) {
+	return Number(math.Asin(float64(params[0].(Number)))), nil
+}
+
+func invokeAcos(ir *interpreter, params []value) (value, error) {
+	return Number(math.Acos(float64(params[0].(Number)))), nil
+}
+
+func invokeAtan(ir *interpreter, params []value) (value, error) {
+	return Number(math.Atan(float64(params[0].(Number)))), nil
+}
+
+func invokeAtan2(ir *interpreter, params []value) (value, error) {
+	return Number(math.Atan2(float64(params[0].(Number)), float64(params[1].(Number)))), nil
+}
+
+func invokeSqrt(ir *interpreter, params []value) (value, error) {
+	return Number(math.Sqrt(float64(params[0].(Number)))), nil
+}
+
+func invokeAbs(ir *interpreter, params []value) (value, error) {
+	return Number(math.Abs(float64(params[0].(Number)))), nil
+}
+
+func invokeMax(it *interpreter, params []value) (value, error) {
+	kernelVal := params[0].(kernel)
+	max := Number(math.MinInt32)
+	for _, n := range kernelVal.values {
+		if n > max {
+			max = n
+		}
+	}
+	return Number(max), nil
+}
+
+func invokeMin(it *interpreter, params []value) (value, error) {
+	kernelVal := params[0].(kernel)
+	min := Number(math.MaxInt32)
+	for _, n := range kernelVal.values {
+		if n < min {
+			min = n
+		}
+	}
+	return Number(min), nil
 }

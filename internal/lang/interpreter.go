@@ -28,6 +28,7 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir.newIdent("Black", NewRgba(0, 0, 0, 255))
 	ir.newIdent("White", NewRgba(255, 255, 255, 255))
 	ir.newIdent("Transparent", NewRgba(255, 255, 255, 0))
+	ir.newIdent("Pi", Number(math.Pi))
 	if bitmap != nil {
 		ir.newIdent("Bounds", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
 		ir.newIdent("W", Number(bitmap.Width()))
@@ -208,7 +209,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			}
 			buf.WriteString(v.printStr())
 		}
-		fmt.Printf("%s", buf.String())
+		fmt.Printf("%s\n", buf.String())
 
 	case bltStmt:
 		expr, err := ir.visitExpr(s.rect)

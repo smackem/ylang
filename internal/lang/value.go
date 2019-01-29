@@ -531,6 +531,7 @@ func (rect Rect) printStr() string {
 
 type kernel struct {
 	width  int
+	height int
 	radius int
 	values []Number
 }

@@ -1,9 +1,13 @@
-SobelX := [ 1  0 -1
-            2  0 -2
-            1  0 -1]
+SobelX := [-1  0  1
+           -2  0  2
+           -1  0  1]
 SobelY := [ 1  2  1
             0  0  0
            -1 -2 -1]
+
+Laplace := [-1 -1 -1
+            -1  8 -1
+            -1 -1 -1]
 
 Gauss := [0 1 2 1 0
           1 2 4 2 1
@@ -12,40 +16,57 @@ Gauss := [0 1 2 1 0
           0 1 2 1 0]
 
 for pos in Bounds {
-    @pos = -@pos
+    px := @pos
+    @pos = rgb(px.i, px.i, px.i)
 }
 commit
 
-for pos in rect(100,100, 200,200) {
-    @pos = -@pos
-}
-commit
-
-for pos in rect(200,200, 200,200) {
-    @pos = -@pos
-}
-commit
-
-
-Median := [1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1
-           1 1 1 1 1 1 1 1]
-Center := (Median.radius);(Median.radius)
-for pos in Bounds {
-    rs := sort(map_r(pos, Median))
-    gs := sort(map_g(pos, Median))
-    bs := sort(map_b(pos, Median))
-    @pos = rgb(rs[Center], gs[Center], bs[Center])
-}
-commit
+//Median := [1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1
+//           1 1 1 1 1 1 1 1]
+//Center := (Median.radius);(Median.radius)
+//for pos in Bounds {
+//    rs := sort(map_r(pos, Median))
+//    gs := sort(map_g(pos, Median))
+//    bs := sort(map_b(pos, Median))
+//    @pos = rgb(rs[Center], gs[Center], bs[Center])
+//}
+//commit
 
 for pos in Bounds {
     sx := convolute(pos, SobelX)
     sy := convolute(pos, SobelY)
-    @pos = rgb(sx.i, sy.i, 0)
+    mag := sqrt(sx.i*sx.i + sy.i*sy.i)
+    @pos = rgb(mag, mag, mag)
+    //@pos = convolute(pos, Laplace)
 }
+commit
+
+//Neighbours := [1 1 1
+//               1 1 1
+//               1 1 1]
+//
+//for pos in Bounds {
+//    rs := map_r(pos, Neighbours)
+//    gs := map_g(pos, Neighbours)
+//    bs := map_b(pos, Neighbours)
+//    r := rs[4] == max(rs) ? rs[4] : 0
+//    if r < 100 {
+//        r = 0
+//    }
+//    g := gs[4] == max(gs) ? gs[4] : 0
+//    if g < 100 {
+//        g = 0
+//    }
+//    b := bs[4] == max(bs) ? bs[4] : 0
+//    if b < 100 {
+//        b = 0
+//    }
+//    @pos = rgb(r, g, b)
+//}
+//commit
