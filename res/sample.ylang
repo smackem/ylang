@@ -15,12 +15,6 @@ Gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-for pos in Bounds {
-    px := @pos
-    @pos = rgb(px.i, px.i, px.i)
-}
-commit
-
 //Median := [1 1 1 1 1 1 1 1
 //           1 1 1 1 1 1 1 1
 //           1 1 1 1 1 1 1 1
@@ -39,11 +33,30 @@ commit
 //commit
 
 for pos in Bounds {
+    i := @pos.i
+    @pos = rgb(i, i, i)
+}
+commit
+
+for pos in Bounds {
     sx := convolute(pos, SobelX)
     sy := convolute(pos, SobelY)
-    mag := sqrt(sx.i*sx.i + sy.i*sy.i)
-    @pos = rgb(mag, mag, mag)
-    //@pos = convolute(pos, Laplace)
+    mag := sqrt(sx.r * sx.r + sy.r * sy.r)
+    color := Black
+    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
+    if angle >= 0 and angle < 45 {
+        color = #0000ff
+    }
+    if angle >= 45 and angle < 90 {
+        color = #00ff00
+    }
+    if angle >= 90 and angle < 135 {
+        color = #ff0000
+    }
+    if angle >= 135 and angle < 180 {
+        color = #ffff00
+    }
+    @pos = color * mag / 255
 }
 commit
 
