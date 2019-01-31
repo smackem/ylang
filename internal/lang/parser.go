@@ -165,18 +165,28 @@ func (p *parser) parseIf() (statement, error) {
 	var falseStmts []statement
 	if p.current().Type == ttElse {
 		p.next()
-		if _, err := p.expect(ttLBrace); err != nil {
-			return nil, err
-		}
-		if p.current().Type != ttRBrace {
-			var err error
-			falseStmts, err = p.parseStmtList(ttRBrace)
+
+		if p.current().Type == ttIf {
+			p.next()
+			stmt, err := p.parseIf()
 			if err != nil {
 				return nil, err
 			}
-		}
-		if _, err := p.expect(ttRBrace); err != nil {
-			return nil, err
+			falseStmts = []statement{stmt}
+		} else {
+			if _, err := p.expect(ttLBrace); err != nil {
+				return nil, err
+			}
+			if p.current().Type != ttRBrace {
+				var err error
+				falseStmts, err = p.parseStmtList(ttRBrace)
+				if err != nil {
+					return nil, err
+				}
+			}
+			if _, err := p.expect(ttRBrace); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return ifStmt{cond, trueStmts, falseStmts}, nil

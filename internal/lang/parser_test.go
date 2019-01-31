@@ -269,6 +269,102 @@ func Test_parse_ast(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "if",
+			src:  "if true { log(1) }",
+			want: Program{
+				[]statement{
+					ifStmt{
+						cond: Bool(true),
+						trueStmts: []statement{
+							logStmt{
+								parameters: []expression{Number(1)},
+							},
+						},
+						falseStmts: nil,
+					},
+				},
+			},
+		},
+		{
+			name: "if_else",
+			src:  "if true { log(1) } else { log(2) }",
+			want: Program{
+				[]statement{
+					ifStmt{
+						cond: Bool(true),
+						trueStmts: []statement{
+							logStmt{
+								parameters: []expression{Number(1)},
+							},
+						},
+						falseStmts: []statement{
+							logStmt{
+								parameters: []expression{Number(2)},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "if_elseif",
+			src:  "if true { log(1) } else if false { log(2) }",
+			want: Program{
+				[]statement{
+					ifStmt{
+						cond: Bool(true),
+						trueStmts: []statement{
+							logStmt{
+								parameters: []expression{Number(1)},
+							},
+						},
+						falseStmts: []statement{
+							ifStmt{
+								cond: Bool(false),
+								trueStmts: []statement{
+									logStmt{
+										parameters: []expression{Number(2)},
+									},
+								},
+								falseStmts: nil,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "if_elseif_else",
+			src:  "if true { log(1) } else if false { log(2) } else { log(3) }",
+			want: Program{
+				[]statement{
+					ifStmt{
+						cond: Bool(true),
+						trueStmts: []statement{
+							logStmt{
+								parameters: []expression{Number(1)},
+							},
+						},
+						falseStmts: []statement{
+							ifStmt{
+								cond: Bool(false),
+								trueStmts: []statement{
+									logStmt{
+										parameters: []expression{Number(2)},
+									},
+								},
+								falseStmts: []statement{
+									logStmt{
+										parameters: []expression{Number(3)},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

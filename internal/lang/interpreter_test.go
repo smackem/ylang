@@ -144,6 +144,14 @@ func Test_interpret(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "min_max",
+			src:  "min := min([4 1 3 2]) max := max([4 1 3 2])",
+			want: scope{
+				"min": Number(1),
+				"max": Number(4),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
