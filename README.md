@@ -7,3 +7,8 @@ ylang must be able to implement these algorithms:
 * Canny edge detection
 * Hough transform
 * Color distribution
+
+## Roadmap
+* Web interface with CodeMirror as editor
+* Compile to intermediate language
+* Use WASM?
