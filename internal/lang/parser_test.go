@@ -96,72 +96,64 @@ func Test_parse_ast(t *testing.T) {
 	tests := []struct {
 		name    string
 		src     string
-		want    Program
+		want    []statement
 		wantErr bool
 	}{
 		{
 			name: "declaration",
 			src:  "x := 1",
-			want: Program{
-				[]statement{
-					declStmt{
-						ident: "x",
-						rhs:   Number(1),
-					},
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs:   Number(1),
 				},
 			},
 		},
 		{
 			name: "pixel_assign",
 			src:  "x := sort(a(1)) @p = 2",
-			want: Program{
-				[]statement{
-					declStmt{
-						ident: "x",
-						rhs: invokeExpr{
-							funcName: "sort",
-							parameters: []expression{
-								invokeExpr{
-									funcName: "a",
-									parameters: []expression{
-										Number(1),
-									},
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs: invokeExpr{
+						funcName: "sort",
+						parameters: []expression{
+							invokeExpr{
+								funcName: "a",
+								parameters: []expression{
+									Number(1),
 								},
 							},
 						},
 					},
-					pixelAssignStmt{
-						lhs: identExpr("p"),
-						rhs: Number(2),
-					},
+				},
+				pixelAssignStmt{
+					lhs: identExpr("p"),
+					rhs: Number(2),
 				},
 			},
 		},
 		{
 			name: "multiple_statements",
 			src:  "log(1) commit",
-			want: Program{
-				[]statement{
-					logStmt{
-						parameters: []expression{
-							Number(1),
-						},
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						Number(1),
 					},
-					commitStmt{rect: nil},
 				},
+				commitStmt{rect: nil},
 			},
 		},
 		{
 			name: "parameter_list",
 			src:  "log(1, 2, 3)",
-			want: Program{
-				[]statement{
-					logStmt{
-						parameters: []expression{
-							Number(1),
-							Number(2),
-							Number(3),
-						},
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						Number(1),
+						Number(2),
+						Number(3),
 					},
 				},
 			},
@@ -169,45 +161,39 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "blt",
 			src:  "blt(BOUNDS) log(1)",
-			want: Program{
-				[]statement{
-					bltStmt{
-						rect: identExpr("BOUNDS"),
-					},
-					logStmt{
-						parameters: []expression{Number(1)},
-					},
+			want: []statement{
+				bltStmt{
+					rect: identExpr("BOUNDS"),
+				},
+				logStmt{
+					parameters: []expression{Number(1)},
 				},
 			},
 		},
 		{
 			name: "blt_with_rect",
 			src:  "blt(IMAGE) log(1)",
-			want: Program{
-				[]statement{
-					bltStmt{
-						rect: identExpr("IMAGE"),
-					},
-					logStmt{
-						parameters: []expression{Number(1)},
-					},
+			want: []statement{
+				bltStmt{
+					rect: identExpr("IMAGE"),
+				},
+				logStmt{
+					parameters: []expression{Number(1)},
 				},
 			},
 		},
 		{
 			name: "molecules",
 			src:  "x := @(1;2).r",
-			want: Program{
-				[]statement{
-					declStmt{
-						ident: "x",
-						rhs: memberExpr{
-							member: "r",
-							recvr: atExpr{
-								inner: posExpr{
-									x: Number(1),
-									y: Number(2),
-								},
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs: memberExpr{
+						member: "r",
+						recvr: atExpr{
+							inner: posExpr{
+								x: Number(1),
+								y: Number(2),
 							},
 						},
 					},
@@ -217,18 +203,16 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "molecules_2",
 			src:  "x := k[1;2].m",
-			want: Program{
-				[]statement{
-					declStmt{
-						ident: "x",
-						rhs: memberExpr{
-							member: "m",
-							recvr: indexExpr{
-								recvr: identExpr("k"),
-								index: posExpr{
-									x: Number(1),
-									y: Number(2),
-								},
+			want: []statement{
+				declStmt{
+					ident: "x",
+					rhs: memberExpr{
+						member: "m",
+						recvr: indexExpr{
+							recvr: identExpr("k"),
+							index: posExpr{
+								x: Number(1),
+								y: Number(2),
 							},
 						},
 					},
@@ -238,29 +222,25 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "color_literal",
 			src:  "log(#ffee44:0f)",
-			want: Program{
-				[]statement{
-					logStmt{
-						parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
-					},
+			want: []statement{
+				logStmt{
+					parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
 				},
 			},
 		},
 		{
 			name: "functions",
 			src:  "log(sort(map_b(1)))",
-			want: Program{
-				[]statement{
-					logStmt{
-						parameters: []expression{
-							invokeExpr{
-								funcName: "sort",
-								parameters: []expression{
-									invokeExpr{
-										funcName: "map_b",
-										parameters: []expression{
-											Number(1),
-										},
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						invokeExpr{
+							funcName: "sort",
+							parameters: []expression{
+								invokeExpr{
+									funcName: "map_b",
+									parameters: []expression{
+										Number(1),
 									},
 								},
 							},
@@ -272,36 +252,32 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "if",
 			src:  "if true { log(1) }",
-			want: Program{
-				[]statement{
-					ifStmt{
-						cond: Bool(true),
-						trueStmts: []statement{
-							logStmt{
-								parameters: []expression{Number(1)},
-							},
+			want: []statement{
+				ifStmt{
+					cond: Bool(true),
+					trueStmts: []statement{
+						logStmt{
+							parameters: []expression{Number(1)},
 						},
-						falseStmts: nil,
 					},
+					falseStmts: nil,
 				},
 			},
 		},
 		{
 			name: "if_else",
 			src:  "if true { log(1) } else { log(2) }",
-			want: Program{
-				[]statement{
-					ifStmt{
-						cond: Bool(true),
-						trueStmts: []statement{
-							logStmt{
-								parameters: []expression{Number(1)},
-							},
+			want: []statement{
+				ifStmt{
+					cond: Bool(true),
+					trueStmts: []statement{
+						logStmt{
+							parameters: []expression{Number(1)},
 						},
-						falseStmts: []statement{
-							logStmt{
-								parameters: []expression{Number(2)},
-							},
+					},
+					falseStmts: []statement{
+						logStmt{
+							parameters: []expression{Number(2)},
 						},
 					},
 				},
@@ -310,25 +286,23 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "if_elseif",
 			src:  "if true { log(1) } else if false { log(2) }",
-			want: Program{
-				[]statement{
-					ifStmt{
-						cond: Bool(true),
-						trueStmts: []statement{
-							logStmt{
-								parameters: []expression{Number(1)},
-							},
+			want: []statement{
+				ifStmt{
+					cond: Bool(true),
+					trueStmts: []statement{
+						logStmt{
+							parameters: []expression{Number(1)},
 						},
-						falseStmts: []statement{
-							ifStmt{
-								cond: Bool(false),
-								trueStmts: []statement{
-									logStmt{
-										parameters: []expression{Number(2)},
-									},
+					},
+					falseStmts: []statement{
+						ifStmt{
+							cond: Bool(false),
+							trueStmts: []statement{
+								logStmt{
+									parameters: []expression{Number(2)},
 								},
-								falseStmts: nil,
 							},
+							falseStmts: nil,
 						},
 					},
 				},
@@ -337,27 +311,25 @@ func Test_parse_ast(t *testing.T) {
 		{
 			name: "if_elseif_else",
 			src:  "if true { log(1) } else if false { log(2) } else { log(3) }",
-			want: Program{
-				[]statement{
-					ifStmt{
-						cond: Bool(true),
-						trueStmts: []statement{
-							logStmt{
-								parameters: []expression{Number(1)},
-							},
+			want: []statement{
+				ifStmt{
+					cond: Bool(true),
+					trueStmts: []statement{
+						logStmt{
+							parameters: []expression{Number(1)},
 						},
-						falseStmts: []statement{
-							ifStmt{
-								cond: Bool(false),
-								trueStmts: []statement{
-									logStmt{
-										parameters: []expression{Number(2)},
-									},
+					},
+					falseStmts: []statement{
+						ifStmt{
+							cond: Bool(false),
+							trueStmts: []statement{
+								logStmt{
+									parameters: []expression{Number(2)},
 								},
-								falseStmts: []statement{
-									logStmt{
-										parameters: []expression{Number(3)},
-									},
+							},
+							falseStmts: []statement{
+								logStmt{
+									parameters: []expression{Number(3)},
 								},
 							},
 						},
@@ -374,7 +346,7 @@ func Test_parse_ast(t *testing.T) {
 				t.Errorf("parse() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got.stmts, tt.want) {
 				t.Errorf("parse() = %v, want %v", got, tt.want)
 			}
 		})
