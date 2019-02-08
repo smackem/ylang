@@ -23,6 +23,7 @@ Median := [1 1 1 1 1
 MedianCenter := (Median.radius);(Median.radius)
 
 /////////////////// greyscale
+//
 for pos in Bounds {
     i := @pos.i
     @pos = rgb(i, i, i)
@@ -30,13 +31,14 @@ for pos in Bounds {
 commit
 
 /////////////////// smoothen
+//
 for pos in Bounds {
     @pos = convolute(pos, Gauss)
 }
 commit
 
-/////////////////// sobel
-
+/////////////////// find gradients and suppress non-maxima
+//
 q0   := [0 0 0
          1 1 1
          0 0 0]
@@ -54,16 +56,16 @@ for pos in Bounds {
     sx := convolute(pos, SobelX)
     sy := convolute(pos, SobelY)
     mag := sqrt(sx.r * sx.r + sy.r * sy.r)
-    k := [0 0 0 0]
-    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
+    angle := sx.r != 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi
+    k := 0
     if angle > 157.5 or angle <= 22.5 {
-        k = q90
-    } else if angle <= 67.5 {
-        k = q135
-    } else if angle <= 112.5 {
         k = q0
-    } else if angle <= 157.5 {
+    } else if angle <= 67.5 {
         k = q45
+    } else if angle <= 112.5 {
+        k = q90
+    } else if angle <= 157.5 {
+        k = q135
     }
     area := map_r(pos, k)
     if max(area) != area[4] {
@@ -73,6 +75,8 @@ for pos in Bounds {
 }
 commit
 
+/////////////////// hysteresis
+//
 Neighbours := [1 1 1
                1 1 1
                1 1 1]
@@ -80,16 +84,13 @@ for pos in Bounds {
     val := @pos.r
     if val > 10 {
         val = 255
-    }
-    else if val < 5 {
+    } else if val < 5 {
         val = 0
-    }
-    else {
+    } else {
         neighbours := map_r(pos, Neighbours)
         if max(neighbours) > 10 {
             val = 255
-        }
-        else {
+        } else {
             val = 0
         }
     }

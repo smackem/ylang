@@ -15,7 +15,7 @@ func compileAndInterpret(src string) (scope, error) {
 	if err != nil {
 		return nil, err
 	}
-	ir := newInterpreter(nil)
+	ir := newInterpreter(nil, program)
 	err = ir.visitStmtList(program.stmts)
 	if err != nil {
 		return nil, err

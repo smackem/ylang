@@ -9,20 +9,22 @@ import (
 )
 
 func interpret(program Program, bitmap BitmapContext) error {
-	return newInterpreter(bitmap).visitStmtList(program.stmts)
+	return newInterpreter(bitmap, program).visitStmtList(program.stmts)
 }
 
 type scope map[string]value
 
 type interpreter struct {
-	idents []scope
-	bitmap BitmapContext
+	idents  []scope
+	bitmap  BitmapContext
+	program Program
 }
 
-func newInterpreter(bitmap BitmapContext) *interpreter {
+func newInterpreter(bitmap BitmapContext, program Program) *interpreter {
 	ir := &interpreter{
-		idents: []scope{make(scope)},
-		bitmap: bitmap,
+		idents:  []scope{make(scope)},
+		bitmap:  bitmap,
+		program: program,
 	}
 	ir.newIdent(lastRectIdent, Rect{})
 	ir.newIdent("Black", NewRgba(0, 0, 0, 255))
@@ -79,6 +81,10 @@ func (ir *interpreter) assignIdent(ident string, val value) error {
 func (ir *interpreter) visitStmtList(stmts []statement) error {
 	for _, s := range stmts {
 		if err := ir.visitStmt(s); err != nil {
+			tok, ok := ir.program.symbols[&s]
+			if ok {
+				return fmt.Errorf("line %d: %s", tok.LineNumber, err)
+			}
 			return err
 		}
 	}
