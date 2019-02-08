@@ -1,6 +1,8 @@
 package lang
 
 import (
+	"fmt"
+	"go/format"
 	"reflect"
 	"testing"
 )
@@ -259,7 +261,7 @@ func Test_parse_ast(t *testing.T) {
 									invokeExpr{
 										funcName: "map_b",
 										parameters: []expression{
-											Number(1),
+											Number(2),
 										},
 									},
 								},
@@ -279,7 +281,9 @@ func Test_parse_ast(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parse() = %v, want %v", got, tt.want)
+				gotSrc, _ := format.Source([]byte(fmt.Sprintf("%#v", got)))
+				wantSrc, _ := format.Source([]byte(fmt.Sprintf("%#v", tt.want)))
+				t.Errorf("parse() =\n%s, want\n%s", gotSrc, wantSrc)
 			}
 		})
 	}
