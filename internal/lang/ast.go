@@ -1,14 +1,9 @@
 package lang
 
-type astNode interface {
-}
-
 type statement interface {
-	astNode
 }
 
 type expression interface {
-	astNode
 }
 
 //////////////////////////////////////////////// statements

@@ -13,117 +13,125 @@ type functionDecl struct {
 }
 
 var numberType = reflect.TypeOf(Number(0))
-var positionType = reflect.TypeOf(Position{})
 var kernelType = reflect.TypeOf(kernel{})
+var positionType = reflect.TypeOf(Position{})
 
 var functions = map[string]functionDecl{
-	"rgb": functionDecl{
+	"rgb": {
 		body:   invokeRgb,
 		params: []reflect.Type{numberType, numberType, numberType},
 	},
-	"srgb": functionDecl{
+	"srgb": {
 		body:   invokeSrgb,
 		params: []reflect.Type{numberType, numberType, numberType},
 	},
-	"rgba": functionDecl{
+	"rgba": {
 		body:   invokeRgba,
 		params: []reflect.Type{numberType, numberType, numberType, numberType},
 	},
-	"srgba": functionDecl{
+	"srgba": {
 		body:   invokeSrgba,
 		params: []reflect.Type{numberType, numberType, numberType, numberType},
 	},
-	"rect": functionDecl{
+	"rect": {
 		body:   invokeRect,
 		params: []reflect.Type{numberType, numberType, numberType, numberType},
 	},
-	"convolute": functionDecl{
+	"convolute": {
 		body:   invokeConvolute,
 		params: []reflect.Type{positionType, kernelType},
 	},
-	"sort": functionDecl{
+	"sort": {
 		body:   invokeSort,
 		params: []reflect.Type{kernelType},
 	},
-	"map_r": functionDecl{
+	"map_r": {
 		body:   invokeMapR,
 		params: []reflect.Type{positionType, kernelType},
 	},
-	"map_g": functionDecl{
+	"map_g": {
 		body:   invokeMapG,
 		params: []reflect.Type{positionType, kernelType},
 	},
-	"map_b": functionDecl{
+	"map_b": {
 		body:   invokeMapB,
 		params: []reflect.Type{positionType, kernelType},
 	},
-	"map_a": functionDecl{
+	"map_a": {
 		body:   invokeMapA,
 		params: []reflect.Type{positionType, kernelType},
 	},
-	"sin": functionDecl{
+	"sin": {
 		body:   invokeSin,
 		params: []reflect.Type{numberType},
 	},
-	"cos": functionDecl{
+	"cos": {
 		body:   invokeCos,
 		params: []reflect.Type{numberType},
 	},
-	"tan": functionDecl{
+	"tan": {
 		body:   invokeTan,
 		params: []reflect.Type{numberType},
 	},
-	"asin": functionDecl{
+	"asin": {
 		body:   invokeAsin,
 		params: []reflect.Type{numberType},
 	},
-	"acos": functionDecl{
+	"acos": {
 		body:   invokeAcos,
 		params: []reflect.Type{numberType},
 	},
-	"atan": functionDecl{
+	"atan": {
 		body:   invokeAtan,
 		params: []reflect.Type{numberType},
 	},
-	"atan2": functionDecl{
-		body:   invokeAtan,
+	"atan2": {
+		body:   invokeAtan2,
 		params: []reflect.Type{numberType, numberType},
 	},
-	"sqrt": functionDecl{
+	"sqrt": {
 		body:   invokeSqrt,
 		params: []reflect.Type{numberType},
 	},
-	"abs": functionDecl{
+	"abs": {
 		body:   invokeAbs,
 		params: []reflect.Type{numberType},
 	},
-	"min": functionDecl{
+	"min": {
 		body:   invokeMin,
 		params: []reflect.Type{kernelType},
 	},
-	"max": functionDecl{
+	"max": {
 		body:   invokeMax,
 		params: []reflect.Type{kernelType},
 	},
+	"list": {
+		body:   invokeList,
+		params: []reflect.Type{numberType, numberType},
+	},
+	"kernel": {
+		body:   invokeKernel,
+		params: []reflect.Type{numberType, numberType},
+	},
 }
 
-func invokeRgb(ir *interpreter, params []value) (value, error) {
+func invokeRgb(_ *interpreter, params []value) (value, error) {
 	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), 255), nil
 }
 
-func invokeSrgb(ir *interpreter, params []value) (value, error) {
+func invokeSrgb(_ *interpreter, params []value) (value, error) {
 	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), 1.0), nil
 }
 
-func invokeRgba(ir *interpreter, params []value) (value, error) {
+func invokeRgba(_ *interpreter, params []value) (value, error) {
 	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
 }
 
-func invokeSrgba(ir *interpreter, params []value) (value, error) {
+func invokeSrgba(_ *interpreter, params []value) (value, error) {
 	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
 }
 
-func invokeRect(ir *interpreter, params []value) (value, error) {
+func invokeRect(_ *interpreter, params []value) (value, error) {
 	x, y := int(params[0].(Number)), int(params[1].(Number))
 	return Rect{
 		Min: image.Point{x, y},
@@ -145,7 +153,7 @@ func (p numberSlice) Len() int           { return len(p) }
 func (p numberSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func invokeSort(ir *interpreter, params []value) (value, error) {
+func invokeSort(_ *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	result := kernelVal
 	result.values = append([]Number(nil), result.values...) // clone values
@@ -185,43 +193,43 @@ func invokeMapA(ir *interpreter, params []value) (value, error) {
 	return result, nil
 }
 
-func invokeSin(ir *interpreter, params []value) (value, error) {
+func invokeSin(_ *interpreter, params []value) (value, error) {
 	return Number(math.Sin(float64(params[0].(Number)))), nil
 }
 
-func invokeCos(ir *interpreter, params []value) (value, error) {
+func invokeCos(_ *interpreter, params []value) (value, error) {
 	return Number(math.Cos(float64(params[0].(Number)))), nil
 }
 
-func invokeTan(ir *interpreter, params []value) (value, error) {
+func invokeTan(_ *interpreter, params []value) (value, error) {
 	return Number(math.Tan(float64(params[0].(Number)))), nil
 }
 
-func invokeAsin(ir *interpreter, params []value) (value, error) {
+func invokeAsin(_ *interpreter, params []value) (value, error) {
 	return Number(math.Asin(float64(params[0].(Number)))), nil
 }
 
-func invokeAcos(ir *interpreter, params []value) (value, error) {
+func invokeAcos(_ *interpreter, params []value) (value, error) {
 	return Number(math.Acos(float64(params[0].(Number)))), nil
 }
 
-func invokeAtan(ir *interpreter, params []value) (value, error) {
+func invokeAtan(_ *interpreter, params []value) (value, error) {
 	return Number(math.Atan(float64(params[0].(Number)))), nil
 }
 
-func invokeAtan2(ir *interpreter, params []value) (value, error) {
+func invokeAtan2(_ *interpreter, params []value) (value, error) {
 	return Number(math.Atan2(float64(params[0].(Number)), float64(params[1].(Number)))), nil
 }
 
-func invokeSqrt(ir *interpreter, params []value) (value, error) {
+func invokeSqrt(_ *interpreter, params []value) (value, error) {
 	return Number(math.Sqrt(float64(params[0].(Number)))), nil
 }
 
-func invokeAbs(ir *interpreter, params []value) (value, error) {
+func invokeAbs(_ *interpreter, params []value) (value, error) {
 	return Number(math.Abs(float64(params[0].(Number)))), nil
 }
 
-func invokeMax(it *interpreter, params []value) (value, error) {
+func invokeMax(_ *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	max := Number(math.MinInt32)
 	for _, n := range kernelVal.values {
@@ -232,7 +240,7 @@ func invokeMax(it *interpreter, params []value) (value, error) {
 	return Number(max), nil
 }
 
-func invokeMin(it *interpreter, params []value) (value, error) {
+func invokeMin(_ *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	min := Number(math.MaxInt32)
 	for _, n := range kernelVal.values {
@@ -241,4 +249,22 @@ func invokeMin(it *interpreter, params []value) (value, error) {
 		}
 	}
 	return Number(min), nil
+}
+
+func invokeList(_ *interpreter, params []value) (value, error) {
+	count := params[0].(Number)
+	val := params[1].(Number)
+	result := kernel{values: make([]Number, int(count))}
+	for i := range result.values {
+		result.values[i] = val
+	}
+	return result, nil
+}
+
+func invokeKernel(_ *interpreter, params []value) (value, error) {
+	width := int(params[0].(Number))
+	height := int(params[1].(Number))
+	count := width * height
+	result := kernel{width: width, height: height, values: make([]Number, count)}
+	return result, nil
 }
