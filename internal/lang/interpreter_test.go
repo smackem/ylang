@@ -15,7 +15,7 @@ func compileAndInterpret(src string) (scope, error) {
 	if err != nil {
 		return nil, err
 	}
-	ir := newInterpreter(nil, program)
+	ir := newInterpreter(nil)
 	err = ir.visitStmtList(program.stmts)
 	if err != nil {
 		return nil, err
@@ -142,6 +142,14 @@ func Test_interpret(t *testing.T) {
 					radius: 1,
 					values: []Number{1, 2, 3, 4},
 				},
+			},
+		},
+		{
+			name: "min_max",
+			src:  "min := min([4 1 3 2]) max := max([4 1 3 2])",
+			want: scope{
+				"min": Number(1),
+				"max": Number(4),
 			},
 		},
 	}

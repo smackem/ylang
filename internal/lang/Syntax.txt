@@ -9,15 +9,22 @@ Statement:
     | IDENT COLONEQ Expr
     | IDENT EQ Expr
     | AT Atom EQ Expr
-    | IF Expr LBRACE StatementList RBRACE
-    | IF Expr LBRACE StatementList RBRACE ELSE LBRACE StatementList RBRACE
-    | FOR IDENT IN Expr LBRACE StatementList RBRACE
-    | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
+    | IfStatement
+    | ForStatement
     | YIELD Expr
     | LOG LPAREN ParameterList RPAREN
     | BLT LPAREN Expr RPAREN
     | COMMIT LPAREN Expr RPAREN
     | COMMIT
+
+IfStatement:
+    | IF Expr LBRACE StatementList RBRACE
+    | IF Expr LBRACE StatementList RBRACE ELSE LBRACE StatementList RBRACE
+    | IF Expr LBRACE StatementList RBRACE ELSE IfStatement
+
+ForStatement:
+    | FOR IDENT IN Expr LBRACE StatementList RBRACE
+    | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
 
 Expr:
     | Expr QMARK Expr COLON Expr

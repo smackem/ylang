@@ -15,25 +15,14 @@ Gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-//Median := [1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1
-//           1 1 1 1 1 1 1 1]
-//Center := (Median.radius);(Median.radius)
-//for pos in Bounds {
-//    rs := sort(map_r(pos, Median))
-//    gs := sort(map_g(pos, Median))
-//    bs := sort(map_b(pos, Median))
-//    @pos = rgb(rs[Center], gs[Center], bs[Center])
-//}
-//commit
+Median := [1 1 1 1 1
+           1 1 1 1 1
+           1 1 1 1 1
+           1 1 1 1 1
+           1 1 1 1 1]
+MedianCenter := (Median.radius);(Median.radius)
 
 /////////////////// greyscale
-//
 for pos in Bounds {
     i := @pos.i
     @pos = rgb(i, i, i)
@@ -41,14 +30,13 @@ for pos in Bounds {
 commit
 
 /////////////////// smoothen
-//
 for pos in Bounds {
     @pos = convolute(pos, Gauss)
 }
 commit
 
-/////////////////// find gradients and suppress non-maxima
-//
+/////////////////// sobel
+
 q0   := [0 0 0
          1 1 1
          0 0 0]
@@ -66,26 +54,25 @@ for pos in Bounds {
     sx := convolute(pos, SobelX)
     sy := convolute(pos, SobelY)
     mag := sqrt(sx.r * sx.r + sy.r * sy.r)
-    angle := sx.r != 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi
-    k := 0
+    k := [0 0 0 0]
+    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
     if angle > 157.5 or angle <= 22.5 {
-        k = q0
-    } else if angle <= 67.5 {
-        k = q45
-    } else if angle <= 112.5 {
         k = q90
-    } else if angle <= 157.5 {
+    } else if angle <= 67.5 {
         k = q135
+    } else if angle <= 112.5 {
+        k = q0
+    } else if angle <= 157.5 {
+        k = q45
     }
-    if angle >= 45 and angle < 90 {
-        color = #00ff00
+    area := map_r(pos, k)
+    if max(area) != area[4] {
+        mag = 0
     }
     @pos = rgb(mag, mag, mag)
 }
 commit
 
-/////////////////// hysteresis
-//
 Neighbours := [1 1 1
                1 1 1
                1 1 1]
@@ -107,27 +94,3 @@ for pos in Bounds {
     @pos = rgb(val, val, val)
 }
 commit
-
-//Neighbours := [1 1 1
-//               1 1 1
-//               1 1 1]
-//
-//for pos in Bounds {
-//    rs := map_r(pos, Neighbours)
-//    gs := map_g(pos, Neighbours)
-//    bs := map_b(pos, Neighbours)
-//    r := rs[4] == max(rs) ? rs[4] : 0
-//    if r < 100 {
-//        r = 0
-//    }
-//    g := gs[4] == max(gs) ? gs[4] : 0
-//    if g < 100 {
-//        g = 0
-//    }
-//    b := bs[4] == max(bs) ? bs[4] : 0
-//    if b < 100 {
-//        b = 0
-//    }
-//    @pos = rgb(r, g, b)
-//}
-//commit

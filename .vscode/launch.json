@@ -11,7 +11,7 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": ["-image", "./res/pub/_A03.png", "-code", "./res/sample.ylang", "-out", "./res/out.png"]
+            "args": []
         }
     ]
 }

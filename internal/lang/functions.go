@@ -13,8 +13,8 @@ type functionDecl struct {
 }
 
 var numberType = reflect.TypeOf(Number(0))
-var kernelType = reflect.TypeOf(kernel{})
 var positionType = reflect.TypeOf(Position{})
+var kernelType = reflect.TypeOf(kernel{})
 
 var functions = map[string]functionDecl{
 	"rgb": {
@@ -109,29 +109,25 @@ var functions = map[string]functionDecl{
 		body:   invokeList,
 		params: []reflect.Type{numberType, numberType},
 	},
-	"kernel": {
-		body:   invokeKernel,
-		params: []reflect.Type{numberType, numberType},
-	},
 }
 
-func invokeRgb(_ *interpreter, params []value) (value, error) {
+func invokeRgb(ir *interpreter, params []value) (value, error) {
 	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), 255), nil
 }
 
-func invokeSrgb(_ *interpreter, params []value) (value, error) {
+func invokeSrgb(ir *interpreter, params []value) (value, error) {
 	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), 1.0), nil
 }
 
-func invokeRgba(_ *interpreter, params []value) (value, error) {
+func invokeRgba(ir *interpreter, params []value) (value, error) {
 	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
 }
 
-func invokeSrgba(_ *interpreter, params []value) (value, error) {
+func invokeSrgba(ir *interpreter, params []value) (value, error) {
 	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
 }
 
-func invokeRect(_ *interpreter, params []value) (value, error) {
+func invokeRect(ir *interpreter, params []value) (value, error) {
 	x, y := int(params[0].(Number)), int(params[1].(Number))
 	return Rect{
 		Min: image.Point{x, y},
@@ -153,7 +149,7 @@ func (p numberSlice) Len() int           { return len(p) }
 func (p numberSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func invokeSort(_ *interpreter, params []value) (value, error) {
+func invokeSort(ir *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	result := kernelVal
 	result.values = append([]Number(nil), result.values...) // clone values
@@ -193,43 +189,43 @@ func invokeMapA(ir *interpreter, params []value) (value, error) {
 	return result, nil
 }
 
-func invokeSin(_ *interpreter, params []value) (value, error) {
+func invokeSin(ir *interpreter, params []value) (value, error) {
 	return Number(math.Sin(float64(params[0].(Number)))), nil
 }
 
-func invokeCos(_ *interpreter, params []value) (value, error) {
+func invokeCos(ir *interpreter, params []value) (value, error) {
 	return Number(math.Cos(float64(params[0].(Number)))), nil
 }
 
-func invokeTan(_ *interpreter, params []value) (value, error) {
+func invokeTan(ir *interpreter, params []value) (value, error) {
 	return Number(math.Tan(float64(params[0].(Number)))), nil
 }
 
-func invokeAsin(_ *interpreter, params []value) (value, error) {
+func invokeAsin(ir *interpreter, params []value) (value, error) {
 	return Number(math.Asin(float64(params[0].(Number)))), nil
 }
 
-func invokeAcos(_ *interpreter, params []value) (value, error) {
+func invokeAcos(ir *interpreter, params []value) (value, error) {
 	return Number(math.Acos(float64(params[0].(Number)))), nil
 }
 
-func invokeAtan(_ *interpreter, params []value) (value, error) {
+func invokeAtan(ir *interpreter, params []value) (value, error) {
 	return Number(math.Atan(float64(params[0].(Number)))), nil
 }
 
-func invokeAtan2(_ *interpreter, params []value) (value, error) {
+func invokeAtan2(ir *interpreter, params []value) (value, error) {
 	return Number(math.Atan2(float64(params[0].(Number)), float64(params[1].(Number)))), nil
 }
 
-func invokeSqrt(_ *interpreter, params []value) (value, error) {
+func invokeSqrt(ir *interpreter, params []value) (value, error) {
 	return Number(math.Sqrt(float64(params[0].(Number)))), nil
 }
 
-func invokeAbs(_ *interpreter, params []value) (value, error) {
+func invokeAbs(ir *interpreter, params []value) (value, error) {
 	return Number(math.Abs(float64(params[0].(Number)))), nil
 }
 
-func invokeMax(_ *interpreter, params []value) (value, error) {
+func invokeMax(it *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	max := Number(math.MinInt32)
 	for _, n := range kernelVal.values {
@@ -240,7 +236,7 @@ func invokeMax(_ *interpreter, params []value) (value, error) {
 	return Number(max), nil
 }
 
-func invokeMin(_ *interpreter, params []value) (value, error) {
+func invokeMin(it *interpreter, params []value) (value, error) {
 	kernelVal := params[0].(kernel)
 	min := Number(math.MaxInt32)
 	for _, n := range kernelVal.values {
@@ -251,20 +247,12 @@ func invokeMin(_ *interpreter, params []value) (value, error) {
 	return Number(min), nil
 }
 
-func invokeList(_ *interpreter, params []value) (value, error) {
+func invokeList(it *interpreter, params []value) (value, error) {
 	count := params[0].(Number)
 	val := params[1].(Number)
-	result := kernel{values: make([]Number, int(count))}
-	for i := range result.values {
-		result.values[i] = val
+	values := make([]Number, int(count))
+	for i := range values {
+		values[i] = val
 	}
-	return result, nil
-}
-
-func invokeKernel(_ *interpreter, params []value) (value, error) {
-	width := int(params[0].(Number))
-	height := int(params[1].(Number))
-	count := width * height
-	result := kernel{width: width, height: height, values: make([]Number, count)}
-	return result, nil
+	return kernel{values: values}, nil
 }

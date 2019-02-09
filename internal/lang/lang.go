@@ -19,7 +19,8 @@ func Compile(src string) (Program, error) {
 
 // Program is the compiled, executable ylang program.
 type Program struct {
-	stmts []statement
+	stmts   []statement
+	symbols map[astNode]token
 }
 
 // Execute executes the Program against the specified Bitmap.
