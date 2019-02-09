@@ -532,7 +532,6 @@ func (rect Rect) printStr() string {
 type kernel struct {
 	width  int
 	height int
-	radius int
 	values []Number
 }
 
@@ -599,8 +598,8 @@ func (k kernel) property(ident string) (value, error) {
 	switch ident {
 	case "width":
 		return Number(k.width), nil
-	case "radius":
-		return Number(k.radius), nil
+	case "height":
+		return Number(k.height), nil
 	case "count":
 		return Number(len(k.values)), nil
 	}
@@ -608,7 +607,7 @@ func (k kernel) property(ident string) (value, error) {
 }
 
 func (k kernel) printStr() string {
-	return fmt.Sprintf("kernel(radius: %d)", k.radius)
+	return fmt.Sprintf("kernel(width: %d, height: %d)", k.width, k.height)
 }
 
 //////////////////////////////////////////// Bool

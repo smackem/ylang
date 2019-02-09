@@ -5,6 +5,7 @@ type astNode interface {
 
 type statement interface {
 	astNode
+	getToken() token
 }
 
 type expression interface {
@@ -13,34 +14,48 @@ type expression interface {
 
 //////////////////////////////////////////////// statements
 
+type stmtBase struct {
+	tok token
+}
+
+func (stmt stmtBase) getToken() token {
+	return stmt.tok
+}
+
 type declStmt struct {
+	stmtBase
 	ident string
 	rhs   expression
 }
 
 type assignStmt struct {
+	stmtBase
 	ident string
 	rhs   expression
 }
 
 type pixelAssignStmt struct {
+	stmtBase
 	lhs expression
 	rhs expression
 }
 
 type ifStmt struct {
+	stmtBase
 	cond       expression
 	trueStmts  []statement
 	falseStmts []statement // nillable
 }
 
 type forStmt struct {
+	stmtBase
 	ident      string
 	collection expression
 	stmts      []statement
 }
 
 type forRangeStmt struct {
+	stmtBase
 	ident string
 	lower expression
 	upper expression
@@ -48,18 +63,22 @@ type forRangeStmt struct {
 }
 
 type yieldStmt struct {
+	stmtBase
 	result expression
 }
 
 type logStmt struct {
+	stmtBase
 	parameters []expression
 }
 
 type bltStmt struct {
+	stmtBase
 	rect expression
 }
 
 type commitStmt struct {
+	stmtBase
 	rect expression // nillable
 }
 

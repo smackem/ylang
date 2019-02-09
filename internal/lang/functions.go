@@ -109,6 +109,10 @@ var functions = map[string]functionDecl{
 		body:   invokeList,
 		params: []reflect.Type{numberType, numberType},
 	},
+	"kernel": {
+		body:   invokeList,
+		params: []reflect.Type{numberType, numberType, numberType},
+	},
 }
 
 func invokeRgb(ir *interpreter, params []value) (value, error) {
@@ -138,7 +142,7 @@ func invokeRect(ir *interpreter, params []value) (value, error) {
 func invokeConvolute(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
-	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values), nil
+	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values), nil
 }
 
 // implement sort.Interface for Number slice
@@ -161,7 +165,7 @@ func invokeMapR(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
-	result.values = ir.bitmap.MapRed(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	result.values = ir.bitmap.MapRed(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
@@ -169,7 +173,7 @@ func invokeMapG(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
-	result.values = ir.bitmap.MapGreen(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	result.values = ir.bitmap.MapGreen(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
@@ -177,7 +181,7 @@ func invokeMapB(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
-	result.values = ir.bitmap.MapBlue(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	result.values = ir.bitmap.MapBlue(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
@@ -185,7 +189,7 @@ func invokeMapA(ir *interpreter, params []value) (value, error) {
 	posVal := params[0].(Position)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
-	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.radius, kernelVal.width, kernelVal.values)
+	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
@@ -255,4 +259,15 @@ func invokeList(it *interpreter, params []value) (value, error) {
 		values[i] = val
 	}
 	return kernel{values: values}, nil
+}
+
+func invokeKernel(ir *interpreter, params []value) (value, error) {
+	width := params[0].(Number)
+	height := params[1].(Number)
+	val := params[2].(Number)
+	values := make([]Number, int(width*height))
+	for i := range values {
+		values[i] = val
+	}
+	return kernel{width: int(width), height: int(height), values: values}, nil
 }

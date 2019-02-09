@@ -7,19 +7,18 @@ import (
 )
 
 func parse(input []token) (Program, error) {
-	parser := parser{input: input, index: 0, symbols: make(map[astNode]token)}
+	parser := parser{input: input, index: 0}
 	program, err := parser.parseProgram()
 	if err != nil {
 		tok := parser.current()
-		return Program{nil, nil}, fmt.Errorf("at line %d, near '%s': %s", tok.LineNumber, tok.Lexeme, err)
+		return Program{nil}, fmt.Errorf("at line %d, near '%s': %s", tok.LineNumber, tok.Lexeme, err)
 	}
-	return Program{program, parser.symbols}, nil
+	return Program{program}, nil
 }
 
 type parser struct {
-	input   []token
-	index   int
-	symbols map[astNode]token
+	input []token
+	index int
 }
 
 func (p parser) current() token {
@@ -49,16 +48,6 @@ func (p *parser) expect(tt tokenType) (token, error) {
 		return emptyToken, fmt.Errorf("expected %v, found %v", tokenTypeNames[tt], tok.Lexeme)
 	}
 	return tok, nil
-}
-
-func (p *parser) makeStmt(stmt statement) statement {
-	p.symbols[&stmt] = p.current()
-	return stmt
-}
-
-func (p *parser) makeExpr(expr expression) expression {
-	p.symbols[&expr] = p.current()
-	return expr
 }
 
 func (p *parser) parseProgram() (stmts []statement, err error) {
@@ -107,7 +96,7 @@ func (p *parser) parseStmt() (stmt statement, err error) {
 	default:
 		stmt, err = nil, fmt.Errorf("unexpected token at statement begin: '%s'", tok)
 	}
-	return p.makeStmt(stmt), err
+	return
 }
 
 func (p *parser) parseIdentStmt(ident string) (statement, error) {
@@ -126,7 +115,7 @@ func (p *parser) parseDeclaration(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return declStmt{ident, rhs}, nil
+	return declStmt{stmtBase{p.current()}, ident, rhs}, nil
 }
 
 func (p *parser) parseAssign(ident string) (statement, error) {
@@ -137,7 +126,7 @@ func (p *parser) parseAssign(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return assignStmt{ident, rhs}, nil
+	return assignStmt{stmtBase{p.current()}, ident, rhs}, nil
 }
 
 func (p *parser) parsePixelAssign() (statement, error) {
@@ -152,7 +141,7 @@ func (p *parser) parsePixelAssign() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return pixelAssignStmt{lhs, rhs}, nil
+	return pixelAssignStmt{stmtBase{p.current()}, lhs, rhs}, nil
 }
 
 func (p *parser) parseIf() (statement, error) {
@@ -202,7 +191,7 @@ func (p *parser) parseIf() (statement, error) {
 			}
 		}
 	}
-	return ifStmt{cond, trueStmts, falseStmts}, nil
+	return ifStmt{stmtBase{p.current()}, cond, trueStmts, falseStmts}, nil
 }
 
 func (p *parser) parseFor() (statement, error) {
@@ -218,7 +207,7 @@ func (p *parser) parseFor() (statement, error) {
 		return nil, err
 	}
 
-	var upper statement
+	var upper expression
 	if p.current().Type == ttDotDot {
 		p.next()
 		upper, err = p.parseExpr()
@@ -241,7 +230,7 @@ func (p *parser) parseFor() (statement, error) {
 	if upper != nil {
 		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, stmts: stmts}, nil
 	}
-	return forStmt{identTok.Lexeme, collection, stmts}, nil
+	return forStmt{stmtBase{p.current()}, identTok.Lexeme, collection, stmts}, nil
 }
 
 func (p *parser) parseYield() (statement, error) {
@@ -249,7 +238,7 @@ func (p *parser) parseYield() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return yieldStmt{result}, nil
+	return yieldStmt{stmtBase{p.current()}, result}, nil
 }
 
 func (p *parser) parseLog() (statement, error) {
@@ -263,7 +252,7 @@ func (p *parser) parseLog() (statement, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return logStmt{parameters}, nil
+	return logStmt{stmtBase{p.current()}, parameters}, nil
 }
 
 func (p *parser) parseParameterList() ([]expression, error) {
@@ -292,7 +281,7 @@ func (p *parser) parseBlt() (statement, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return bltStmt{rect}, nil
+	return bltStmt{stmtBase{p.current()}, rect}, nil
 }
 
 func (p *parser) parseCommit() (statement, error) {
@@ -308,7 +297,7 @@ func (p *parser) parseCommit() (statement, error) {
 			return nil, err
 		}
 	}
-	return commitStmt{rect}, nil
+	return commitStmt{stmtBase{p.current()}, rect}, nil
 }
 
 func (p *parser) parseExpr() (expression, error) {
@@ -330,7 +319,7 @@ func (p *parser) parseExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(ternaryExpr{cond, trueResult, falseResult}), nil
+		return ternaryExpr{cond, trueResult, falseResult}, nil
 	}
 
 	return cond, nil
@@ -348,7 +337,7 @@ func (p *parser) parseOrExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(orExpr{left, right}), nil
+		return orExpr{left, right}, nil
 	}
 	return left, nil
 }
@@ -365,7 +354,7 @@ func (p *parser) parseAndExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(andExpr{left, right}), nil
+		return andExpr{left, right}, nil
 	}
 	return left, nil
 }
@@ -383,42 +372,42 @@ func (p *parser) parseCondExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(eqExpr{left, right}), nil
+		return eqExpr{left, right}, nil
 	case ttNeq:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(neqExpr{left, right}), nil
+		return neqExpr{left, right}, nil
 	case ttGt:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(gtExpr{left, right}), nil
+		return gtExpr{left, right}, nil
 	case ttGe:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(geExpr{left, right}), nil
+		return geExpr{left, right}, nil
 	case ttLt:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(ltExpr{left, right}), nil
+		return ltExpr{left, right}, nil
 	case ttLe:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(leExpr{left, right}), nil
+		return leExpr{left, right}, nil
 	}
 	return left, nil
 }
@@ -436,21 +425,21 @@ func (p *parser) parseTermExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(addExpr{left, right}), nil
+		return addExpr{left, right}, nil
 	case ttMinus:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(subExpr{left, right}), nil
+		return subExpr{left, right}, nil
 	case ttIn:
 		p.next()
 		right, err := p.parseTermExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(inExpr{left, right}), nil
+		return inExpr{left, right}, nil
 	}
 	return left, nil
 }
@@ -468,21 +457,21 @@ func (p *parser) parseProductExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(mulExpr{left, right}), nil
+		return mulExpr{left, right}, nil
 	case ttSlash:
 		p.next()
 		right, err := p.parseProductExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(divExpr{left, right}), nil
+		return divExpr{left, right}, nil
 	case ttPercent:
 		p.next()
 		right, err := p.parseProductExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(modExpr{left, right}), nil
+		return modExpr{left, right}, nil
 	}
 	return left, nil
 }
@@ -495,14 +484,14 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(negExpr{inner}), nil
+		return negExpr{inner}, nil
 	case ttNot:
 		p.next()
 		inner, err := p.parseMoleculeExpr()
 		if err != nil {
 			return nil, err
 		}
-		return p.makeExpr(notExpr{inner}), nil
+		return notExpr{inner}, nil
 	}
 
 	atom, err := p.parseAtom()
@@ -518,21 +507,21 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 			if err != nil {
 				return nil, err
 			}
-			atom = p.makeExpr(posExpr{x: atom, y: y})
+			atom = posExpr{x: atom, y: y}
 		case ttDot:
 			p.next()
 			memberTok, err := p.expect(ttIdent)
 			if err != nil {
 				return nil, err
 			}
-			atom = p.makeExpr(memberExpr{recvr: atom, member: memberTok.Lexeme})
+			atom = memberExpr{recvr: atom, member: memberTok.Lexeme}
 		case ttLBracket:
 			p.next()
 			index, err := p.parseExpr()
 			if err != nil {
 				return nil, err
 			}
-			atom = p.makeExpr(indexExpr{recvr: atom, index: index})
+			atom = indexExpr{recvr: atom, index: index}
 			if _, err := p.expect(ttRBracket); err != nil {
 				return nil, err
 			}
@@ -554,11 +543,11 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttNumber:
 		return tok.parseNumber(), nil
 	case ttString:
-		return p.makeExpr(String(tok.Lexeme)), nil
+		return String(tok.Lexeme), nil
 	case ttTrue:
-		return p.makeExpr(Bool(true)), nil
+		return Bool(true), nil
 	case ttFalse:
-		return p.makeExpr(Bool(false)), nil
+		return Bool(false), nil
 	case ttColor:
 		return tok.parseColor(), nil
 	case ttLBracket:
@@ -575,7 +564,7 @@ func (p *parser) parseParenAtom() (expression, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return p.makeExpr(inner), nil
+	return inner, nil
 }
 
 func (p *parser) parseAtAtom() (expression, error) {
@@ -583,7 +572,7 @@ func (p *parser) parseAtAtom() (expression, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p.makeExpr(atExpr{inner}), nil
+	return atExpr{inner}, nil
 }
 
 func (p *parser) parseIdentAtom(ident string) (expression, error) {
@@ -596,7 +585,7 @@ func (p *parser) parseIdentAtom(ident string) (expression, error) {
 		if _, err := p.expect(ttRParen); err != nil {
 			return nil, err
 		}
-		return p.makeExpr(invokeExpr{funcName: ident, parameters: parameters}), nil
+		return invokeExpr{funcName: ident, parameters: parameters}, nil
 	}
 	return identExpr(ident), nil
 }
@@ -611,7 +600,7 @@ func (p *parser) parseKernelAtom() (expression, error) {
 				return nil, fmt.Errorf("kernel defined in kernel expression must be quadratic")
 			}
 			p.next()
-			return p.makeExpr(kernelExpr{elements}), nil
+			return kernelExpr{elements}, nil
 		case ttEOF:
 			return nil, fmt.Errorf("unclosed kernel element list")
 		}

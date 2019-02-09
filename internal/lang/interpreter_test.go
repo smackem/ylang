@@ -88,7 +88,7 @@ func Test_interpret(t *testing.T) {
 			name: "kernel",
 			src:  "k := [1 2 3 4]",
 			want: scope{
-				"k": kernel{width: 2, radius: 1, values: []Number{Number(1), Number(2), Number(3), Number(4)}},
+				"k": kernel{width: 2, height: 2, values: []Number{Number(1), Number(2), Number(3), Number(4)}},
 			},
 		},
 		{
@@ -139,7 +139,7 @@ func Test_interpret(t *testing.T) {
 			want: scope{
 				"k": kernel{
 					width:  2,
-					radius: 1,
+					height: 2,
 					values: []Number{1, 2, 3, 4},
 				},
 			},

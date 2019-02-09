@@ -20,7 +20,7 @@ Median := [1 1 1 1 1
            1 1 1 1 1
            1 1 1 1 1
            1 1 1 1 1]
-MedianCenter := (Median.radius);(Median.radius)
+MedianCenter := 2;2
 
 /////////////////// greyscale
 for pos in Bounds {
@@ -31,6 +31,7 @@ commit
 
 /////////////////// smoothen
 for pos in Bounds {
+    @pos = 123
     @pos = convolute(pos, Gauss)
 }
 commit

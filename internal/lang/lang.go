@@ -19,8 +19,7 @@ func Compile(src string) (Program, error) {
 
 // Program is the compiled, executable ylang program.
 type Program struct {
-	stmts   []statement
-	symbols map[astNode]token
+	stmts []statement
 }
 
 // Execute executes the Program against the specified Bitmap.
@@ -118,11 +117,11 @@ type BitmapContext interface {
 	SetPixel(x int, y int, color Color)
 	Width() int
 	Height() int
-	Convolute(x int, y int, radius int, width int, kernel []Number) Color
-	MapRed(x int, y int, radius int, width int, kernel []Number) []Number
-	MapGreen(x int, y int, radius int, width int, kernel []Number) []Number
-	MapBlue(x int, y int, radius int, width int, kernel []Number) []Number
-	MapAlpha(x int, y int, radius int, width int, kernel []Number) []Number
+	Convolute(x, y, width, height int, kernel []Number) Color
+	MapRed(x, y, width, height int, kernel []Number) []Number
+	MapGreen(x, y, width, height int, kernel []Number) []Number
+	MapBlue(x, y, width, height int, kernel []Number) []Number
+	MapAlpha(x, y, width, height int, kernel []Number) []Number
 	BltToTarget(x, y, width, height int)
 	BltToSource(x, y, width, height int)
 }

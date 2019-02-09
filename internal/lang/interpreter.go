@@ -79,7 +79,8 @@ func (ir *interpreter) assignIdent(ident string, val value) error {
 func (ir *interpreter) visitStmtList(stmts []statement) error {
 	for _, s := range stmts {
 		if err := ir.visitStmt(s); err != nil {
-			return err
+			tok := s.getToken()
+			return fmt.Errorf("line %d near '%s': %s", tok.LineNumber, tok.Lexeme, err)
 		}
 	}
 	return nil
@@ -494,7 +495,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		return kernel{
 			values: elementNumbers,
 			width:  rootOfLen,
-			radius: rootOfLen / 2,
+			height: rootOfLen,
 		}, nil
 	}
 

@@ -56,7 +56,7 @@ func (surf *surface) Height() int {
 	return surf.source.Bounds().Dy()
 }
 
-func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lang.Number) lang.Color {
+func (surf *surface) Convolute(x, y, width, height int, kernel []lang.Number) lang.Color {
 	kernelSum := lang.Number(0.0)
 	r := lang.Number(0.0)
 	g := lang.Number(0.0)
@@ -68,8 +68,8 @@ func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lan
 
 	for kernelY := 0; kernelY < width; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
-			sourceY := y - radius + kernelY
-			sourceX := x - radius + kernelX
+			sourceY := y - (height / 2) + kernelY
+			sourceX := x - (width / 2) + kernelX
 			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
 				value := kernel[kernelIndex]
 				px := surf.source.NRGBAAt(sourceX, sourceY)
@@ -92,7 +92,7 @@ func (surf *surface) Convolute(x int, y int, radius int, width int, kernel []lan
 	return lang.NewRgba(r/kernelSum, g/kernelSum, b/kernelSum, a)
 }
 
-func (surf *surface) mapChannel(x, y, radius, width int, kernel []lang.Number, mapper func(color.NRGBA) byte) []lang.Number {
+func (surf *surface) mapChannel(x, y, width, height int, kernel []lang.Number, mapper func(color.NRGBA) byte) []lang.Number {
 	result := make([]lang.Number, len(kernel))
 	kernelIndex := 0
 	w := surf.Width()
@@ -100,8 +100,8 @@ func (surf *surface) mapChannel(x, y, radius, width int, kernel []lang.Number, m
 
 	for kernelY := 0; kernelY < width; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
-			sourceY := y - radius + kernelY
-			sourceX := x - radius + kernelX
+			sourceY := y - (width / 2) + kernelY
+			sourceX := x - (height / 2) + kernelX
 			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
 				px := surf.source.NRGBAAt(sourceX, sourceY)
 				result[kernelIndex] = kernel[kernelIndex] * lang.Number(mapper(px))
