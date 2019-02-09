@@ -6,8 +6,8 @@ import (
 	"unicode"
 )
 
-func parse(input []token) (Program, error) {
-	parser := parser{input: input, index: 0}
+func parse(input []token, omitTokenInfo bool) (Program, error) {
+	parser := parser{input: input, index: 0, omitTokenInfo: omitTokenInfo}
 	program, err := parser.parseProgram()
 	if err != nil {
 		tok := parser.current()
@@ -17,8 +17,9 @@ func parse(input []token) (Program, error) {
 }
 
 type parser struct {
-	input []token
-	index int
+	input         []token
+	index         int
+	omitTokenInfo bool
 }
 
 func (p parser) current() token {
@@ -48,6 +49,13 @@ func (p *parser) expect(tt tokenType) (token, error) {
 		return emptyToken, fmt.Errorf("expected %v, found %v", tokenTypeNames[tt], tok.Lexeme)
 	}
 	return tok, nil
+}
+
+func (p *parser) makeStmtBase() stmtBase {
+	if p.omitTokenInfo {
+		return stmtBase{}
+	}
+	return stmtBase{p.current()}
 }
 
 func (p *parser) parseProgram() (stmts []statement, err error) {
@@ -115,7 +123,7 @@ func (p *parser) parseDeclaration(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return declStmt{stmtBase{p.current()}, ident, rhs}, nil
+	return declStmt{p.makeStmtBase(), ident, rhs}, nil
 }
 
 func (p *parser) parseAssign(ident string) (statement, error) {
@@ -126,7 +134,7 @@ func (p *parser) parseAssign(ident string) (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return assignStmt{stmtBase{p.current()}, ident, rhs}, nil
+	return assignStmt{p.makeStmtBase(), ident, rhs}, nil
 }
 
 func (p *parser) parsePixelAssign() (statement, error) {
@@ -141,7 +149,7 @@ func (p *parser) parsePixelAssign() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return pixelAssignStmt{stmtBase{p.current()}, lhs, rhs}, nil
+	return pixelAssignStmt{p.makeStmtBase(), lhs, rhs}, nil
 }
 
 func (p *parser) parseIf() (statement, error) {
@@ -191,7 +199,7 @@ func (p *parser) parseIf() (statement, error) {
 			}
 		}
 	}
-	return ifStmt{stmtBase{p.current()}, cond, trueStmts, falseStmts}, nil
+	return ifStmt{p.makeStmtBase(), cond, trueStmts, falseStmts}, nil
 }
 
 func (p *parser) parseFor() (statement, error) {
@@ -230,7 +238,7 @@ func (p *parser) parseFor() (statement, error) {
 	if upper != nil {
 		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, stmts: stmts}, nil
 	}
-	return forStmt{stmtBase{p.current()}, identTok.Lexeme, collection, stmts}, nil
+	return forStmt{p.makeStmtBase(), identTok.Lexeme, collection, stmts}, nil
 }
 
 func (p *parser) parseYield() (statement, error) {
@@ -238,7 +246,7 @@ func (p *parser) parseYield() (statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return yieldStmt{stmtBase{p.current()}, result}, nil
+	return yieldStmt{p.makeStmtBase(), result}, nil
 }
 
 func (p *parser) parseLog() (statement, error) {
@@ -252,7 +260,7 @@ func (p *parser) parseLog() (statement, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return logStmt{stmtBase{p.current()}, parameters}, nil
+	return logStmt{p.makeStmtBase(), parameters}, nil
 }
 
 func (p *parser) parseParameterList() ([]expression, error) {
@@ -281,7 +289,7 @@ func (p *parser) parseBlt() (statement, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return bltStmt{stmtBase{p.current()}, rect}, nil
+	return bltStmt{p.makeStmtBase(), rect}, nil
 }
 
 func (p *parser) parseCommit() (statement, error) {
@@ -297,7 +305,7 @@ func (p *parser) parseCommit() (statement, error) {
 			return nil, err
 		}
 	}
-	return commitStmt{stmtBase{p.current()}, rect}, nil
+	return commitStmt{p.makeStmtBase(), rect}, nil
 }
 
 func (p *parser) parseExpr() (expression, error) {

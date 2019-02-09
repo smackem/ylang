@@ -11,7 +11,7 @@ func compileAndInterpret(src string) (scope, error) {
 	if err != nil {
 		return nil, err
 	}
-	program, err := parse(tokens)
+	program, err := parse(tokens, false)
 	if err != nil {
 		return nil, err
 	}
@@ -152,6 +152,28 @@ func Test_interpret(t *testing.T) {
 				"max": Number(4),
 			},
 		},
+		{
+			name: "list",
+			src:  "l := list(4, 123)",
+			want: scope{
+				"l": kernel{
+					width:  0,
+					height: 0,
+					values: []Number{123, 123, 123, 123},
+				},
+			},
+		},
+		{
+			name: "kernel_func",
+			src:  "k := kernel(2, 3, 1)",
+			want: scope{
+				"k": kernel{
+					width:  2,
+					height: 3,
+					values: []Number{1, 1, 1, 1, 1, 1},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -161,7 +183,7 @@ func Test_interpret(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("compileAndInterpret() = %v, want %v", got, tt.want)
+				t.Errorf("compileAndInterpret() = %#v, want %#v", got, tt.want)
 			}
 		})
 	}

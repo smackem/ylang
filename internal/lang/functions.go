@@ -110,7 +110,7 @@ var functions = map[string]functionDecl{
 		params: []reflect.Type{numberType, numberType},
 	},
 	"kernel": {
-		body:   invokeList,
+		body:   invokeKernel,
 		params: []reflect.Type{numberType, numberType, numberType},
 	},
 }

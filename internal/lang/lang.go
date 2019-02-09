@@ -10,7 +10,7 @@ func Compile(src string) (Program, error) {
 	if err != nil {
 		return Program{}, err
 	}
-	prog, err := parse(tokens)
+	prog, err := parse(tokens, false)
 	if err != nil {
 		return Program{}, err
 	}

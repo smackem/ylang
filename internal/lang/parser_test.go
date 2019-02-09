@@ -85,7 +85,7 @@ func Test_parse_syntax(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, _ := lex(tt.src)
-			if _, err := parse(tokens); (err != nil) != tt.wantErr {
+			if _, err := parse(tokens, true); (err != nil) != tt.wantErr {
 				t.Errorf("parse() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -104,8 +104,9 @@ func Test_parse_ast(t *testing.T) {
 			src:  "x := 1",
 			want: []statement{
 				declStmt{
-					ident: "x",
-					rhs:   Number(1),
+					stmtBase: stmtBase{},
+					ident:    "x",
+					rhs:      Number(1),
 				},
 			},
 		},
@@ -114,7 +115,8 @@ func Test_parse_ast(t *testing.T) {
 			src:  "x := sort(a(1)) @p = 2",
 			want: []statement{
 				declStmt{
-					ident: "x",
+					stmtBase: stmtBase{},
+					ident:    "x",
 					rhs: invokeExpr{
 						funcName: "sort",
 						parameters: []expression{
@@ -128,8 +130,9 @@ func Test_parse_ast(t *testing.T) {
 					},
 				},
 				pixelAssignStmt{
-					lhs: identExpr("p"),
-					rhs: Number(2),
+					stmtBase: stmtBase{},
+					lhs:      identExpr("p"),
+					rhs:      Number(2),
 				},
 			},
 		},
@@ -138,11 +141,15 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(1) commit",
 			want: []statement{
 				logStmt{
+					stmtBase: stmtBase{},
 					parameters: []expression{
 						Number(1),
 					},
 				},
-				commitStmt{rect: nil},
+				commitStmt{
+					stmtBase: stmtBase{},
+					rect:     nil,
+				},
 			},
 		},
 		{
@@ -150,6 +157,7 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(1, 2, 3)",
 			want: []statement{
 				logStmt{
+					stmtBase: stmtBase{},
 					parameters: []expression{
 						Number(1),
 						Number(2),
@@ -163,9 +171,11 @@ func Test_parse_ast(t *testing.T) {
 			src:  "blt(BOUNDS) log(1)",
 			want: []statement{
 				bltStmt{
-					rect: identExpr("BOUNDS"),
+					stmtBase: stmtBase{},
+					rect:     identExpr("BOUNDS"),
 				},
 				logStmt{
+					stmtBase:   stmtBase{},
 					parameters: []expression{Number(1)},
 				},
 			},
@@ -175,9 +185,11 @@ func Test_parse_ast(t *testing.T) {
 			src:  "blt(IMAGE) log(1)",
 			want: []statement{
 				bltStmt{
-					rect: identExpr("IMAGE"),
+					stmtBase: stmtBase{},
+					rect:     identExpr("IMAGE"),
 				},
 				logStmt{
+					stmtBase:   stmtBase{},
 					parameters: []expression{Number(1)},
 				},
 			},
@@ -187,7 +199,8 @@ func Test_parse_ast(t *testing.T) {
 			src:  "x := @(1;2).r",
 			want: []statement{
 				declStmt{
-					ident: "x",
+					stmtBase: stmtBase{},
+					ident:    "x",
 					rhs: memberExpr{
 						member: "r",
 						recvr: atExpr{
@@ -205,7 +218,8 @@ func Test_parse_ast(t *testing.T) {
 			src:  "x := k[1;2].m",
 			want: []statement{
 				declStmt{
-					ident: "x",
+					stmtBase: stmtBase{},
+					ident:    "x",
 					rhs: memberExpr{
 						member: "m",
 						recvr: indexExpr{
@@ -224,6 +238,7 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(#ffee44:0f)",
 			want: []statement{
 				logStmt{
+					stmtBase:   stmtBase{},
 					parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
 				},
 			},
@@ -254,9 +269,11 @@ func Test_parse_ast(t *testing.T) {
 			src:  "if true { log(1) }",
 			want: []statement{
 				ifStmt{
-					cond: Bool(true),
+					stmtBase: stmtBase{},
+					cond:     Bool(true),
 					trueStmts: []statement{
 						logStmt{
+							stmtBase:   stmtBase{},
 							parameters: []expression{Number(1)},
 						},
 					},
@@ -269,14 +286,17 @@ func Test_parse_ast(t *testing.T) {
 			src:  "if true { log(1) } else { log(2) }",
 			want: []statement{
 				ifStmt{
-					cond: Bool(true),
+					stmtBase: stmtBase{},
+					cond:     Bool(true),
 					trueStmts: []statement{
 						logStmt{
+							stmtBase:   stmtBase{},
 							parameters: []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
 						logStmt{
+							stmtBase:   stmtBase{},
 							parameters: []expression{Number(2)},
 						},
 					},
@@ -288,17 +308,21 @@ func Test_parse_ast(t *testing.T) {
 			src:  "if true { log(1) } else if false { log(2) }",
 			want: []statement{
 				ifStmt{
-					cond: Bool(true),
+					stmtBase: stmtBase{},
+					cond:     Bool(true),
 					trueStmts: []statement{
 						logStmt{
+							stmtBase:   stmtBase{},
 							parameters: []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
 						ifStmt{
-							cond: Bool(false),
+							stmtBase: stmtBase{},
+							cond:     Bool(false),
 							trueStmts: []statement{
 								logStmt{
+									stmtBase:   stmtBase{},
 									parameters: []expression{Number(2)},
 								},
 							},
@@ -313,22 +337,27 @@ func Test_parse_ast(t *testing.T) {
 			src:  "if true { log(1) } else if false { log(2) } else { log(3) }",
 			want: []statement{
 				ifStmt{
-					cond: Bool(true),
+					stmtBase: stmtBase{},
+					cond:     Bool(true),
 					trueStmts: []statement{
 						logStmt{
+							stmtBase:   stmtBase{},
 							parameters: []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
 						ifStmt{
-							cond: Bool(false),
+							stmtBase: stmtBase{},
+							cond:     Bool(false),
 							trueStmts: []statement{
 								logStmt{
+									stmtBase:   stmtBase{},
 									parameters: []expression{Number(2)},
 								},
 							},
 							falseStmts: []statement{
 								logStmt{
+									stmtBase:   stmtBase{},
 									parameters: []expression{Number(3)},
 								},
 							},
@@ -341,13 +370,13 @@ func Test_parse_ast(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, _ := lex(tt.src)
-			got, err := parse(tokens)
+			got, err := parse(tokens, true)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parse() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got.stmts, tt.want) {
-				t.Errorf("parse() = %#v, want %#v", got, tt.want)
+				t.Errorf("parse() = %#v, want %#v", got.stmts, tt.want)
 			}
 		})
 	}

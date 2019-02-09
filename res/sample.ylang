@@ -15,14 +15,11 @@ Gauss := [0 1 2 1 0
           1 2 4 2 1
           0 1 2 1 0]
 
-Median := [1 1 1 1 1
-           1 1 1 1 1
-           1 1 1 1 1
-           1 1 1 1 1
-           1 1 1 1 1]
+Median := kernel(5, 5, 1)
 MedianCenter := 2;2
 
 /////////////////// greyscale
+//
 for pos in Bounds {
     i := @pos.i
     @pos = rgb(i, i, i)
@@ -30,24 +27,24 @@ for pos in Bounds {
 commit
 
 /////////////////// smoothen
+//
 for pos in Bounds {
-    @pos = 123
     @pos = convolute(pos, Gauss)
 }
 commit
 
-/////////////////// sobel
-
-q0   := [0 0 0
+/////////////////// edge detection and non-maximum supression
+//
+Q0   := [0 0 0
          1 1 1
          0 0 0]
-q45  := [0 0 1
+Q45  := [0 0 1
          0 1 0
          1 0 0]
-q90  := [0 1 0
+Q90  := [0 1 0
          0 1 0
          0 1 0]
-q135 := [1 0 0
+Q135 := [1 0 0
          0 1 0
          0 0 1]
 
@@ -55,16 +52,16 @@ for pos in Bounds {
     sx := convolute(pos, SobelX)
     sy := convolute(pos, SobelY)
     mag := sqrt(sx.r * sx.r + sy.r * sy.r)
-    k := [0 0 0 0]
+    k := 0
     angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
-    if angle > 157.5 or angle <= 22.5 {
-        k = q90
-    } else if angle <= 67.5 {
-        k = q135
-    } else if angle <= 112.5 {
-        k = q0
-    } else if angle <= 157.5 {
-        k = q45
+    if angle >= 157.5 or angle < 22.5 {
+        k = Q90
+    } else if angle < 67.5 {
+        k = Q135
+    } else if angle < 112.5 {
+        k = Q0
+    } else if angle < 157.5 {
+        k = Q45
     }
     area := map_r(pos, k)
     if max(area) != area[4] {
@@ -74,6 +71,8 @@ for pos in Bounds {
 }
 commit
 
+/////////////////// hysteresis
+//
 Neighbours := [1 1 1
                1 1 1
                1 1 1]
