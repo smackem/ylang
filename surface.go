@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
 	"image/draw"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -16,8 +15,14 @@ import (
 )
 
 type surface struct {
-	source *image.NRGBA
-	target *image.NRGBA
+	source *ymage
+	target *ymage
+}
+
+type ymage struct {
+	pixels []lang.Color
+	width  int
+	height int
 }
 
 func loadSurface(reader io.Reader) (*surface, error) {
@@ -25,46 +30,47 @@ func loadSurface(reader io.Reader) (*surface, error) {
 	if err != nil {
 		return nil, err
 	}
-	target := &image.NRGBA{
-		Pix:    make([]byte, len(source.Pix)),
-		Rect:   source.Rect,
-		Stride: source.Stride,
+	target := &ymage{
+		pixels: make([]lang.Color, len(source.pixels)),
+		width:  source.width,
+		height: source.height,
 	}
 	return &surface{source, target}, nil
 }
 
 func (surf *surface) GetPixel(x int, y int) lang.Color {
-	nrgba := surf.source.NRGBAAt(x, y)
-	return lang.NewRgba(lang.Number(nrgba.R), lang.Number(nrgba.G), lang.Number(nrgba.B), lang.Number(nrgba.A))
+	return surf.source.pixels[y*surf.source.width+x]
 }
 
 func (surf *surface) SetPixel(x int, y int, col lang.Color) {
-	clamped := col.Clamp()
-	surf.target.SetNRGBA(x, y, color.NRGBA{
-		R: byte(clamped.R),
-		G: byte(clamped.G),
-		B: byte(clamped.B),
-		A: byte(clamped.A),
-	})
+	surf.target.pixels[y*surf.target.width+x] = col
 }
 
-func (surf *surface) Width() int {
-	return surf.source.Bounds().Dx()
+func (surf *surface) SourceWidth() int {
+	return surf.source.width
 }
 
-func (surf *surface) Height() int {
-	return surf.source.Bounds().Dy()
+func (surf *surface) SourceHeight() int {
+	return surf.source.height
+}
+
+func (surf *surface) TargetWidth() int {
+	return surf.target.width
+}
+
+func (surf *surface) TargetHeight() int {
+	return surf.target.height
 }
 
 func (surf *surface) Convolute(x, y, width, height int, kernel []lang.Number) lang.Color {
-	kernelSum := lang.Number(0.0)
-	r := lang.Number(0.0)
-	g := lang.Number(0.0)
-	b := lang.Number(0.0)
+	kernelSum := lang.Number(0)
+	r := lang.Number(0)
+	g := lang.Number(0)
+	b := lang.Number(0)
 	a := lang.Number(255)
 	kernelIndex := 0
-	w := surf.Width()
-	h := surf.Height()
+	w := surf.SourceWidth()
+	h := surf.SourceHeight()
 
 	for kernelY := 0; kernelY < width; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
@@ -72,14 +78,14 @@ func (surf *surface) Convolute(x, y, width, height int, kernel []lang.Number) la
 			sourceX := x - (width / 2) + kernelX
 			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
 				value := kernel[kernelIndex]
-				px := surf.source.NRGBAAt(sourceX, sourceY)
-				r += value * lang.Number(px.R)
-				g += value * lang.Number(px.G)
-				b += value * lang.Number(px.B)
+				px := surf.GetPixel(sourceX, sourceY)
+				r += value * px.R
+				g += value * px.G
+				b += value * px.B
 				kernelSum += value
 
 				if sourceX == x && sourceY == y {
-					a = lang.Number(px.A)
+					a = px.A
 				}
 			}
 			kernelIndex++
@@ -92,19 +98,19 @@ func (surf *surface) Convolute(x, y, width, height int, kernel []lang.Number) la
 	return lang.NewRgba(r/kernelSum, g/kernelSum, b/kernelSum, a)
 }
 
-func (surf *surface) mapChannel(x, y, width, height int, kernel []lang.Number, mapper func(color.NRGBA) byte) []lang.Number {
+func (surf *surface) mapChannel(x, y, width, height int, kernel []lang.Number, mapper func(lang.Color) lang.Number) []lang.Number {
 	result := make([]lang.Number, len(kernel))
 	kernelIndex := 0
-	w := surf.Width()
-	h := surf.Height()
+	w := surf.SourceWidth()
+	h := surf.SourceHeight()
 
 	for kernelY := 0; kernelY < width; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
 			sourceY := y - (width / 2) + kernelY
 			sourceX := x - (height / 2) + kernelX
 			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
-				px := surf.source.NRGBAAt(sourceX, sourceY)
-				result[kernelIndex] = kernel[kernelIndex] * lang.Number(mapper(px))
+				px := surf.GetPixel(sourceX, sourceY)
+				result[kernelIndex] = kernel[kernelIndex] * mapper(px)
 			}
 			kernelIndex++
 		}
@@ -113,69 +119,97 @@ func (surf *surface) mapChannel(x, y, width, height int, kernel []lang.Number, m
 }
 
 func (surf *surface) MapRed(x, y, radius, width int, kernel []lang.Number) []lang.Number {
-	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.R })
+	return surf.mapChannel(x, y, radius, width, kernel, func(px lang.Color) lang.Number { return px.R })
 }
 
 func (surf *surface) MapGreen(x, y, radius, width int, kernel []lang.Number) []lang.Number {
-	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.G })
+	return surf.mapChannel(x, y, radius, width, kernel, func(px lang.Color) lang.Number { return px.G })
 }
 
 func (surf *surface) MapBlue(x, y, radius, width int, kernel []lang.Number) []lang.Number {
-	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.B })
+	return surf.mapChannel(x, y, radius, width, kernel, func(px lang.Color) lang.Number { return px.B })
 }
 
 func (surf *surface) MapAlpha(x, y, radius, width int, kernel []lang.Number) []lang.Number {
-	return surf.mapChannel(x, y, radius, width, kernel, func(px color.NRGBA) byte { return px.A })
+	return surf.mapChannel(x, y, radius, width, kernel, func(px lang.Color) lang.Number { return px.A })
 }
 
 func (surf *surface) BltToTarget(x, y, width, height int) {
-	if width == surf.Width() && height == surf.Height() {
-		copy(surf.target.Pix, surf.source.Pix)
+	if width == surf.SourceWidth() && height == surf.SourceHeight() && surf.target.width == surf.source.width && surf.source.height == surf.target.height {
+		copy(surf.target.pixels, surf.source.pixels)
 	} else {
 		for iy := y; iy < height; iy++ {
 			for ix := x; ix < width; ix++ {
-				surf.target.SetNRGBA(ix, iy, surf.source.NRGBAAt(x, y))
+				index := iy*surf.target.width + ix
+				surf.target.pixels[index] = surf.source.pixels[index]
 			}
 		}
 	}
 }
 
 func (surf *surface) BltToSource(x, y, width, height int) {
-	if width == surf.Width() && height == surf.Height() {
-		copy(surf.source.Pix, surf.target.Pix)
+	if width == surf.SourceWidth() && height == surf.SourceHeight() && surf.target.width == surf.source.width && surf.source.height == surf.target.height {
+		copy(surf.source.pixels, surf.target.pixels)
 	} else {
 		for iy := y; iy < height; iy++ {
 			for ix := x; ix < width; ix++ {
-				surf.source.SetNRGBA(ix, iy, surf.target.NRGBAAt(x, y))
+				index := iy*surf.target.width + ix
+				surf.source.pixels[index] = surf.target.pixels[index]
 			}
 		}
 	}
 }
 
-func loadImage(reader io.Reader) (*image.NRGBA, error) {
+func loadImage(reader io.Reader) (*ymage, error) {
 	source, encoding, err := image.Decode(reader)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Printf("Image decoded as %s", encoding)
-
 	target := image.NewNRGBA(source.Bounds())
 	draw.Draw(target, target.Bounds(), source, image.Point{0, 0}, draw.Src)
 
-	return target, nil
+	byteCount := len(target.Pix)
+	pixels := make([]lang.Color, byteCount/4)
+	j := 0
+	for i := 0; i < byteCount; i += 4 {
+		pixels[j] = lang.NewRgba(
+			lang.Number(target.Pix[i+0]),
+			lang.Number(target.Pix[i+1]),
+			lang.Number(target.Pix[i+2]),
+			lang.Number(target.Pix[i+3]))
+		j++
+	}
+
+	return &ymage{
+		pixels: pixels,
+		width:  target.Rect.Dx(),
+		height: target.Rect.Dy(),
+	}, nil
 }
 
-func saveImage(img image.Image, targetPath string) error {
+func saveImage(ymg *ymage, targetPath string) error {
 	targetFile, err := os.Create(targetPath)
 	if err != nil {
 		return fmt.Errorf("error creating file %s: %s", targetPath, err)
 	}
 	defer targetFile.Close()
 
+	img := image.NewNRGBA(image.Rect(0, 0, ymg.width, ymg.height))
+	byteCount := len(img.Pix)
+	j := 0
+	for i := 0; i < byteCount; i += 4 {
+		rgba := ymg.pixels[j].Clamp()
+		img.Pix[i+0] = byte(rgba.R)
+		img.Pix[i+1] = byte(rgba.G)
+		img.Pix[i+2] = byte(rgba.B)
+		img.Pix[i+3] = byte(rgba.A)
+		j++
+	}
+
 	if err = png.Encode(targetFile, img); err != nil {
 		return fmt.Errorf("error encoding target image: %s", err)
 	}
-
 	return nil
 }

@@ -28,7 +28,7 @@ func (prog Program) Execute(bitmap BitmapContext) error {
 }
 
 // Number is the number type used by the interpreter
-type Number float64
+type Number float32
 
 // String is the string type used by the interpreter
 type String string
@@ -115,8 +115,10 @@ func (c Color) ScA() Number {
 type BitmapContext interface {
 	GetPixel(x int, y int) Color
 	SetPixel(x int, y int, color Color)
-	Width() int
-	Height() int
+	SourceWidth() int
+	SourceHeight() int
+	TargetWidth() int
+	TargetHeight() int
 	Convolute(x, y, width, height int, kernel []Number) Color
 	MapRed(x, y, width, height int, kernel []Number) []Number
 	MapGreen(x, y, width, height int, kernel []Number) []Number

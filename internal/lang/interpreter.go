@@ -30,9 +30,9 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir.newIdent("Transparent", NewRgba(255, 255, 255, 0))
 	ir.newIdent("Pi", Number(math.Pi))
 	if bitmap != nil {
-		ir.newIdent("Bounds", Rect{image.Point{0, 0}, image.Point{bitmap.Width(), bitmap.Height()}})
-		ir.newIdent("W", Number(bitmap.Width()))
-		ir.newIdent("H", Number(bitmap.Height()))
+		ir.newIdent("Bounds", Rect{image.Point{0, 0}, image.Point{bitmap.SourceWidth(), bitmap.SourceHeight()}})
+		ir.newIdent("W", Number(bitmap.SourceWidth()))
+		ir.newIdent("H", Number(bitmap.SourceHeight()))
 	}
 	ir.pushScope()
 	return ir
