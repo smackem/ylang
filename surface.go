@@ -160,6 +160,14 @@ func (surf *surface) BltToSource(x, y, width, height int) {
 	}
 }
 
+func (surf *surface) ResizeTarget(width, height int) {
+	surf.target = &ymage{
+		width:  width,
+		height: height,
+		pixels: make([]lang.Color, width*height),
+	}
+}
+
 func loadImage(reader io.Reader) (*ymage, error) {
 	source, encoding, err := image.Decode(reader)
 	if err != nil {

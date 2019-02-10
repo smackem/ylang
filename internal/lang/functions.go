@@ -113,6 +113,10 @@ var functions = map[string]functionDecl{
 		body:   invokeKernel,
 		params: []reflect.Type{numberType, numberType, numberType},
 	},
+	"resize": {
+		body:   invokeResize,
+		params: []reflect.Type{numberType, numberType},
+	},
 }
 
 func invokeRgb(ir *interpreter, params []value) (value, error) {
@@ -270,4 +274,13 @@ func invokeKernel(ir *interpreter, params []value) (value, error) {
 		values[i] = val
 	}
 	return kernel{width: int(width), height: int(height), values: values}, nil
+}
+
+func invokeResize(ir *interpreter, params []value) (value, error) {
+	width := params[0].(Number)
+	height := params[1].(Number)
+	ir.bitmap.ResizeTarget(int(width), int(height))
+	return Rect{
+		Max: image.Point{int(width), int(height)},
+	}, nil
 }

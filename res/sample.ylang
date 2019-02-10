@@ -94,3 +94,10 @@ for pos in Bounds {
     @pos = rgb(val, val, val)
 }
 commit
+
+/////////////////// Resize target
+//
+OutBounds := resize(200, 100)
+for pos in OutBounds {
+    @pos = rgb(pos.x % 255, pos.y % 255, 0)
+}

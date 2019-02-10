@@ -126,6 +126,7 @@ type BitmapContext interface {
 	MapAlpha(x, y, width, height int, kernel []Number) []Number
 	BltToTarget(x, y, width, height int)
 	BltToSource(x, y, width, height int)
+	ResizeTarget(width, height int)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
