@@ -6,16 +6,21 @@ StatementList:
     | Statement
 
 Statement:
-    | IDENT COLONEQ Expr
-    | IDENT EQ Expr
+    | IdentStatement
     | AT Atom EQ Expr
     | IfStatement
     | ForStatement
     | YIELD Expr
     | LOG LPAREN ParameterList RPAREN
+    | FunctionDefStatement
     | BLT LPAREN Expr RPAREN
-    | COMMIT LPAREN Expr RPAREN
-    | COMMIT
+    | CommitStatement
+    | RETURN Expr
+
+IdentStatement:
+    | IDENT COLONEQ Expr
+    | IDENT EQ Expr
+    | IDENT LBRACKET Expr RBRACKET EQ Expr
 
 IfStatement:
     | IF Expr LBRACE StatementList RBRACE
@@ -25,6 +30,13 @@ IfStatement:
 ForStatement:
     | FOR IDENT IN Expr LBRACE StatementList RBRACE
     | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
+
+FunctionDefStatement:
+    | DEF IDENT LPAREN ParameterListOpt RPAREN LBRACE StatementList RBRACE
+
+CommitStatement:
+    | COMMIT LPAREN Expr RPAREN
+    | COMMIT
 
 Expr:
     | Expr QMARK Expr COLON Expr

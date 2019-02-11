@@ -110,6 +110,29 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			return err
 		}
 
+	case indexedAssignStmt:
+		lval, ok := ir.findIdent(s.ident)
+		if !ok {
+			return fmt.Errorf("unkown identifier '%s'", s.ident)
+		}
+		ival, err := ir.visitExpr(s.index)
+		if err != nil {
+			return err
+		}
+		i, ok := ival.(Number)
+		if !ok {
+			return fmt.Errorf("expected numeric index expression")
+		}
+		rval, err := ir.visitExpr(s.rhs)
+		if err != nil {
+			return err
+		}
+		k, ok := lval.(kernel)
+		if !ok {
+			return fmt.Errorf("expected kernel expression")
+		}
+		k.values[int(i)] = rval.(Number)
+
 	case pixelAssignStmt:
 		left, err := ir.visitExpr(s.lhs)
 		if err != nil {

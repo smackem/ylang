@@ -137,6 +137,28 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "indexedAssign",
+			src:  "x[1] = 2",
+			want: []statement{
+				indexedAssignStmt{
+					stmtBase: stmtBase{},
+					ident:    "x",
+					index:    Number(1),
+					rhs:      Number(2),
+				},
+			},
+		},
+		{
+			name: "return",
+			src:  "return 100",
+			want: []statement{
+				returnStmt{
+					stmtBase: stmtBase{},
+					result:   Number(100),
+				},
+			},
+		},
+		{
 			name: "multiple_statements",
 			src:  "log(1) commit",
 			want: []statement{

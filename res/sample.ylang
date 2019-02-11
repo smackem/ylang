@@ -21,10 +21,35 @@ MedianCenter := 2;2
 /////////////////// greyscale
 //
 for pos in Bounds {
-    i := @pos.i
-    @pos = rgb(i, i, i)
+    @pos = White * @pos.i
 }
 commit
+
+//def tint(color) {
+//    for pos in Bounds {
+//        px := color * @pos.i
+//        @pos = px
+//    }
+//    commit
+//}
+//
+//def add(a, b) {
+//    return a + b
+//}
+//
+//tint(White)
+//log(add(100, 150))
+//
+//def colorDist(rc, f) {
+//    k := list(255, 0)
+//    for pos in rc {
+//        chan := f(@pos)
+//        k[chan] = k[chan] + 1
+//    }
+//    return k
+//}
+//
+//colorDist(Bounds, px -> px.r)
 
 /////////////////// smoothen
 //

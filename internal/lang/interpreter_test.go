@@ -174,6 +174,17 @@ func Test_interpret(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "indexed_assign",
+			src:  "k := list(1, 0) k[0] = 123",
+			want: scope{
+				"k": kernel{
+					width:  0,
+					height: 0,
+					values: []Number{123},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

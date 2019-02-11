@@ -101,6 +101,8 @@ func (p *parser) parseStmt() (stmt statement, err error) {
 		stmt, err = p.parseBlt()
 	case ttCommit:
 		stmt, err = p.parseCommit()
+	case ttReturn:
+		stmt, err = p.parseReturn()
 	default:
 		stmt, err = nil, fmt.Errorf("unexpected token at statement begin: '%s'", tok)
 	}
@@ -114,6 +116,8 @@ func (p *parser) parseIdentStmt(ident string) (statement, error) {
 		return p.parseDeclaration(ident)
 	case ttEq:
 		return p.parseAssign(ident)
+	case ttLBracket:
+		return p.parseIndexedAssign(ident)
 	}
 	return nil, fmt.Errorf("unexpected token '%s' - expected %s or %s", tok, tokenTypeNames[ttColonEq], tokenTypeNames[ttEq])
 }
@@ -135,6 +139,24 @@ func (p *parser) parseAssign(ident string) (statement, error) {
 		return nil, err
 	}
 	return assignStmt{p.makeStmtBase(), ident, rhs}, nil
+}
+
+func (p *parser) parseIndexedAssign(ident string) (statement, error) {
+	indexExpr, err := p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttRBracket); err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttEq); err != nil {
+		return nil, err
+	}
+	rhs, err := p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+	return indexedAssignStmt{p.makeStmtBase(), ident, indexExpr, rhs}, nil
 }
 
 func (p *parser) parsePixelAssign() (statement, error) {
@@ -306,6 +328,14 @@ func (p *parser) parseCommit() (statement, error) {
 		}
 	}
 	return commitStmt{p.makeStmtBase(), rect}, nil
+}
+
+func (p *parser) parseReturn() (statement, error) {
+	result, err := p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+	return returnStmt{p.makeStmtBase(), result}, nil
 }
 
 func (p *parser) parseExpr() (expression, error) {

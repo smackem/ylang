@@ -56,6 +56,9 @@ const (
 	ttLog
 	ttBlt
 	ttCommit
+	ttDef
+	ttReturn
+	ttArrow
 	ttEOF
 )
 
@@ -104,6 +107,9 @@ var tokenTypeNames = []string{
 	"log",
 	"blt",
 	"commit",
+	"def",
+	"return",
+	"->",
 	"eof",
 }
 
@@ -231,6 +237,8 @@ var keywordTokens = map[string]tokenType{
 	"log":    ttLog,
 	"blt":    ttBlt,
 	"commit": ttCommit,
+	"def":    ttDef,
+	"return": ttReturn,
 }
 
 func lookupKeyword(lexeme string) tokenType {
@@ -244,6 +252,7 @@ var matchers = []matcher{
 	makeMatcher(`\(`, func(string) tokenType { return ttLParen }),
 	makeMatcher(`\)`, func(string) tokenType { return ttRParen }),
 	makeMatcher(`\+`, func(string) tokenType { return ttPlus }),
+	makeMatcher(`\->`, func(string) tokenType { return ttArrow }),
 	makeMatcher(`\-`, func(string) tokenType { return ttMinus }),
 	makeMatcher(`\*`, func(string) tokenType { return ttStar }),
 	makeMatcher(`/`, func(string) tokenType { return ttSlash }),

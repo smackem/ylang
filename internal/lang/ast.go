@@ -34,6 +34,13 @@ type assignStmt struct {
 	rhs   expression
 }
 
+type indexedAssignStmt struct {
+	stmtBase
+	ident string
+	index expression
+	rhs   expression
+}
+
 type pixelAssignStmt struct {
 	stmtBase
 	lhs expression
@@ -80,6 +87,11 @@ type bltStmt struct {
 type commitStmt struct {
 	stmtBase
 	rect expression // nillable
+}
+
+type returnStmt struct {
+	stmtBase
+	result expression
 }
 
 //////////////////////////////////////////////// expressions
