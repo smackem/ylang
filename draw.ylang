@@ -1,0 +1,24 @@
+center := 200;200
+inner := 20
+len := 200
+deg2rad := 1/180/Pi
+
+for angle in 0 .. 360/15 {
+    radians := angle * 15 * deg2rad
+    pos1 := (center.x + sin(radians) * inner);(center.y + cos(radians) * inner)
+    pos2 := (center.x + sin(radians) * len);(center.y + cos(radians) * len)
+
+    dist := pos2 - pos1
+    steps := abs(dist.x) > abs(dist.y) ? abs(dist.x) : abs(dist.y)
+    dx := dist.x / steps
+    dy := dist.y / steps
+
+    x := pos1.x
+    y := pos1.y
+
+    for i in 0 .. steps {
+        @(x;y) = #FF0000
+        x = x + dx
+        y = y + dy
+    }
+}
