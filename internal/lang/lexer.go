@@ -56,9 +56,10 @@ const (
 	ttLog
 	ttBlt
 	ttCommit
-	ttDef
+	ttFn
 	ttReturn
 	ttArrow
+	ttNil
 	ttEOF
 )
 
@@ -107,9 +108,10 @@ var tokenTypeNames = []string{
 	"log",
 	"blt",
 	"commit",
-	"def",
+	"fn",
 	"return",
 	"->",
+	"nil",
 	"eof",
 }
 
@@ -237,8 +239,9 @@ var keywordTokens = map[string]tokenType{
 	"log":    ttLog,
 	"blt":    ttBlt,
 	"commit": ttCommit,
-	"def":    ttDef,
+	"fn":     ttFn,
 	"return": ttReturn,
+	"nil":    ttNil,
 }
 
 func lookupKeyword(lexeme string) tokenType {

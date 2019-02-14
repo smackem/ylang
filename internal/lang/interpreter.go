@@ -472,6 +472,9 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 	case Color:
 		return e, nil
 
+	case nil:
+		return nil, nil
+
 	case identExpr:
 		val, ok := ir.findIdent(string(e))
 		if !ok {

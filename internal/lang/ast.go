@@ -152,3 +152,7 @@ type invokeExpr struct {
 type kernelExpr struct {
 	elements []expression
 }
+type functionExpr struct {
+	parameterNames []string
+	body           []statement
+}

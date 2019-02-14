@@ -586,10 +586,14 @@ func (p *parser) parseAtom() (expression, error) {
 		return Bool(true), nil
 	case ttFalse:
 		return Bool(false), nil
+	case ttNil:
+		return nil, nil
 	case ttColor:
 		return tok.parseColor(), nil
 	case ttLBracket:
 		return p.parseKernelAtom()
+	case ttFn:
+		return p.parseFunctionDef()
 	}
 	return nil, fmt.Errorf("unexpected symbol '%s'", tok.Lexeme)
 }
@@ -648,4 +652,73 @@ func (p *parser) parseKernelAtom() (expression, error) {
 		}
 		elements = append(elements, element)
 	}
+}
+
+func (p *parser) parseFunctionDef() (expression, error) {
+	if _, err := p.expect(ttLParen); err != nil {
+		return nil, err
+	}
+	var parameterNames []string
+	var err error
+	if p.current().Type == ttRParen {
+		p.next()
+	} else {
+		parameterNames, err = p.parseIdentList()
+		if err != nil {
+			return nil, err
+		}
+		if _, err := p.expect(ttRParen); err != nil {
+			return nil, err
+		}
+	}
+
+	if p.current().Type == ttArrow {
+		p.next()
+		expr, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+		return functionExpr{
+			parameterNames: parameterNames,
+			body: []statement{
+				returnStmt{
+					stmtBase: p.makeStmtBase(),
+					result:   expr,
+				},
+			},
+		}, nil
+	}
+
+	if _, err := p.expect(ttLBrace); err != nil {
+		return nil, err
+	}
+	body, err := p.parseStmtList(ttRBrace)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttRBrace); err != nil {
+		return nil, err
+	}
+
+	return functionExpr{
+		parameterNames: parameterNames,
+		body:           body,
+	}, nil
+}
+
+func (p *parser) parseIdentList() ([]string, error) {
+	idents := []string{}
+	for {
+		tok, err := p.expect(ttIdent)
+		if err != nil {
+			return nil, err
+		}
+		idents = append(idents, tok.Lexeme)
+		if p.current().Type == ttComma {
+			p.next()
+		} else {
+			break
+		}
+	}
+	return idents, nil
 }

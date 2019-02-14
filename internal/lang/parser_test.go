@@ -149,6 +149,44 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "functionDecl",
+			src:  "f := fn(x) { return 1 }",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "f",
+					rhs: functionExpr{
+						parameterNames: []string{"x"},
+						body: []statement{
+							returnStmt{
+								stmtBase: stmtBase{},
+								result:   Number(1),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "functionDecl_Lambda",
+			src:  "f := fn() -> 5",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "f",
+					rhs: functionExpr{
+						parameterNames: nil,
+						body: []statement{
+							returnStmt{
+								stmtBase: stmtBase{},
+								result:   Number(5),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "return",
 			src:  "return 100",
 			want: []statement{

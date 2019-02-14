@@ -12,7 +12,6 @@ Statement:
     | ForStatement
     | YIELD Expr
     | LOG LPAREN ParameterList RPAREN
-    | FunctionDefStatement
     | BLT LPAREN Expr RPAREN
     | CommitStatement
     | RETURN Expr
@@ -30,9 +29,6 @@ IfStatement:
 ForStatement:
     | FOR IDENT IN Expr LBRACE StatementList RBRACE
     | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
-
-FunctionDefStatement:
-    | DEF IDENT LPAREN ParameterListOpt RPAREN LBRACE StatementList RBRACE
 
 CommitStatement:
     | COMMIT LPAREN Expr RPAREN
@@ -88,6 +84,7 @@ Atom:
     | FALSE
     | IDENT LPAREN ParameterListOpt RPAREN
     | LBRACKET MoleculeList RBRACKET
+    | FunctionDef
 
 ParameterListOpt:
     | ParameterList
@@ -96,3 +93,15 @@ ParameterListOpt:
 ParameterList:
     | Expr COMMA ParameterList
     | Expr
+
+FunctionDef:
+    | FN LPAREN IdentListOpt RPAREN LBRACKET StatementList RBRACKET
+    | FN LPAREN IdentListOpt RPAREN ARROW Expr
+
+IdentListOpt:
+    | IdentList
+    |
+
+IdentList:
+    | IDENT COMMA IdentList
+    | IDENT
