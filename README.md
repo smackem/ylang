@@ -11,5 +11,6 @@ ylang must be able to implement these algorithms:
 
 ## Roadmap
 * Web interface with CodeMirror as editor
+* Drawing language for creation of graphical images
 * Compile to intermediate language
 * Use WASM?
