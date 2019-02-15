@@ -11,7 +11,7 @@ func compileAndInterpret(src string) (scope, error) {
 	if err != nil {
 		return nil, err
 	}
-	program, err := parse(tokens, false)
+	program, err := parse(tokens, true)
 	if err != nil {
 		return nil, err
 	}
@@ -185,6 +185,38 @@ func Test_interpret(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "function_call",
+			src:  "f := fn() -> 123 ret := f()",
+			want: scope{
+				"f": functionExpr{
+					parameterNames: nil,
+					body: []statement{
+						returnStmt{
+							stmtBase: stmtBase{},
+							result:   Number(123),
+						},
+					},
+				},
+				"ret": Number(123),
+			},
+		},
+		{
+			name: "function_call_with_param",
+			src:  "f := fn(x) -> x ret := f(5)",
+			want: scope{
+				"f": functionExpr{
+					parameterNames: []string{"x"},
+					body: []statement{
+						returnStmt{
+							stmtBase: stmtBase{},
+							result:   identExpr("x"),
+						},
+					},
+				},
+				"ret": Number(5),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -194,7 +226,7 @@ func Test_interpret(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("compileAndInterpret() = %#v, want %#v", got, tt.want)
+				t.Errorf("compileAndInterpret() =\n%#v\nwant\n%#v", got, tt.want)
 			}
 		})
 	}

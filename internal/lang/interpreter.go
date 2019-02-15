@@ -9,15 +9,33 @@ import (
 )
 
 func interpret(program Program, bitmap BitmapContext) error {
-	return newInterpreter(bitmap).visitStmtList(program.stmts)
+	ir := newInterpreter(bitmap)
+	if err := ir.visitStmtList(program.stmts); err != nil {
+		if _, ok := err.(returnSignal); !ok { // return statement encountered
+			return err
+		}
+	}
+	return nil
 }
 
 type scope map[string]value
+type functionScope struct {
+	retval value
+}
 
 type interpreter struct {
-	idents []scope
-	bitmap BitmapContext
+	idents         []scope
+	bitmap         BitmapContext
+	functionScopes []functionScope
 }
+
+type returnSignal string
+
+func (rs returnSignal) Error() string {
+	return string(rs)
+}
+
+const returnSig returnSignal = returnSignal("RET")
 
 func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir := &interpreter{
@@ -44,6 +62,23 @@ func (ir *interpreter) pushScope() {
 
 func (ir *interpreter) popScope() {
 	ir.idents = ir.idents[:len(ir.idents)-1]
+}
+
+func (ir *interpreter) pushFunctionScope() {
+	ir.functionScopes = append(ir.functionScopes, functionScope{})
+	ir.pushScope()
+}
+
+func (ir *interpreter) popFunctionScope() {
+	ir.functionScopes = ir.functionScopes[:len(ir.functionScopes)-1]
+	ir.popScope()
+}
+
+func (ir *interpreter) getReturnValue() value {
+	if len(ir.functionScopes) <= 0 {
+		return nil
+	}
+	return ir.functionScopes[len(ir.functionScopes)-1].retval
 }
 
 func (ir interpreter) findIdent(ident string) (value, bool) {
@@ -79,6 +114,10 @@ func (ir *interpreter) assignIdent(ident string, val value) error {
 func (ir *interpreter) visitStmtList(stmts []statement) error {
 	for _, s := range stmts {
 		if err := ir.visitStmt(s); err != nil {
+			if _, ok := err.(returnSignal); ok { // return statement encountered
+				return err
+			}
+
 			tok := s.getToken()
 			return fmt.Errorf("line %d near '%s': %s", tok.LineNumber, tok.Lexeme, err)
 		}
@@ -152,6 +191,11 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		}
 		ir.bitmap.SetPixel(pos.X, pos.Y, color)
 
+	case invocationStmt:
+		if _, err := ir.visitExpr(s.invocation); err != nil {
+			return err
+		}
+
 	case ifStmt:
 		condVal, err := ir.visitExpr(s.cond)
 		if err != nil {
@@ -181,6 +225,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if !ok {
 			return fmt.Errorf("type mismatch: expected for ident in rect")
 		}
+		ir.assignIdent(lastRectIdent, rect)
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.ident, nil)
@@ -192,7 +237,6 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 				}
 			}
 		}
-		ir.assignIdent(lastRectIdent, rect)
 
 	case forRangeStmt:
 		lowerVal, err := ir.visitExpr(s.lower)
@@ -262,6 +306,17 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			return fmt.Errorf("type mismatch: commit expects rect")
 		}
 		ir.bitmap.BltToSource(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
+
+	case returnStmt:
+		if len(ir.functionScopes) <= 0 {
+			return fmt.Errorf("Cannot return a value from root level")
+		}
+		result, err := ir.visitExpr(s.result)
+		if err != nil {
+			return err
+		}
+		ir.functionScopes[len(ir.functionScopes)-1].retval = result
+		return returnSig
 	}
 
 	return nil
@@ -352,7 +407,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			if err != nil {
 				return nil, err
 			}
-			return Bool(!result.(Bool)), nil
+			return result.not()
 		})
 
 	case gtExpr:
@@ -523,23 +578,57 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			width:  rootOfLen,
 			height: rootOfLen,
 		}, nil
+
+	case functionExpr:
+		return e, nil
 	}
 
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))
 }
 
-func (ir *interpreter) invokeFunc(name string, values []value) (value, error) {
+func (ir *interpreter) invokeFunc(name string, arguments []value) (value, error) {
+	val, ok := ir.findIdent(name)
+	if ok {
+		return ir.invokeFunctionExpr(name, val, arguments)
+	}
+	return ir.invokeBuiltinFunction(name, arguments)
+}
+
+func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []value) (value, error) {
+	fn, ok := val.(functionExpr)
+	if !ok {
+		return nil, fmt.Errorf("%s is invoked like a function, but refers to a %s", name, reflect.TypeOf(val))
+	}
+	if len(arguments) != len(fn.parameterNames) {
+		return nil, fmt.Errorf("%s is invoked with %d arguments, but is declared with %d parameters", name, len(arguments), len(fn.parameterNames))
+	}
+
+	ir.pushFunctionScope()
+	defer ir.popFunctionScope()
+	for i, argument := range arguments {
+		ir.newIdent(fn.parameterNames[i], argument)
+	}
+
+	if err := ir.visitStmtList(fn.body); err != nil {
+		if _, ok := err.(returnSignal); !ok { // return statement encountered
+			return nil, err
+		}
+	}
+	return ir.getReturnValue(), nil
+}
+
+func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, error) {
 	f, ok := functions[name]
 	if !ok {
 		return nil, fmt.Errorf("unkown function '%s'", name)
 	}
-	if len(values) != len(f.params) {
-		return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(values))
+	if len(arguments) != len(f.params) {
+		return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
 	}
-	for i := 0; i < len(values); i++ {
-		if reflect.TypeOf(values[i]) != f.params[i] {
-			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, f.params[i].Name(), reflect.TypeOf(values[i]).Name())
+	for i := 0; i < len(arguments); i++ {
+		if reflect.TypeOf(arguments[i]) != f.params[i] {
+			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, f.params[i].Name(), reflect.TypeOf(arguments[i]).Name())
 		}
 	}
-	return f.body(ir, values)
+	return f.body(ir, arguments)
 }

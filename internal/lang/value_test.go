@@ -30,11 +30,10 @@ func TestNumber_equals(t *testing.T) {
 			want: Bool(false),
 		},
 		{
-			name:    "1=='x'",
-			n:       1,
-			args:    args{other: String("x")},
-			want:    Bool(false),
-			wantErr: true,
+			name: "1=='x'",
+			n:    1,
+			args: args{other: String("x")},
+			want: Bool(false),
 		},
 	}
 	for _, tt := range tests {
@@ -78,7 +77,7 @@ func TestNumber_greaterThan(t *testing.T) {
 			name:    "1>'x'",
 			n:       1,
 			args:    args{other: String("x")},
-			want:    Bool(false),
+			want:    nil,
 			wantErr: true,
 		},
 	}
@@ -129,7 +128,7 @@ func TestNumber_greaterThanOrEqual(t *testing.T) {
 			name:    "1>='x'",
 			n:       1,
 			args:    args{other: String("x")},
-			want:    Bool(false),
+			want:    nil,
 			wantErr: true,
 		},
 	}
@@ -174,7 +173,7 @@ func TestNumber_lessThan(t *testing.T) {
 			name:    "1<'x'",
 			n:       1,
 			args:    args{other: String("x")},
-			want:    Bool(false),
+			want:    nil,
 			wantErr: true,
 		},
 	}
@@ -225,7 +224,6 @@ func TestNumber_lessThanOrEqual(t *testing.T) {
 			name:    "1<='x'",
 			n:       1,
 			args:    args{other: String("x")},
-			want:    Bool(false),
 			wantErr: true,
 		},
 	}
@@ -501,11 +499,10 @@ func TestString_equals(t *testing.T) {
 			want: Bool(false),
 		},
 		{
-			name:    "abc==1",
-			s:       "abc",
-			args:    args{other: Number(1)},
-			want:    Bool(false),
-			wantErr: true,
+			name: "abc==1",
+			s:    "abc",
+			args: args{other: Number(1)},
+			want: Bool(false),
 		},
 	}
 	for _, tt := range tests {
@@ -578,11 +575,10 @@ func TestPosition_equals(t *testing.T) {
 			want: Bool(false),
 		},
 		{
-			name:    "1;2==100",
-			p:       Position{1, 2},
-			args:    args{other: Number(100)},
-			want:    Bool(false),
-			wantErr: true,
+			name: "1;2==100",
+			p:    Position{1, 2},
+			args: args{other: Number(100)},
+			want: Bool(false),
 		},
 	}
 	for _, tt := range tests {
@@ -848,10 +844,9 @@ func TestPosition_in(t *testing.T) {
 			want: Bool(false),
 		},
 		{
-			name:    "10;12 in rect(0;0, 10, 10)",
+			name:    "10;12 in number",
 			p:       Position{10, 12},
 			args:    args{other: Number(1)},
-			want:    Bool(false),
 			wantErr: true,
 		},
 	}

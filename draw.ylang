@@ -3,11 +3,17 @@ inner := 20
 len := 200
 deg2rad := 1/180/Pi
 
-for angle in 0 .. 360/15 {
-    radians := angle * 15 * deg2rad
-    pos1 := (center.x + sin(radians) * inner);(center.y + cos(radians) * inner)
-    pos2 := (center.x + sin(radians) * len);(center.y + cos(radians) * len)
+tint := fn(color) {
+    mul := fn(c, pos) -> c * @pos.sci
+    for pos in Bounds {
+        @pos = mul(color, pos)
+        if pos.y > 100 {
+            return nil
+        }
+    }
+}
 
+PlotLine := fn(pos1, pos2) {
     dist := pos2 - pos1
     steps := abs(dist.x) > abs(dist.y) ? abs(dist.x) : abs(dist.y)
     dx := dist.x / steps
@@ -17,8 +23,17 @@ for angle in 0 .. 360/15 {
     y := pos1.y
 
     for i in 0 .. steps {
-        @(x;y) = #FF0000
+        @(x;y) = #88FF00
         x = x + dx
         y = y + dy
     }
+}
+
+tint(White)
+
+for angle in 0 .. 360/15 {
+    radians := angle * 15 * deg2rad
+    pos1 := (center.x + sin(radians) * inner);(center.y + cos(radians) * inner)
+    pos2 := (center.x + sin(radians) * len);(center.y + cos(radians) * len)
+    PlotLine(pos1, pos2)
 }

@@ -20,6 +20,7 @@ IdentStatement:
     | IDENT COLONEQ Expr
     | IDENT EQ Expr
     | IDENT LBRACKET Expr RBRACKET EQ Expr
+    | IDENT LPAREN ParameterListOpt RPAREN
 
 IfStatement:
     | IF Expr LBRACE StatementList RBRACE
@@ -82,6 +83,7 @@ Atom:
     | COLOR
     | TRUE
     | FALSE
+    | NIL
     | IDENT LPAREN ParameterListOpt RPAREN
     | LBRACKET MoleculeList RBRACKET
     | FunctionDef

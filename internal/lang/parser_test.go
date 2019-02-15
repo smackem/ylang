@@ -304,6 +304,20 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "function_without_params",
+			src:  "log(fun())",
+			want: []statement{
+				logStmt{
+					parameters: []expression{
+						invokeExpr{
+							funcName:   "fun",
+							parameters: nil,
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "functions",
 			src:  "log(sort(map_b(1)))",
 			want: []statement{

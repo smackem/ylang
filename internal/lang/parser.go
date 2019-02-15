@@ -118,8 +118,18 @@ func (p *parser) parseIdentStmt(ident string) (statement, error) {
 		return p.parseAssign(ident)
 	case ttLBracket:
 		return p.parseIndexedAssign(ident)
+	case ttLParen:
+		return p.parseInvocation(ident)
 	}
 	return nil, fmt.Errorf("unexpected token '%s' - expected %s or %s", tok, tokenTypeNames[ttColonEq], tokenTypeNames[ttEq])
+}
+
+func (p *parser) parseInvocation(ident string) (statement, error) {
+	invocation, err := p.parseInvocationAtom(ident)
+	if err != nil {
+		return nil, err
+	}
+	return invocationStmt{p.makeStmtBase(), invocation}, nil
 }
 
 func (p *parser) parseDeclaration(ident string) (statement, error) {
@@ -620,16 +630,26 @@ func (p *parser) parseAtAtom() (expression, error) {
 func (p *parser) parseIdentAtom(ident string) (expression, error) {
 	if p.current().Type == ttLParen {
 		p.next()
-		parameters, err := p.parseParameterList()
+		return p.parseInvocationAtom(ident)
+	}
+	return identExpr(ident), nil
+}
+
+func (p *parser) parseInvocationAtom(ident string) (expression, error) {
+	var parameters []expression
+	var err error
+	if p.current().Type == ttRParen {
+		parameters = nil
+	} else {
+		parameters, err = p.parseParameterList()
 		if err != nil {
 			return nil, err
 		}
-		if _, err := p.expect(ttRParen); err != nil {
-			return nil, err
-		}
-		return invokeExpr{funcName: ident, parameters: parameters}, nil
 	}
-	return identExpr(ident), nil
+	if _, err := p.expect(ttRParen); err != nil {
+		return nil, err
+	}
+	return invokeExpr{funcName: ident, parameters: parameters}, nil
 }
 
 func (p *parser) parseKernelAtom() (expression, error) {

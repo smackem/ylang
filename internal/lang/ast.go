@@ -47,6 +47,11 @@ type pixelAssignStmt struct {
 	rhs expression
 }
 
+type invocationStmt struct {
+	stmtBase
+	invocation expression
+}
+
 type ifStmt struct {
 	stmtBase
 	cond       expression
