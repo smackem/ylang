@@ -21,7 +21,7 @@ MedianCenter := 2;2
 /////////////////// greyscale
 //
 for pos in Bounds {
-    @pos = White * @pos.i
+    @pos = White * @pos.sci
 }
 commit
 

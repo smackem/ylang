@@ -1,0 +1,29 @@
+SobelX := [-1  0  1
+           -2  0  2
+           -1  0  1]
+SobelY := [ 1  2  1
+            0  0  0
+           -1 -2 -1]
+
+for pos in Bounds {
+    @pos = @pos.sci * White
+}
+commit
+
+for pos in Bounds {
+    sx := convolute(pos, SobelX)
+    sy := convolute(pos, SobelY)
+    mag := sqrt(sx.r * sx.r + sy.r * sy.r)
+    color := nil
+    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
+    if angle >= 157.5 or angle < 22.5 {
+        color = #ff0000 // 0 - red
+    } else if angle < 67.5 {
+        color = #00ff00 // 45 - green
+    } else if angle < 112.5 {
+        color = #0000ff // 90 - blue
+    } else if angle < 157.5 {
+        color = #ffff00 // 135 - yellow
+    }
+    @pos = color * mag/255
+}
