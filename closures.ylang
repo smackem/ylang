@@ -1,0 +1,15 @@
+outer := 1
+Test := fn(t) {
+    captured := 120 
+    f := fn(x) -> fn(y) -> x + y + captured + outer + t
+    ff := f(100)
+    log(ff(150))
+}
+Test2 := fn(tt) {
+    captured := 4534.534534 // must not override ident "captured" in closure
+    Test(tt)
+}
+Test2(3) // should print 374
+outer = 2
+Test2(3) // should print 375
+Test2(4) // should print 376

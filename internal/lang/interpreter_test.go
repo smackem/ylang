@@ -189,7 +189,7 @@ func Test_interpret(t *testing.T) {
 			name: "function_call",
 			src:  "f := fn() -> 123 ret := f()",
 			want: scope{
-				"f": functionExpr{
+				"f": function{
 					parameterNames: nil,
 					body: []statement{
 						returnStmt{
@@ -197,6 +197,7 @@ func Test_interpret(t *testing.T) {
 							result:   Number(123),
 						},
 					},
+					closure: []scope{},
 				},
 				"ret": Number(123),
 			},
@@ -205,7 +206,7 @@ func Test_interpret(t *testing.T) {
 			name: "function_call_with_param",
 			src:  "f := fn(x) -> x ret := f(5)",
 			want: scope{
-				"f": functionExpr{
+				"f": function{
 					parameterNames: []string{"x"},
 					body: []statement{
 						returnStmt{
@@ -213,6 +214,7 @@ func Test_interpret(t *testing.T) {
 							result:   identExpr("x"),
 						},
 					},
+					closure: []scope{},
 				},
 				"ret": Number(5),
 			},
@@ -230,4 +232,12 @@ func Test_interpret(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_newInterpreter(t *testing.T) {
+	t.Run("scopeCount", func(t *testing.T) {
+		if got := newInterpreter(nil); len(got.idents) != initialScopeCount {
+			t.Errorf("interpreter initial scope count = %v, want %v", len(got.idents), initialScopeCount)
+		}
+	})
 }

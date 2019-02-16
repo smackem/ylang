@@ -36,6 +36,7 @@ func (rs returnSignal) Error() string {
 }
 
 const returnSig returnSignal = returnSignal("RET")
+const initialScopeCount int = 2
 
 func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir := &interpreter{
@@ -64,14 +65,17 @@ func (ir *interpreter) popScope() {
 	ir.idents = ir.idents[:len(ir.idents)-1]
 }
 
-func (ir *interpreter) pushFunctionScope() {
+func (ir *interpreter) pushFunctionScope(closure []scope) int {
 	ir.functionScopes = append(ir.functionScopes, functionScope{})
+	prevScopeCount := len(ir.idents)
+	ir.idents = append(ir.idents, closure...)
 	ir.pushScope()
+	return prevScopeCount
 }
 
-func (ir *interpreter) popFunctionScope() {
+func (ir *interpreter) popFunctionScope(scopeCount int) {
 	ir.functionScopes = ir.functionScopes[:len(ir.functionScopes)-1]
-	ir.popScope()
+	ir.idents = ir.idents[:scopeCount]
 }
 
 func (ir *interpreter) getReturnValue() value {
@@ -580,7 +584,11 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		}, nil
 
 	case functionExpr:
-		return e, nil
+		return function{
+			parameterNames: e.parameterNames,
+			body:           e.body,
+			closure:        ir.idents[2:], // omit constants and top scope - they are visible in any context
+		}, nil
 	}
 
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))
@@ -595,7 +603,7 @@ func (ir *interpreter) invokeFunc(name string, arguments []value) (value, error)
 }
 
 func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []value) (value, error) {
-	fn, ok := val.(functionExpr)
+	fn, ok := val.(function)
 	if !ok {
 		return nil, fmt.Errorf("%s is invoked like a function, but refers to a %s", name, reflect.TypeOf(val))
 	}
@@ -603,8 +611,8 @@ func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []va
 		return nil, fmt.Errorf("%s is invoked with %d arguments, but is declared with %d parameters", name, len(arguments), len(fn.parameterNames))
 	}
 
-	ir.pushFunctionScope()
-	defer ir.popFunctionScope()
+	prevScopeCount := ir.pushFunctionScope(fn.closure)
+	defer ir.popFunctionScope(prevScopeCount)
 	for i, argument := range arguments {
 		ir.newIdent(fn.parameterNames[i], argument)
 	}
