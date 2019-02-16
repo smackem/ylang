@@ -466,30 +466,33 @@ func (p *parser) parseTermExpr() (expression, error) {
 		return nil, err
 	}
 
-	switch p.current().Type {
-	case ttPlus:
-		p.next()
-		right, err := p.parseTermExpr()
-		if err != nil {
-			return nil, err
+	for {
+		switch p.current().Type {
+		case ttPlus:
+			p.next()
+			right, err := p.parseProductExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = addExpr{left, right}
+		case ttMinus:
+			p.next()
+			right, err := p.parseProductExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = subExpr{left, right}
+		case ttIn:
+			p.next()
+			right, err := p.parseProductExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = inExpr{left, right}
+		default:
+			return left, nil
 		}
-		return addExpr{left, right}, nil
-	case ttMinus:
-		p.next()
-		right, err := p.parseTermExpr()
-		if err != nil {
-			return nil, err
-		}
-		return subExpr{left, right}, nil
-	case ttIn:
-		p.next()
-		right, err := p.parseTermExpr()
-		if err != nil {
-			return nil, err
-		}
-		return inExpr{left, right}, nil
 	}
-	return left, nil
 }
 
 func (p *parser) parseProductExpr() (expression, error) {
@@ -498,30 +501,33 @@ func (p *parser) parseProductExpr() (expression, error) {
 		return nil, err
 	}
 
-	switch p.current().Type {
-	case ttStar:
-		p.next()
-		right, err := p.parseProductExpr()
-		if err != nil {
-			return nil, err
+	for {
+		switch p.current().Type {
+		case ttStar:
+			p.next()
+			right, err := p.parseMoleculeExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = mulExpr{left, right}
+		case ttSlash:
+			p.next()
+			right, err := p.parseMoleculeExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = divExpr{left, right}
+		case ttPercent:
+			p.next()
+			right, err := p.parseMoleculeExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = modExpr{left, right}
+		default:
+			return left, nil
 		}
-		return mulExpr{left, right}, nil
-	case ttSlash:
-		p.next()
-		right, err := p.parseProductExpr()
-		if err != nil {
-			return nil, err
-		}
-		return divExpr{left, right}, nil
-	case ttPercent:
-		p.next()
-		right, err := p.parseProductExpr()
-		if err != nil {
-			return nil, err
-		}
-		return modExpr{left, right}, nil
 	}
-	return left, nil
 }
 
 func (p *parser) parseMoleculeExpr() (expression, error) {

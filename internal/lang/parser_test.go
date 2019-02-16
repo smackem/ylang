@@ -294,6 +294,40 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "term",
+			src:  "x := 1 + 3 - 2",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "x",
+					rhs: subExpr{
+						left: addExpr{
+							left:  Number(1),
+							right: Number(3),
+						},
+						right: Number(2),
+					},
+				},
+			},
+		},
+		{
+			name: "product",
+			src:  "x := 16 / 4 * 2",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "x",
+					rhs: mulExpr{
+						left: divExpr{
+							left:  Number(16),
+							right: Number(4),
+						},
+						right: Number(2),
+					},
+				},
+			},
+		},
+		{
 			name: "color_literal",
 			src:  "log(#ffee44:0f)",
 			want: []statement{
@@ -450,7 +484,7 @@ func Test_parse_ast(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got.stmts, tt.want) {
-				t.Errorf("parse() = %#v, want %#v", got.stmts, tt.want)
+				t.Errorf("parse() =\n%#v\nwant\n%#v", got.stmts, tt.want)
 			}
 		})
 	}

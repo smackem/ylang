@@ -18,9 +18,9 @@ drawColorDist := fn() {
 
     OutBounds := resize(255, 100)
     for x in 0 .. OutBounds.w {
-        r := (rs[x] / rmax) * 255
-        g := (gs[x] / gmax) * 255
-        b := (bs[x] / bmax) * 255
+        r := rs[x] / rmax * 255
+        g := gs[x] / gmax * 255
+        b := bs[x] / bmax * 255
         color := rgb(r, g, b)
         for y in 0 .. OutBounds.h {
             @(x;y) = color

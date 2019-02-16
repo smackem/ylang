@@ -41,7 +41,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "multi_declaration",
-			src:  "x := 1 x := 2",
+			src: `x := 1
+			      x := 2`,
 			want: scope{
 				"x": Number(2),
 			},
@@ -55,7 +56,12 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "colors",
-			src:  "c1 := rgb(1,2,3) c2 := rgba(1,2,3,4) r := c1.r g := c1.g b := c1.b a := c1.a",
+			src: `c1 := rgb(1,2,3)
+				  c2 := rgba(1,2,3,4)
+				  r := c1.r
+				  g := c1.g
+				  b := c1.b
+				  a := c1.a`,
 			want: scope{
 				"c1": NewRgba(1, 2, 3, 255),
 				"c2": NewRgba(1, 2, 3, 4),
@@ -67,7 +73,12 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "scolors",
-			src:  "c1 := srgb(1,2,3) c2 := srgba(1,2,3,4) scr := c1.scr scg := c1.scg scb := c1.scb sca := c1.sca",
+			src: `c1 := srgb(1,2,3)
+				  c2 := srgba(1,2,3,4)
+				  scr := c1.scr
+				  scg := c1.scg
+				  scb := c1.scb
+				  sca := c1.sca`,
 			want: scope{
 				"c1":  NewSrgba(1, 2, 3, 1),
 				"c2":  NewSrgba(1, 2, 3, 4),
@@ -93,28 +104,32 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "if_else",
-			src:  "x := 0 if true { x = 1 } else { x = 2 }",
+			src: `x := 0
+			      if true { x = 1 } else { x = 2 }`,
 			want: scope{
 				"x": Number(1),
 			},
 		},
 		{
 			name: "if_else_2",
-			src:  "x := 0 if false { x = 1 } else { x = 2 }",
+			src: `x := 0
+			      if false { x = 1 } else { x = 2 }`,
 			want: scope{
 				"x": Number(2),
 			},
 		},
 		{
 			name: "for",
-			src:  "p := 0 for pos in rect(0,0,1,1) { p = pos }",
+			src: `p := 0
+			      for pos in rect(0,0,1,1) { p = pos }`,
 			want: scope{
 				"p": Position{0, 0},
 			},
 		},
 		{
 			name: "for_2",
-			src:  "p := 0 for pos in rect(0,0,2,2) { p = pos }",
+			src: `p := 0
+			      for pos in rect(0,0,2,2) { p = pos }`,
 			want: scope{
 				"p": Position{1, 1},
 			},
@@ -146,7 +161,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "min_max",
-			src:  "min := min([4 1 3 2]) max := max([4 1 3 2])",
+			src: `min := min([4 1 3 2])
+			      max := max([4 1 3 2])`,
 			want: scope{
 				"min": Number(1),
 				"max": Number(4),
@@ -176,7 +192,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "indexed_assign",
-			src:  "k := list(1, 0) k[0] = 123",
+			src: `k := list(1, 0)
+			      k[0] = 123`,
 			want: scope{
 				"k": kernel{
 					width:  0,
@@ -187,7 +204,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "function_call",
-			src:  "f := fn() -> 123 ret := f()",
+			src: `f := fn() -> 123
+			      ret := f()`,
 			want: scope{
 				"f": function{
 					parameterNames: nil,
@@ -204,7 +222,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "function_call_with_param",
-			src:  "f := fn(x) -> x ret := f(5)",
+			src: `f := fn(x) -> x
+			      ret := f(5)`,
 			want: scope{
 				"f": function{
 					parameterNames: []string{"x"},
@@ -217,6 +236,19 @@ func Test_interpret(t *testing.T) {
 					closure: []scope{},
 				},
 				"ret": Number(5),
+			},
+		},
+		{
+			name: "scopes",
+			src: `x := 1
+				  y := 1
+				  if true {
+					 x = 2
+					 y := 2
+				  }`,
+			want: scope{
+				"x": Number(2),
+				"y": Number(1),
 			},
 		},
 	}
