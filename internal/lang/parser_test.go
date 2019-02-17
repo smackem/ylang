@@ -328,6 +328,27 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "members",
+			src:  "log(x.member1.member2.member3)",
+			want: []statement{
+				logStmt{
+					stmtBase: stmtBase{},
+					parameters: []expression{
+						memberExpr{
+							member: "member3",
+							recvr: memberExpr{
+								member: "member2",
+								recvr: memberExpr{
+									member: "member1",
+									recvr:  identExpr("x"),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "color_literal",
 			src:  "log(#ffee44:0f)",
 			want: []statement{

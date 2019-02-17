@@ -2,6 +2,7 @@ package lang
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 )
 
@@ -22,6 +23,7 @@ type value interface {
 	at(bitmap BitmapContext) (value, error)
 	property(ident string) (value, error)
 	printStr() string
+	iterate(visit func(value) error) error
 }
 
 var falseVal = Bool(false)
@@ -119,6 +121,14 @@ func (n Number) mod(other value) (value, error) {
 }
 
 func (n Number) in(other value) (value, error) {
+	if k, ok := other.(kernel); ok {
+		for _, kn := range k.values {
+			if kn == n {
+				return Bool(true), nil
+			}
+		}
+		return falseVal, nil
+	}
 	return nil, fmt.Errorf("type mismatch: 'number in %s' not supported", reflect.TypeOf(other))
 }
 
@@ -140,6 +150,10 @@ func (n Number) property(ident string) (value, error) {
 
 func (n Number) printStr() string {
 	return fmt.Sprintf("%f", n)
+}
+
+func (n Number) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over number")
 }
 
 //////////////////////////////////////////// string
@@ -209,6 +223,10 @@ func (s String) property(ident string) (value, error) {
 
 func (s String) printStr() string {
 	return string(s)
+}
+
+func (s String) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over string")
 }
 
 //////////////////////////////////////////// lang.Position
@@ -317,6 +335,10 @@ func (p Position) property(ident string) (value, error) {
 
 func (p Position) printStr() string {
 	return fmt.Sprintf("%d;%d", p.X, p.Y)
+}
+
+func (p Position) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over position")
 }
 
 //////////////////////////////////////////// lang.Color
@@ -440,6 +462,10 @@ func (c Color) printStr() string {
 	return fmt.Sprintf("%f:%f:%f@%f", c.R, c.G, c.B, c.A)
 }
 
+func (c Color) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over color")
+}
+
 //////////////////////////////////////////// lang.Rect
 
 func (rect Rect) equals(other value) (value, error) {
@@ -510,9 +536,9 @@ func (rect Rect) property(ident string) (value, error) {
 		return Number(rect.Min.X), nil
 	case "y", "top":
 		return Number(rect.Min.Y), nil
-	case "w":
+	case "w", "width":
 		return Number(rect.Max.X - rect.Min.X), nil
-	case "h":
+	case "h", "height":
 		return Number(rect.Max.Y - rect.Min.Y), nil
 	case "right":
 		return Number(rect.Max.X), nil
@@ -524,6 +550,17 @@ func (rect Rect) property(ident string) (value, error) {
 
 func (rect Rect) printStr() string {
 	return fmt.Sprintf("rect(x:%d, y:%d, w:%d, h:%d)", rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
+}
+
+func (rect Rect) iterate(visit func(value) error) error {
+	for y := rect.Min.Y; y < rect.Max.Y; y++ {
+		for x := rect.Min.X; x < rect.Max.X; x++ {
+			if err := visit(Position{x, y}); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 //////////////////////////////////////////// lang.Kernel(radius, length, values)
@@ -609,6 +646,15 @@ func (k kernel) printStr() string {
 	return fmt.Sprintf("kernel(width: %d, height: %d)", k.width, k.height)
 }
 
+func (k kernel) iterate(visit func(value) error) error {
+	for _, v := range k.values {
+		if err := visit(v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 //////////////////////////////////////////// Bool
 
 func (b Bool) equals(other value) (value, error) {
@@ -681,6 +727,10 @@ func (b Bool) printStr() string {
 	return "false"
 }
 
+func (b Bool) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over bool")
+}
+
 //////////////////////////////////////////// functionExpr
 
 type function struct {
@@ -751,4 +801,122 @@ func (f function) property(ident string) (value, error) {
 
 func (f function) printStr() string {
 	return fmt.Sprintf("fn(%v) {...}", f.parameterNames)
+}
+
+func (f function) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over function")
+}
+
+//////////////////////////////////////////// line
+
+type line struct {
+	point1 Position
+	point2 Position
+}
+
+func (l line) equals(other value) (value, error) {
+	if r, ok := other.(line); ok {
+		return Bool(l == r), nil
+	}
+	return falseVal, nil
+}
+
+func (l line) greaterThan(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line > %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) greaterThanOrEqual(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line >= %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) lessThan(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line < %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) lessThanOrEqual(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line <= %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) add(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line + %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) sub(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line - %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) mul(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line * %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) div(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line / %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) mod(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line %% %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) in(other value) (value, error) {
+	if r, ok := other.(Rect); ok {
+		p1, _ := l.point1.in(r)
+		p2, _ := l.point2.in(r)
+		return Bool(p1.(Bool) && p2.(Bool)), nil
+	}
+	return nil, fmt.Errorf("type mismatch: line in %s not supported", reflect.TypeOf(other))
+}
+
+func (l line) neg() (value, error) {
+	return line{point1: l.point2, point2: l.point1}, nil
+}
+
+func (l line) not() (value, error) {
+	return nil, fmt.Errorf("type mismatch: 'not line' not supported")
+}
+
+func (l line) at(bitmap BitmapContext) (value, error) {
+	return nil, fmt.Errorf("type mismatch: @line not supported")
+}
+
+func (l line) property(ident string) (value, error) {
+	switch ident {
+	case "p1", "point1":
+		return l.point1, nil
+	case "p2", "point2":
+		return l.point1, nil
+	case "len":
+		dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
+		return Number(math.Sqrt(float64(dx*dx + dy*dy))), nil
+	}
+	return nil, fmt.Errorf("unknown property 'rect.%s'", ident)
+}
+
+func (l line) printStr() string {
+	return fmt.Sprintf("line(point1:%v, point2:%v)", l.point1, l.point2)
+}
+
+func (l line) iterate(visit func(value) error) error {
+	dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
+	dxabs := math.Abs(float64(dx))
+	dyabs := math.Abs(float64(dy))
+	var steps int
+	if dxabs > dyabs {
+		steps = int(dxabs)
+	} else {
+		steps = int(dyabs)
+	}
+	dx = dx / steps
+	dy = dy / steps
+
+	x := l.point1.X
+	y := l.point1.Y
+
+	for i := 0; i < steps; i++ {
+		if err := visit(Position{x, y}); err != nil {
+			return err
+		}
+		x = x + dx
+		y = y + dy
+	}
+	return nil
 }

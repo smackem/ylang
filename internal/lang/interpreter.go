@@ -226,21 +226,19 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			return err
 		}
 		rect, ok := collVal.(Rect)
-		if !ok {
-			return fmt.Errorf("type mismatch: expected for ident in rect")
+		if ok {
+			ir.assignIdent(lastRectIdent, rect)
 		}
-		ir.assignIdent(lastRectIdent, rect)
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.ident, nil)
-		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			for x := rect.Min.X; x < rect.Max.X; x++ {
-				ir.assignIdent(s.ident, Position{x, y})
-				if err := ir.visitStmtList(s.stmts); err != nil {
-					return err
-				}
+		collVal.iterate(func(val value) error {
+			ir.assignIdent(s.ident, val)
+			if err := ir.visitStmtList(s.stmts); err != nil {
+				return err
 			}
-		}
+			return nil
+		})
 
 	case forRangeStmt:
 		lowerVal, err := ir.visitExpr(s.lower)
