@@ -117,6 +117,10 @@ var functions = map[string]functionDecl{
 		body:   invokeResize,
 		params: []reflect.Type{numberType, numberType},
 	},
+	"line": {
+		body:   invokeLine,
+		params: []reflect.Type{positionType, positionType},
+	},
 }
 
 func invokeRgb(ir *interpreter, params []value) (value, error) {
@@ -283,4 +287,9 @@ func invokeResize(ir *interpreter, params []value) (value, error) {
 	return Rect{
 		Max: image.Point{int(width), int(height)},
 	}, nil
+}
+
+func invokeLine(ir *interpreter, params []value) (value, error) {
+	point1, point2 := params[0].(Position), params[1].(Position)
+	return line{point1, point2}, nil
 }

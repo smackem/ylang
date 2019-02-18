@@ -896,23 +896,22 @@ func (l line) printStr() string {
 }
 
 func (l line) iterate(visit func(value) error) error {
-	dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
-	dxabs := math.Abs(float64(dx))
-	dyabs := math.Abs(float64(dy))
+	dx, dy := Number(l.point2.X-l.point1.X), Number(l.point2.Y-l.point1.Y)
+	dxabs, dyabs := math.Abs(float64(dx)), math.Abs(float64(dy))
+
 	var steps int
 	if dxabs > dyabs {
 		steps = int(dxabs)
 	} else {
 		steps = int(dyabs)
 	}
-	dx = dx / steps
-	dy = dy / steps
 
-	x := l.point1.X
-	y := l.point1.Y
+	stepsN := Number(steps)
+	dx, dy = dx/stepsN, dy/stepsN
+	x, y := Number(l.point1.X), Number(l.point1.Y)
 
 	for i := 0; i < steps; i++ {
-		if err := visit(Position{x, y}); err != nil {
+		if err := visit(Position{int(x + 0.5), int(y + 0.5)}); err != nil {
 			return err
 		}
 		x = x + dx
