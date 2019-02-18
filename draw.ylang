@@ -30,9 +30,9 @@ for pos in OutBounds {
     @pos = Black
 }
 
-for angle in 0 .. 360/15 {
-    radians := angle * 15 * Deg2Rad
-    log(angle * 15, " ", radians)
+for angle in 0 .. 15 .. 360 {
+    radians := angle * Deg2Rad
+    log(angle, " ", radians)
     pos1 := (Center.x + sin(radians) * Inner); (Center.y + cos(radians) * Inner)
     pos2 := (Center.x + sin(radians) * Radius); (Center.y + cos(radians) * Radius)
     PlotLine(pos1, pos2)

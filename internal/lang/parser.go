@@ -248,11 +248,23 @@ func (p *parser) parseFor() (statement, error) {
 	}
 
 	var upper expression
+	var step expression
 	if p.current().Type == ttDotDot {
 		p.next()
 		upper, err = p.parseExpr()
 		if err != nil {
 			return nil, err
+		}
+
+		if p.current().Type == ttDotDot {
+			p.next()
+			step = upper
+			upper, err = p.parseExpr()
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			step = Number(1)
 		}
 	}
 
@@ -268,7 +280,7 @@ func (p *parser) parseFor() (statement, error) {
 	}
 
 	if upper != nil {
-		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, stmts: stmts}, nil
+		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, step: step, stmts: stmts}, nil
 	}
 	return forStmt{p.makeStmtBase(), identTok.Lexeme, collection, stmts}, nil
 }

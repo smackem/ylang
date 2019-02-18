@@ -7,25 +7,25 @@ colorDist := fn(rc, f) {
     return k
 }
 
-drawColorDist := fn() {
-    rs := colorDist(Bounds, fn(px) -> px.r)
-    gs := colorDist(Bounds, fn(px) -> px.g)
-    bs := colorDist(Bounds, fn(px) -> px.b)
-    rmax := max(rs)
-    gmax := max(gs)
-    bmax := max(bs)
-    log("rmax:", rmax, "gmax:", gmax, "bmax:", bmax)
-
-    OutBounds := resize(255, 100)
-    for x in 0 .. OutBounds.w {
-        r := rs[x] / rmax * 255
-        g := gs[x] / gmax * 255
-        b := bs[x] / bmax * 255
-        color := rgb(r, g, b)
-        for y in 0 .. OutBounds.h {
-            @(x;y) = color
-        }
+drawVerticalLine := fn(x, height) {
+    for y in 0 .. height {
+        @(x;y) = color
     }
 }
 
-drawColorDist()
+rs := colorDist(Bounds, fn(px) -> px.r)
+gs := colorDist(Bounds, fn(px) -> px.g)
+bs := colorDist(Bounds, fn(px) -> px.b)
+rmax := max(rs)
+gmax := max(gs)
+bmax := max(bs)
+log("rmax:", rmax, "gmax:", gmax, "bmax:", bmax)
+
+OutBounds := resize(255, 100)
+for x in 0 .. OutBounds.width {
+    r := rs[x] / rmax * 255
+    g := gs[x] / gmax * 255
+    b := bs[x] / bmax * 255
+    color := rgb(r, g, b)
+    drawVerticalLine(x, OutBounds.height)
+}

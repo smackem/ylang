@@ -257,10 +257,18 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if !ok {
 			return fmt.Errorf("type mismatch: expected upper number")
 		}
+		stepVal, err := ir.visitExpr(s.step)
+		if err != nil {
+			return err
+		}
+		stepN, ok := stepVal.(Number)
+		if !ok {
+			return fmt.Errorf("type mismatch: expected upper number")
+		}
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.ident, nil)
-		for n := lowerN; n < upperN; n++ {
+		for n := lowerN; n < upperN; n += stepN {
 			ir.assignIdent(s.ident, n)
 			if err := ir.visitStmtList(s.stmts); err != nil {
 				return err

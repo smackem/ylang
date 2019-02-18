@@ -411,6 +411,61 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "for_range",
+			src:  "for x in 0..10 { log(1) }",
+			want: []statement{
+				forRangeStmt{
+					stmtBase: stmtBase{},
+					ident:    "x",
+					lower:    Number(0),
+					step:     Number(1),
+					upper:    Number(10),
+					stmts: []statement{
+						logStmt{
+							stmtBase:   stmtBase{},
+							parameters: []expression{Number(1)},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "for_range_with_step",
+			src:  "for x in 0..2..10 { log(1) }",
+			want: []statement{
+				forRangeStmt{
+					stmtBase: stmtBase{},
+					ident:    "x",
+					lower:    Number(0),
+					step:     Number(2),
+					upper:    Number(10),
+					stmts: []statement{
+						logStmt{
+							stmtBase:   stmtBase{},
+							parameters: []expression{Number(1)},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "for",
+			src:  "for x in coll { log(1) }",
+			want: []statement{
+				forStmt{
+					stmtBase:   stmtBase{},
+					ident:      "x",
+					collection: identExpr("coll"),
+					stmts: []statement{
+						logStmt{
+							stmtBase:   stmtBase{},
+							parameters: []expression{Number(1)},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "if_else",
 			src:  "if true { log(1) } else { log(2) }",
 			want: []statement{

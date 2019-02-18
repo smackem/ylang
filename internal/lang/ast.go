@@ -71,6 +71,7 @@ type forRangeStmt struct {
 	ident string
 	lower expression
 	upper expression
+	step  expression
 	stmts []statement
 }
 
