@@ -636,10 +636,17 @@ func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (va
 	if !ok {
 		return nil, fmt.Errorf("unkown function '%s'", name)
 	}
+	discreteArgsCount := len(arguments)
 	if len(arguments) != len(f.params) {
-		return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
+		if len(arguments) < len(f.params) {
+			return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
+		}
+		if f.params[len(f.params)-1].Kind() != reflect.Slice {
+			return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
+		}
+		discreteArgsCount = len(f.params) - 1
 	}
-	for i := 0; i < len(arguments); i++ {
+	for i := 0; i < discreteArgsCount; i++ {
 		if reflect.TypeOf(arguments[i]) != f.params[i] {
 			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, f.params[i].Name(), reflect.TypeOf(arguments[i]).Name())
 		}

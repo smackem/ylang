@@ -121,6 +121,10 @@ var functions = map[string]functionDecl{
 		body:   invokeLine,
 		params: []reflect.Type{positionType, positionType},
 	},
+	"polygon": {
+		body:   invokePolygon,
+		params: []reflect.Type{reflect.TypeOf([]Position{})},
+	},
 }
 
 func invokeRgb(ir *interpreter, params []value) (value, error) {
@@ -292,4 +296,8 @@ func invokeResize(ir *interpreter, params []value) (value, error) {
 func invokeLine(ir *interpreter, params []value) (value, error) {
 	point1, point2 := params[0].(Position), params[1].(Position)
 	return line{point1, point2}, nil
+}
+
+func invokePolygon(ir *interpreter, params []value) (value, error) {
+	return nil, nil
 }
