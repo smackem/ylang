@@ -43,13 +43,13 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 		idents: []scope{make(scope)},
 		bitmap: bitmap,
 	}
-	ir.newIdent(lastRectIdent, Rect{})
+	ir.newIdent(lastRectIdent, rect{})
 	ir.newIdent("Black", NewRgba(0, 0, 0, 255))
 	ir.newIdent("White", NewRgba(255, 255, 255, 255))
 	ir.newIdent("Transparent", NewRgba(255, 255, 255, 0))
 	ir.newIdent("Pi", Number(math.Pi))
 	if bitmap != nil {
-		ir.newIdent("Bounds", Rect{image.Point{0, 0}, image.Point{bitmap.SourceWidth(), bitmap.SourceHeight()}})
+		ir.newIdent("Bounds", rect{image.Point{0, 0}, image.Point{bitmap.SourceWidth(), bitmap.SourceHeight()}})
 		ir.newIdent("W", Number(bitmap.SourceWidth()))
 		ir.newIdent("H", Number(bitmap.SourceHeight()))
 	}
@@ -181,9 +181,9 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if err != nil {
 			return err
 		}
-		pos, ok := left.(Position)
+		pos, ok := left.(point)
 		if !ok {
-			return fmt.Errorf("type mismatch: expected @position = color")
+			return fmt.Errorf("type mismatch: expected @point = color")
 		}
 		right, err := ir.visitExpr(s.rhs)
 		if err != nil {
@@ -191,7 +191,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		}
 		color, ok := right.(Color)
 		if !ok {
-			return fmt.Errorf("type mismatch: expected @position = color")
+			return fmt.Errorf("type mismatch: expected @point = color")
 		}
 		ir.bitmap.SetPixel(pos.X, pos.Y, color)
 
@@ -205,9 +205,9 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if err != nil {
 			return err
 		}
-		b, ok := condVal.(Bool)
+		b, ok := condVal.(boolean)
 		if !ok {
-			return fmt.Errorf("type mismatch: expected if(bool)")
+			return fmt.Errorf("type mismatch: expected if(boolean)")
 		}
 		if b {
 			ir.pushScope()
@@ -225,7 +225,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if err != nil {
 			return err
 		}
-		rect, ok := collVal.(Rect)
+		rect, ok := collVal.(rect)
 		if ok {
 			ir.assignIdent(lastRectIdent, rect)
 		}
@@ -294,7 +294,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if err != nil {
 			return err
 		}
-		rect, ok := expr.(Rect)
+		rect, ok := expr.(rect)
 		if !ok {
 			return fmt.Errorf("type mismatch: blt expects rect")
 		}
@@ -311,7 +311,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		} else {
 			expr, _ = ir.findIdent(lastRectIdent)
 		}
-		rect, ok := expr.(Rect)
+		rect, ok := expr.(rect)
 		if !ok {
 			return fmt.Errorf("type mismatch: commit expects rect")
 		}
@@ -353,7 +353,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, ok := condVal.(Bool)
+		b, ok := condVal.(boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool?x:x")
 		}
@@ -367,44 +367,44 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, ok := leftVal.(Bool)
+		b, ok := leftVal.(boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
 		if b {
-			return Bool(true), nil
+			return boolean(true), nil
 		}
 		rightVal, err := ir.visitExpr(e.right)
 		if err != nil {
 			return nil, err
 		}
-		b, ok = rightVal.(Bool)
+		b, ok = rightVal.(boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
-		return Bool(b), nil
+		return boolean(b), nil
 
 	case andExpr:
 		leftVal, err := ir.visitExpr(e.left)
 		if err != nil {
 			return nil, err
 		}
-		b, ok := leftVal.(Bool)
+		b, ok := leftVal.(boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
 		if !b {
-			return Bool(false), nil
+			return boolean(false), nil
 		}
 		rightVal, err := ir.visitExpr(e.right)
 		if err != nil {
 			return nil, err
 		}
-		b, ok = rightVal.(Bool)
+		b, ok = rightVal.(boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
-		return Bool(b), nil
+		return boolean(b), nil
 
 	case eqExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
@@ -494,7 +494,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: expected pos(Number, Number)")
 			}
-			return Position{int(x + 0.5), int(y + 0.5)}, nil
+			return point{int(x + 0.5), int(y + 0.5)}, nil
 		})
 
 	case memberExpr:
@@ -520,15 +520,15 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		switch i := index.(type) {
 		case Number:
 			return k.values[int(i)], nil
-		case Position:
+		case point:
 			return k.values[i.Y*k.width+i.X], nil
 		}
-		return nil, fmt.Errorf("type mismatch: expected kernel@number or kernel@position but found kernel@%s", index)
+		return nil, fmt.Errorf("type mismatch: expected kernel@number or kernel@point but found kernel@%s", index)
 
-	case String:
+	case str:
 		return e, nil
 
-	case Bool:
+	case boolean:
 		return e, nil
 
 	case Number:
@@ -552,7 +552,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		if err != nil {
 			return nil, err
 		}
-		pos, ok := val.(Position)
+		pos, ok := val.(point)
 		if !ok {
 			return nil, fmt.Errorf("")
 		}
@@ -636,20 +636,45 @@ func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (va
 	if !ok {
 		return nil, fmt.Errorf("unkown function '%s'", name)
 	}
-	discreteArgsCount := len(arguments)
-	if len(arguments) != len(f.params) {
-		if len(arguments) < len(f.params) {
-			return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
-		}
-		if f.params[len(f.params)-1].Kind() != reflect.Slice {
-			return nil, fmt.Errorf("wrong number of arguments for function '%s': expected %d, got %d", name, len(f.params), len(arguments))
-		}
-		discreteArgsCount = len(f.params) - 1
-	}
-	for i := 0; i < discreteArgsCount; i++ {
-		if reflect.TypeOf(arguments[i]) != f.params[i] {
-			return nil, fmt.Errorf("argument type mismatch for function '%s' at argument %d: expected %s, got %s", name, i, f.params[i].Name(), reflect.TypeOf(arguments[i]).Name())
-		}
+	if err := validateArguments(arguments, f.params); err != nil {
+		return nil, fmt.Errorf("function '%s': %s", name, err)
 	}
 	return f.body(ir, arguments)
+}
+
+func validateArguments(arguments []value, params []reflect.Type) error {
+	argsCount := len(arguments)
+	paramsCount := len(params)
+	discreteArgsCount := argsCount
+
+	if argsCount != paramsCount {
+		lastParam := params[paramsCount-1]
+		if lastParam.Kind() != reflect.Slice {
+			return fmt.Errorf("wrong number of arguments: expected %d, got %d", paramsCount, argsCount)
+		}
+		if argsCount < paramsCount-1 {
+			return fmt.Errorf("wrong number of arguments: expected %d, got %d", paramsCount, argsCount)
+		}
+		for i := paramsCount - 1; i < argsCount; i++ {
+			if reflect.TypeOf(arguments[i]) != lastParam.Elem() {
+				return fmt.Errorf("argument type mismatch at argument %d: expected %s, got %s", i, lastParam.Elem().Name(), reflect.TypeOf(arguments[i]).Name())
+			}
+		}
+		discreteArgsCount = paramsCount - 1
+	}
+
+	for i := 0; i < discreteArgsCount; i++ {
+		argType := reflect.TypeOf(arguments[i])
+		if argType == params[i] {
+			// direct match
+			continue
+		}
+		if i == discreteArgsCount-1 && params[i].Kind() == reflect.Slice && argType == params[i].Elem() {
+			// trailing slice with one arg
+			continue
+		}
+		return fmt.Errorf("argument type mismatch at argument %d: expected %s, got %s", i, params[i].Name(), reflect.TypeOf(arguments[i]).Name())
+	}
+
+	return nil
 }

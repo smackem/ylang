@@ -21,19 +21,19 @@ func TestNumber_equals(t *testing.T) {
 			name: "1==1",
 			n:    1,
 			args: args{other: Number(1)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "1==2",
 			n:    1,
 			args: args{other: Number(2)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 		{
 			name: "1=='x'",
 			n:    1,
-			args: args{other: String("x")},
-			want: Bool(false),
+			args: args{other: str("x")},
+			want: boolean(false),
 		},
 	}
 	for _, tt := range tests {
@@ -65,18 +65,18 @@ func TestNumber_greaterThan(t *testing.T) {
 			name: "2>1",
 			n:    2,
 			args: args{other: Number(1)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "1>2",
 			n:    1,
 			args: args{other: Number(2)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 		{
 			name:    "1>'x'",
 			n:       1,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -110,24 +110,24 @@ func TestNumber_greaterThanOrEqual(t *testing.T) {
 			name: "1>=1",
 			n:    1,
 			args: args{other: Number(1)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "2>=1",
 			n:    2,
 			args: args{other: Number(1)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "1>=2",
 			n:    1,
 			args: args{other: Number(2)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 		{
 			name:    "1>='x'",
 			n:       1,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -161,18 +161,18 @@ func TestNumber_lessThan(t *testing.T) {
 			name: "2<3",
 			n:    2,
 			args: args{other: Number(3)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "2<1",
 			n:    2,
 			args: args{other: Number(1)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 		{
 			name:    "1<'x'",
 			n:       1,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -206,24 +206,24 @@ func TestNumber_lessThanOrEqual(t *testing.T) {
 			name: "2<=2",
 			n:    2,
 			args: args{other: Number(2)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "2<=4",
 			n:    2,
 			args: args{other: Number(4)},
-			want: Bool(true),
+			want: boolean(true),
 		},
 		{
 			name: "2<=1",
 			n:    2,
 			args: args{other: Number(1)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 		{
 			name:    "1<='x'",
 			n:       1,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			wantErr: true,
 		},
 	}
@@ -261,8 +261,8 @@ func TestNumber_add(t *testing.T) {
 		{
 			name: "120+1;2",
 			n:    120.0,
-			args: args{other: Position{1, 2}},
-			want: Position{121, 122},
+			args: args{other: point{1, 2}},
+			want: point{121, 122},
 		},
 		{
 			name: "120+rgb(1,2,3)",
@@ -273,7 +273,7 @@ func TestNumber_add(t *testing.T) {
 		{
 			name:    "120+'x'",
 			n:       120.0,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -312,7 +312,7 @@ func TestNumber_sub(t *testing.T) {
 		{
 			name:    "120-'x'",
 			n:       120.0,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -351,7 +351,7 @@ func TestNumber_mul(t *testing.T) {
 		{
 			name:    "1*x",
 			n:       120.0,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -390,7 +390,7 @@ func TestNumber_div(t *testing.T) {
 		{
 			name:    "1/x",
 			n:       1.0,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -429,7 +429,7 @@ func TestNumber_mod(t *testing.T) {
 		{
 			name:    "1%x",
 			n:       1.0,
-			args:    args{other: String("x")},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -481,7 +481,7 @@ func TestString_equals(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       String
+		s       str
 		args    args
 		want    value
 		wantErr bool
@@ -489,31 +489,31 @@ func TestString_equals(t *testing.T) {
 		{
 			name: "abc==abc",
 			s:    "abc",
-			args: args{other: String("abc")},
-			want: Bool(true),
+			args: args{other: str("abc")},
+			want: boolean(true),
 		},
 		{
 			name: "abc==def",
 			s:    "abc",
-			args: args{other: String("def")},
-			want: Bool(false),
+			args: args{other: str("def")},
+			want: boolean(false),
 		},
 		{
 			name: "abc==1",
 			s:    "abc",
 			args: args{other: Number(1)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.s.equals(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("String.equals() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("str.equals() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("String.equals() = %v, want %v", got, tt.want)
+				t.Errorf("str.equals() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -525,7 +525,7 @@ func TestString_add(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		s       String
+		s       str
 		args    args
 		want    value
 		wantErr bool
@@ -533,19 +533,19 @@ func TestString_add(t *testing.T) {
 		{
 			name: "abc+def",
 			s:    "abc",
-			args: args{other: String("def")},
-			want: String("abcdef"),
+			args: args{other: str("def")},
+			want: str("abcdef"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.s.add(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("String.add() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("str.add() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("String.add() = %v, want %v", got, tt.want)
+				t.Errorf("str.add() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -557,39 +557,39 @@ func TestPosition_equals(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2==1;2",
-			p:    Position{1, 2},
-			args: args{other: Position{1, 2}},
-			want: Bool(true),
+			p:    point{1, 2},
+			args: args{other: point{1, 2}},
+			want: boolean(true),
 		},
 		{
 			name: "1;2==2;3",
-			p:    Position{1, 2},
-			args: args{other: Position{2, 3}},
-			want: Bool(false),
+			p:    point{1, 2},
+			args: args{other: point{2, 3}},
+			want: boolean(false),
 		},
 		{
 			name: "1;2==100",
-			p:    Position{1, 2},
+			p:    point{1, 2},
 			args: args{other: Number(100)},
-			want: Bool(false),
+			want: boolean(false),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.equals(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.equals() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.equals() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Position.equals() = %v, want %v", got, tt.want)
+				t.Errorf("point.equals() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -601,27 +601,27 @@ func TestPosition_add(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2+1;2",
-			p:    Position{1, 2},
-			args: args{other: Position{1, 2}},
-			want: Position{2, 4},
+			p:    point{1, 2},
+			args: args{other: point{1, 2}},
+			want: point{2, 4},
 		},
 		{
 			name: "1;2+100",
-			p:    Position{1, 2},
+			p:    point{1, 2},
 			args: args{other: Number(100)},
-			want: Position{101, 102},
+			want: point{101, 102},
 		},
 		{
 			name:    "1;2+'x'",
-			p:       Position{1, 2},
-			args:    args{other: String("x")},
+			p:       point{1, 2},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -630,11 +630,11 @@ func TestPosition_add(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.add(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.add() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.add() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.add() = %v, want %v", got, tt.want)
+				t.Errorf("point.add() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -646,27 +646,27 @@ func TestPosition_sub(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2-1;2",
-			p:    Position{1, 2},
-			args: args{other: Position{1, 2}},
-			want: Position{0, 0},
+			p:    point{1, 2},
+			args: args{other: point{1, 2}},
+			want: point{0, 0},
 		},
 		{
 			name: "1;2-1",
-			p:    Position{1, 2},
+			p:    point{1, 2},
 			args: args{other: Number(1)},
-			want: Position{0, 1},
+			want: point{0, 1},
 		},
 		{
 			name:    "1;2-'x'",
-			p:       Position{1, 2},
-			args:    args{other: String("x")},
+			p:       point{1, 2},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -675,11 +675,11 @@ func TestPosition_sub(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.sub(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.sub() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.sub() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.sub() = %v, want %v", got, tt.want)
+				t.Errorf("point.sub() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -691,27 +691,27 @@ func TestPosition_mul(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2*3;2",
-			p:    Position{1, 2},
-			args: args{other: Position{3, 2}},
-			want: Position{3, 4},
+			p:    point{1, 2},
+			args: args{other: point{3, 2}},
+			want: point{3, 4},
 		},
 		{
 			name: "1;2*50",
-			p:    Position{1, 2},
+			p:    point{1, 2},
 			args: args{other: Number(50)},
-			want: Position{50, 100},
+			want: point{50, 100},
 		},
 		{
 			name:    "1;2*'x'",
-			p:       Position{1, 2},
-			args:    args{other: String("x")},
+			p:       point{1, 2},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -720,11 +720,11 @@ func TestPosition_mul(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.mul(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.mul() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.mul() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.mul() = %v, want %v", got, tt.want)
+				t.Errorf("point.mul() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -736,27 +736,27 @@ func TestPosition_div(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2/3;2",
-			p:    Position{10, 6},
-			args: args{other: Position{5, 3}},
-			want: Position{2, 2},
+			p:    point{10, 6},
+			args: args{other: point{5, 3}},
+			want: point{2, 2},
 		},
 		{
 			name: "12;60/6",
-			p:    Position{12, 60},
+			p:    point{12, 60},
 			args: args{other: Number(6)},
-			want: Position{2, 10},
+			want: point{2, 10},
 		},
 		{
 			name:    "1;2/'x'",
-			p:       Position{1, 2},
-			args:    args{other: String("x")},
+			p:       point{1, 2},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -765,11 +765,11 @@ func TestPosition_div(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.div(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.div() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.div() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.div() = %v, want %v", got, tt.want)
+				t.Errorf("point.div() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -781,27 +781,27 @@ func TestPosition_mod(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "5;9%4;5",
-			p:    Position{5, 9},
-			args: args{other: Position{4, 5}},
-			want: Position{1, 4},
+			p:    point{5, 9},
+			args: args{other: point{4, 5}},
+			want: point{1, 4},
 		},
 		{
 			name: "5;9%3",
-			p:    Position{5, 9},
+			p:    point{5, 9},
 			args: args{other: Number(3)},
-			want: Position{2, 0},
+			want: point{2, 0},
 		},
 		{
 			name:    "1;2%'x'",
-			p:       Position{1, 2},
-			args:    args{other: String("x")},
+			p:       point{1, 2},
+			args:    args{other: str("x")},
 			want:    nil,
 			wantErr: true,
 		},
@@ -810,11 +810,11 @@ func TestPosition_mod(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.mod(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.mod() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.mod() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.mod() = %v, want %v", got, tt.want)
+				t.Errorf("point.mod() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -826,26 +826,26 @@ func TestPosition_in(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "1;2 in rect(0;0, 10, 10)",
-			p:    Position{1, 2},
-			args: args{other: Rect{image.Point{0, 0}, image.Point{10, 10}}},
-			want: Bool(true),
+			p:    point{1, 2},
+			args: args{other: rect{image.Point{0, 0}, image.Point{10, 10}}},
+			want: boolean(true),
 		},
 		{
 			name: "10;12 in rect(0;0, 10, 10)",
-			p:    Position{10, 12},
-			args: args{other: Rect{image.Point{0, 0}, image.Point{10, 10}}},
-			want: Bool(false),
+			p:    point{10, 12},
+			args: args{other: rect{image.Point{0, 0}, image.Point{10, 10}}},
+			want: boolean(false),
 		},
 		{
 			name:    "10;12 in number",
-			p:       Position{10, 12},
+			p:       point{10, 12},
 			args:    args{other: Number(1)},
 			wantErr: true,
 		},
@@ -854,11 +854,11 @@ func TestPosition_in(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.in(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.in() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.in() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Position.in() = %v, want %v", got, tt.want)
+				t.Errorf("point.in() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -867,25 +867,25 @@ func TestPosition_in(t *testing.T) {
 func TestPosition_neg(t *testing.T) {
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		want    value
 		wantErr bool
 	}{
 		{
 			name: "-1;2",
-			p:    Position{1, 2},
-			want: Position{-1, -2},
+			p:    point{1, 2},
+			want: point{-1, -2},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.neg()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.neg() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.neg() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.neg() = %v, want %v", got, tt.want)
+				t.Errorf("point.neg() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -898,7 +898,7 @@ func TestPosition_at(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
@@ -909,11 +909,11 @@ func TestPosition_at(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.at(tt.args.bitmap)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.at() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.at() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.at() = %v, want %v", got, tt.want)
+				t.Errorf("point.at() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -925,7 +925,7 @@ func TestPosition_property(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       Position
+		p       point
 		args    args
 		want    value
 		wantErr bool
@@ -936,11 +936,11 @@ func TestPosition_property(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.p.property(tt.args.ident)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Position.property() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("point.property() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Position.property() = %v, want %v", got, tt.want)
+				t.Errorf("point.property() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -1164,7 +1164,7 @@ func TestRect_equals(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		rect    Rect
+		rect    rect
 		args    args
 		want    value
 		wantErr bool
@@ -1175,11 +1175,11 @@ func TestRect_equals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.rect.equals(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Rect.equals() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("rect.equals() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Rect.equals() = %v, want %v", got, tt.want)
+				t.Errorf("rect.equals() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -1191,7 +1191,7 @@ func TestRect_in(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		rect    Rect
+		rect    rect
 		args    args
 		want    value
 		wantErr bool
@@ -1202,11 +1202,11 @@ func TestRect_in(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.rect.in(tt.args.other)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Rect.in() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("rect.in() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Rect.in() = %v, want %v", got, tt.want)
+				t.Errorf("rect.in() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -1218,7 +1218,7 @@ func TestRect_property(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		rect    Rect
+		rect    rect
 		args    args
 		want    value
 		wantErr bool
@@ -1229,11 +1229,11 @@ func TestRect_property(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.rect.property(tt.args.ident)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Rect.property() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("rect.property() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Rect.property() = %v, want %v", got, tt.want)
+				t.Errorf("rect.property() = %v, want %v", got, tt.want)
 			}
 		})
 	}

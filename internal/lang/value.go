@@ -2,6 +2,7 @@ package lang
 
 import (
 	"fmt"
+	"image"
 	"math"
 	"reflect"
 )
@@ -26,41 +27,41 @@ type value interface {
 	iterate(visit func(value) error) error
 }
 
-var falseVal = Bool(false)
+var falseVal = boolean(false)
 
 //////////////////////////////////////////// Number
 
 func (n Number) equals(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return Bool(n == r), nil
+		return boolean(n == r), nil
 	}
 	return falseVal, nil
 }
 
 func (n Number) greaterThan(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return Bool(n > r), nil
+		return boolean(n > r), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number > number, found number > %s", reflect.TypeOf(other))
 }
 
 func (n Number) greaterThanOrEqual(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return Bool(n >= r), nil
+		return boolean(n >= r), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number >= number, found number >= %s", reflect.TypeOf(other))
 }
 
 func (n Number) lessThan(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return Bool(n < r), nil
+		return boolean(n < r), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number < number, found number < %s", reflect.TypeOf(other))
 }
 
 func (n Number) lessThanOrEqual(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return Bool(n <= r), nil
+		return boolean(n <= r), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number <= number, found number <= %s", reflect.TypeOf(other))
 }
@@ -69,8 +70,8 @@ func (n Number) add(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
 		return Number(n + r), nil
-	case Position:
-		return Position{int(n + Number(r.X) + 0.5), int(n + Number(r.Y) + 0.5)}, nil
+	case point:
+		return point{int(n + Number(r.X) + 0.5), int(n + Number(r.Y) + 0.5)}, nil
 	case Color:
 		return NewRgba(n+r.R, n+r.G, n+r.B, r.A), nil
 	}
@@ -81,8 +82,8 @@ func (n Number) sub(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
 		return Number(n - r), nil
-	case Position:
-		return Position{int(n - Number(r.X) + 0.5), int(n - Number(r.Y) + 0.5)}, nil
+	case point:
+		return point{int(n - Number(r.X) + 0.5), int(n - Number(r.Y) + 0.5)}, nil
 	case Color:
 		return NewRgba(n-r.R, n-r.G, n-r.B, r.A), nil
 	}
@@ -93,8 +94,8 @@ func (n Number) mul(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
 		return Number(n * r), nil
-	case Position:
-		return Position{int(n*Number(r.X) + 0.5), int(n*Number(r.Y) + 0.5)}, nil
+	case point:
+		return point{int(n*Number(r.X) + 0.5), int(n*Number(r.Y) + 0.5)}, nil
 	case Color:
 		return NewSrgba(n*r.ScR(), n*r.ScG(), n*r.ScB(), r.ScA()), nil
 	}
@@ -105,8 +106,8 @@ func (n Number) div(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
 		return Number(n / r), nil
-	case Position:
-		return Position{int(n/Number(r.X) + 0.5), int(n/Number(r.Y) + 0.5)}, nil
+	case point:
+		return point{int(n/Number(r.X) + 0.5), int(n/Number(r.Y) + 0.5)}, nil
 	case Color:
 		return NewSrgba(n/r.ScR(), n/r.ScG(), n/r.ScB(), r.ScA()), nil
 	}
@@ -124,7 +125,7 @@ func (n Number) in(other value) (value, error) {
 	if k, ok := other.(kernel); ok {
 		for _, kn := range k.values {
 			if kn == n {
-				return Bool(true), nil
+				return boolean(true), nil
 			}
 		}
 		return falseVal, nil
@@ -141,7 +142,7 @@ func (n Number) not() (value, error) {
 }
 
 func (n Number) at(bitmap BitmapContext) (value, error) {
-	return nil, fmt.Errorf("type mismatch: found '@number' instead of '@position'")
+	return nil, fmt.Errorf("type mismatch: found '@number' instead of '@point'")
 }
 
 func (n Number) property(ident string) (value, error) {
@@ -156,196 +157,200 @@ func (n Number) iterate(visit func(value) error) error {
 	return fmt.Errorf("cannot iterate over number")
 }
 
-//////////////////////////////////////////// string
+//////////////////////////////////////////// str
 
-func (s String) equals(other value) (value, error) {
-	if r, ok := other.(String); ok {
-		return Bool(s == r), nil
+type str string
+
+func (s str) equals(other value) (value, error) {
+	if r, ok := other.(str); ok {
+		return boolean(s == r), nil
 	}
 	return falseVal, nil
 }
 
-func (s String) greaterThan(other value) (value, error) {
+func (s str) greaterThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string > %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) greaterThanOrEqual(other value) (value, error) {
+func (s str) greaterThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string >= %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) lessThan(other value) (value, error) {
+func (s str) lessThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string < %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) lessThanOrEqual(other value) (value, error) {
+func (s str) lessThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string <= %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) add(other value) (value, error) {
-	return String(fmt.Sprintf("%s%s", s, other)), nil
+func (s str) add(other value) (value, error) {
+	return str(fmt.Sprintf("%s%s", s, other)), nil
 }
 
-func (s String) sub(other value) (value, error) {
+func (s str) sub(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string - %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) mul(other value) (value, error) {
+func (s str) mul(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string * %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) div(other value) (value, error) {
+func (s str) div(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string / %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) mod(other value) (value, error) {
+func (s str) mod(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string %% %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) in(other value) (value, error) {
+func (s str) in(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: string in %s not supported", reflect.TypeOf(other))
 }
 
-func (s String) neg() (value, error) {
+func (s str) neg() (value, error) {
 	return nil, fmt.Errorf("type mismatch: -string not supported")
 }
 
-func (s String) not() (value, error) {
+func (s str) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: not string not supported")
 }
 
-func (s String) at(bitmap BitmapContext) (value, error) {
+func (s str) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @string not supported")
 }
 
-func (s String) property(ident string) (value, error) {
+func (s str) property(ident string) (value, error) {
 	return nil, fmt.Errorf("unknown property 'string.%s'", ident)
 }
 
-func (s String) printStr() string {
+func (s str) printStr() string {
 	return string(s)
 }
 
-func (s String) iterate(visit func(value) error) error {
+func (s str) iterate(visit func(value) error) error {
 	return fmt.Errorf("cannot iterate over string")
 }
 
-//////////////////////////////////////////// lang.Position
+//////////////////////////////////////////// lang.point
 
-func (p Position) equals(other value) (value, error) {
-	if r, ok := other.(Position); ok {
-		return Bool(p == r), nil
+type point image.Point
+
+func (p point) equals(other value) (value, error) {
+	if r, ok := other.(point); ok {
+		return boolean(p == r), nil
 	}
 	return falseVal, nil
 }
 
-func (p Position) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: position > %s not supported", reflect.TypeOf(other))
+func (p point) greaterThan(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: point > %s not supported", reflect.TypeOf(other))
 }
 
-func (p Position) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: position >= %s not supported", reflect.TypeOf(other))
+func (p point) greaterThanOrEqual(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: point >= %s not supported", reflect.TypeOf(other))
 }
 
-func (p Position) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: position < %s not supported", reflect.TypeOf(other))
+func (p point) lessThan(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: point < %s not supported", reflect.TypeOf(other))
 }
 
-func (p Position) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: position <= %s not supported", reflect.TypeOf(other))
+func (p point) lessThanOrEqual(other value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: point <= %s not supported", reflect.TypeOf(other))
 }
 
-func (p Position) add(other value) (value, error) {
+func (p point) add(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
-		return Position{p.X + int(r+0.5), p.Y + int(r+0.5)}, nil
-	case Position:
-		return Position{p.X + r.X, p.Y + r.Y}, nil
+		return point{p.X + int(r+0.5), p.Y + int(r+0.5)}, nil
+	case point:
+		return point{p.X + r.X, p.Y + r.Y}, nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position + number or position + position, found position + %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point + number or point + point, found point + %s", reflect.TypeOf(other))
 }
 
-func (p Position) sub(other value) (value, error) {
+func (p point) sub(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
-		return Position{p.X - int(r+0.5), p.Y - int(r+0.5)}, nil
-	case Position:
-		return Position{p.X - r.X, p.Y - r.Y}, nil
+		return point{p.X - int(r+0.5), p.Y - int(r+0.5)}, nil
+	case point:
+		return point{p.X - r.X, p.Y - r.Y}, nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position - number or position - position, found position - %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point - number or point - point, found point - %s", reflect.TypeOf(other))
 }
 
-func (p Position) mul(other value) (value, error) {
+func (p point) mul(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
-		return Position{int(Number(p.X)*r + 0.5), int(Number(p.Y)*r + 0.5)}, nil
-	case Position:
-		return Position{p.X * r.X, p.Y * r.Y}, nil
+		return point{int(Number(p.X)*r + 0.5), int(Number(p.Y)*r + 0.5)}, nil
+	case point:
+		return point{p.X * r.X, p.Y * r.Y}, nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position * number or position * position, found position * %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point * number or point * point, found point * %s", reflect.TypeOf(other))
 }
 
-func (p Position) div(other value) (value, error) {
+func (p point) div(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
-		return Position{int(Number(p.X)/r + 0.5), int(Number(p.Y)/r + 0.5)}, nil
-	case Position:
-		return Position{p.X / r.X, p.Y / r.Y}, nil
+		return point{int(Number(p.X)/r + 0.5), int(Number(p.Y)/r + 0.5)}, nil
+	case point:
+		return point{p.X / r.X, p.Y / r.Y}, nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position / number or position / position, found position / %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point / number or point / point, found point / %s", reflect.TypeOf(other))
 }
 
-func (p Position) mod(other value) (value, error) {
+func (p point) mod(other value) (value, error) {
 	switch r := other.(type) {
 	case Number:
-		return Position{p.X % int(r+0.5), p.Y % int(r+0.5)}, nil
-	case Position:
-		return Position{p.X % r.X, p.Y % r.Y}, nil
+		return point{p.X % int(r+0.5), p.Y % int(r+0.5)}, nil
+	case point:
+		return point{p.X % r.X, p.Y % r.Y}, nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position %% number or position %% position, found position %% %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point %% number or point %% point, found point %% %s", reflect.TypeOf(other))
 }
 
-func (p Position) in(other value) (value, error) {
-	if r, ok := other.(Rect); ok {
-		return Bool(p.X >= r.Min.X && p.X < r.Max.X && p.Y >= r.Min.Y && p.Y < r.Max.Y), nil
+func (p point) in(other value) (value, error) {
+	if r, ok := other.(rect); ok {
+		return boolean(p.X >= r.Min.X && p.X < r.Max.X && p.Y >= r.Min.Y && p.Y < r.Max.Y), nil
 	}
-	return nil, fmt.Errorf("type mismatch: expected position == position, found position == %s", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: expected point == point, found point == %s", reflect.TypeOf(other))
 }
 
-func (p Position) neg() (value, error) {
-	return Position{-p.X, -p.Y}, nil
+func (p point) neg() (value, error) {
+	return point{-p.X, -p.Y}, nil
 }
 
-func (p Position) not() (value, error) {
-	return nil, fmt.Errorf("type mismatch: not position not supported")
+func (p point) not() (value, error) {
+	return nil, fmt.Errorf("type mismatch: not point not supported")
 }
 
-func (p Position) at(bitmap BitmapContext) (value, error) {
+func (p point) at(bitmap BitmapContext) (value, error) {
 	return bitmap.GetPixel(p.X, p.Y), nil
 }
 
-func (p Position) property(ident string) (value, error) {
+func (p point) property(ident string) (value, error) {
 	switch ident {
 	case "x":
 		return Number(p.X), nil
 	case "y":
 		return Number(p.Y), nil
 	}
-	return nil, fmt.Errorf("unknown property 'position.%s'", ident)
+	return nil, fmt.Errorf("unknown property 'point.%s'", ident)
 }
 
-func (p Position) printStr() string {
+func (p point) printStr() string {
 	return fmt.Sprintf("%d;%d", p.X, p.Y)
 }
 
-func (p Position) iterate(visit func(value) error) error {
-	return fmt.Errorf("cannot iterate over position")
+func (p point) iterate(visit func(value) error) error {
+	return fmt.Errorf("cannot iterate over point")
 }
 
 //////////////////////////////////////////// lang.Color
 
 func (c Color) equals(other value) (value, error) {
 	if r, ok := other.(Color); ok {
-		return Bool(c == r), nil
+		return boolean(c == r), nil
 	}
 	return falseVal, nil
 }
@@ -466,96 +471,98 @@ func (c Color) iterate(visit func(value) error) error {
 	return fmt.Errorf("cannot iterate over color")
 }
 
-//////////////////////////////////////////// lang.Rect
+//////////////////////////////////////////// lang.rect
 
-func (rect Rect) equals(other value) (value, error) {
-	if r, ok := other.(Rect); ok {
-		return Bool(rect == r), nil
+type rect image.Rectangle
+
+func (rc rect) equals(other value) (value, error) {
+	if r, ok := other.(rect); ok {
+		return boolean(rc == r), nil
 	}
 	return falseVal, nil
 }
 
-func (rect Rect) greaterThan(other value) (value, error) {
+func (rc rect) greaterThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect > %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) greaterThanOrEqual(other value) (value, error) {
+func (rc rect) greaterThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect >= %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) lessThan(other value) (value, error) {
+func (rc rect) lessThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect < %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) lessThanOrEqual(other value) (value, error) {
+func (rc rect) lessThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect <= %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) add(other value) (value, error) {
+func (rc rect) add(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect + %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) sub(other value) (value, error) {
+func (rc rect) sub(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect - %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) mul(other value) (value, error) {
+func (rc rect) mul(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect * %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) div(other value) (value, error) {
+func (rc rect) div(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect / %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) mod(other value) (value, error) {
+func (rc rect) mod(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect %% %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) in(other value) (value, error) {
-	if r, ok := other.(Rect); ok {
-		return Bool(rect.Min.X >= r.Min.X && rect.Min.Y >= r.Min.Y && rect.Max.X < r.Max.X && rect.Max.Y < r.Max.Y), nil
+func (rc rect) in(other value) (value, error) {
+	if r, ok := other.(rect); ok {
+		return boolean(rc.Min.X >= r.Min.X && rc.Min.Y >= r.Min.Y && rc.Max.X < r.Max.X && rc.Max.Y < r.Max.Y), nil
 	}
 	return nil, fmt.Errorf("type mismatch: rect in %s not supported", reflect.TypeOf(other))
 }
 
-func (rect Rect) neg() (value, error) {
+func (rc rect) neg() (value, error) {
 	return nil, fmt.Errorf("type mismatch: -rect not supported")
 }
 
-func (rect Rect) not() (value, error) {
+func (rc rect) not() (value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not rect' not supported")
 }
 
-func (rect Rect) at(bitmap BitmapContext) (value, error) {
+func (rc rect) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @rect not supported")
 }
 
-func (rect Rect) property(ident string) (value, error) {
+func (rc rect) property(ident string) (value, error) {
 	switch ident {
 	case "x", "left":
-		return Number(rect.Min.X), nil
+		return Number(rc.Min.X), nil
 	case "y", "top":
-		return Number(rect.Min.Y), nil
+		return Number(rc.Min.Y), nil
 	case "w", "width":
-		return Number(rect.Max.X - rect.Min.X), nil
+		return Number(rc.Max.X - rc.Min.X), nil
 	case "h", "height":
-		return Number(rect.Max.Y - rect.Min.Y), nil
+		return Number(rc.Max.Y - rc.Min.Y), nil
 	case "right":
-		return Number(rect.Max.X), nil
+		return Number(rc.Max.X), nil
 	case "bottom":
-		return Number(rect.Max.Y), nil
+		return Number(rc.Max.Y), nil
 	}
 	return nil, fmt.Errorf("unknown property 'rect.%s'", ident)
 }
 
-func (rect Rect) printStr() string {
-	return fmt.Sprintf("rect(x:%d, y:%d, w:%d, h:%d)", rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
+func (rc rect) printStr() string {
+	return fmt.Sprintf("rect(x:%d, y:%d, w:%d, h:%d)", rc.Min.X, rc.Min.Y, rc.Max.X-rc.Min.X, rc.Max.Y-rc.Min.Y)
 }
 
-func (rect Rect) iterate(visit func(value) error) error {
-	for y := rect.Min.Y; y < rect.Max.Y; y++ {
-		for x := rect.Min.X; x < rect.Max.X; x++ {
-			if err := visit(Position{x, y}); err != nil {
+func (rc rect) iterate(visit func(value) error) error {
+	for y := rc.Min.Y; y < rc.Max.Y; y++ {
+		for x := rc.Min.X; x < rc.Max.X; x++ {
+			if err := visit(point{x, y}); err != nil {
 				return err
 			}
 		}
@@ -573,7 +580,7 @@ type kernel struct {
 
 func (k kernel) equals(other value) (value, error) {
 	if r, ok := other.(kernel); ok {
-		return Bool(reflect.DeepEqual(k, r)), nil
+		return boolean(reflect.DeepEqual(k, r)), nil
 	}
 	return falseVal, nil
 }
@@ -657,77 +664,79 @@ func (k kernel) iterate(visit func(value) error) error {
 
 //////////////////////////////////////////// Bool
 
-func (b Bool) equals(other value) (value, error) {
-	if r, ok := other.(Bool); ok {
-		return Bool(b == r), nil
+type boolean bool
+
+func (b boolean) equals(other value) (value, error) {
+	if r, ok := other.(boolean); ok {
+		return boolean(b == r), nil
 	}
 	return falseVal, nil
 }
 
-func (b Bool) greaterThan(other value) (value, error) {
+func (b boolean) greaterThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool > %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) greaterThanOrEqual(other value) (value, error) {
+func (b boolean) greaterThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool >= %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) lessThan(other value) (value, error) {
+func (b boolean) lessThan(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool < %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) lessThanOrEqual(other value) (value, error) {
+func (b boolean) lessThanOrEqual(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool <= %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) add(other value) (value, error) {
+func (b boolean) add(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool + %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) sub(other value) (value, error) {
+func (b boolean) sub(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool - %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) mul(other value) (value, error) {
+func (b boolean) mul(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool * %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) div(other value) (value, error) {
+func (b boolean) div(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool / %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) mod(other value) (value, error) {
+func (b boolean) mod(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool %% %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) in(other value) (value, error) {
+func (b boolean) in(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool in %s not supported", reflect.TypeOf(other))
 }
 
-func (b Bool) neg() (value, error) {
+func (b boolean) neg() (value, error) {
 	return nil, fmt.Errorf("type mismatch: -bool not supported")
 }
 
-func (b Bool) not() (value, error) {
+func (b boolean) not() (value, error) {
 	return !b, nil
 }
 
-func (b Bool) at(bitmap BitmapContext) (value, error) {
+func (b boolean) at(bitmap BitmapContext) (value, error) {
 	return nil, fmt.Errorf("type mismatch: @bool not supported")
 }
 
-func (b Bool) property(ident string) (value, error) {
+func (b boolean) property(ident string) (value, error) {
 	return nil, fmt.Errorf("unknown property 'bool.%s'", ident)
 }
 
-func (b Bool) printStr() string {
+func (b boolean) printStr() string {
 	if b {
 		return "true"
 	}
 	return "false"
 }
 
-func (b Bool) iterate(visit func(value) error) error {
+func (b boolean) iterate(visit func(value) error) error {
 	return fmt.Errorf("cannot iterate over bool")
 }
 
@@ -810,13 +819,13 @@ func (f function) iterate(visit func(value) error) error {
 //////////////////////////////////////////// line
 
 type line struct {
-	point1 Position
-	point2 Position
+	point1 point
+	point2 point
 }
 
 func (l line) equals(other value) (value, error) {
 	if r, ok := other.(line); ok {
-		return Bool(l == r), nil
+		return boolean(l == r), nil
 	}
 	return falseVal, nil
 }
@@ -858,10 +867,10 @@ func (l line) mod(other value) (value, error) {
 }
 
 func (l line) in(other value) (value, error) {
-	if r, ok := other.(Rect); ok {
+	if r, ok := other.(rect); ok {
 		p1, _ := l.point1.in(r)
 		p2, _ := l.point2.in(r)
-		return Bool(p1.(Bool) && p2.(Bool)), nil
+		return boolean(p1.(boolean) && p2.(boolean)), nil
 	}
 	return nil, fmt.Errorf("type mismatch: line in %s not supported", reflect.TypeOf(other))
 }
@@ -911,7 +920,7 @@ func (l line) iterate(visit func(value) error) error {
 	x, y := Number(l.point1.X), Number(l.point1.Y)
 
 	for i := 0; i < steps; i++ {
-		if err := visit(Position{int(x + 0.5), int(y + 0.5)}); err != nil {
+		if err := visit(point{int(x + 0.5), int(y + 0.5)}); err != nil {
 			return err
 		}
 		x = x + dx

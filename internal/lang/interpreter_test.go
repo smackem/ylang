@@ -51,7 +51,7 @@ func Test_interpret(t *testing.T) {
 			name: "rect",
 			src:  "x := rect(1, 2, 3, 4)",
 			want: scope{
-				"x": Rect{Min: image.Point{1, 2}, Max: image.Point{4, 6}},
+				"x": rect{Min: image.Point{1, 2}, Max: image.Point{4, 6}},
 			},
 		},
 		{
@@ -123,7 +123,7 @@ func Test_interpret(t *testing.T) {
 			src: `p := 0
 			      for pos in rect(0,0,1,1) { p = pos }`,
 			want: scope{
-				"p": Position{0, 0},
+				"p": point{0, 0},
 			},
 		},
 		{
@@ -131,7 +131,7 @@ func Test_interpret(t *testing.T) {
 			src: `p := 0
 			      for pos in rect(0,0,2,2) { p = pos }`,
 			want: scope{
-				"p": Position{1, 1},
+				"p": point{1, 1},
 			},
 		},
 		{
@@ -272,4 +272,127 @@ func Test_newInterpreter(t *testing.T) {
 			t.Errorf("interpreter initial scope count = %v, want %v", len(got.idents), initialScopeCount)
 		}
 	})
+}
+
+func Test_validateArguments(t *testing.T) {
+	numberType := reflect.TypeOf(Number(0))
+	boolType := reflect.TypeOf(boolean(false))
+	numberSliceType := reflect.TypeOf([]Number{})
+	type args struct {
+		arguments []value
+		params    []reflect.Type
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "empty",
+			wantErr: false,
+		},
+		{
+			name: "two_numbers_ok",
+			args: args{
+				arguments: []value{Number(1), Number(2)},
+				params:    []reflect.Type{numberType, numberType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "two_numbers_error_toofew",
+			args: args{
+				arguments: []value{Number(1)},
+				params:    []reflect.Type{numberType, numberType},
+			},
+			wantErr: true,
+		},
+		{
+			name: "two_numbers_error_toomany",
+			args: args{
+				arguments: []value{Number(1), Number(2), Number(3)},
+				params:    []reflect.Type{numberType, numberType},
+			},
+			wantErr: true,
+		},
+		{
+			name: "type_mismatch",
+			args: args{
+				arguments: []value{Number(1), boolean(false)},
+				params:    []reflect.Type{numberType, numberType},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mixed_types",
+			args: args{
+				arguments: []value{Number(1), boolean(false)},
+				params:    []reflect.Type{numberType, boolType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_ok",
+			args: args{
+				arguments: []value{Number(1), Number(2), Number(3)},
+				params:    []reflect.Type{numberSliceType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_empty_ok",
+			args: args{
+				arguments: []value{},
+				params:    []reflect.Type{numberSliceType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_trailing_ok",
+			args: args{
+				arguments: []value{boolean(true), Number(1), Number(2)},
+				params:    []reflect.Type{boolType, numberSliceType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_trailing_single_ok",
+			args: args{
+				arguments: []value{boolean(true), Number(1)},
+				params:    []reflect.Type{boolType, numberSliceType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_trailing_empty_ok",
+			args: args{
+				arguments: []value{boolean(true)},
+				params:    []reflect.Type{boolType, numberSliceType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "varargs_trailing_empty_error",
+			args: args{
+				arguments: []value{},
+				params:    []reflect.Type{boolType, numberSliceType},
+			},
+			wantErr: true,
+		},
+		{
+			name: "varargs_trailing_type_mismatch",
+			args: args{
+				arguments: []value{boolean(true), Number(1), Number(2), boolean(false)},
+				params:    []reflect.Type{boolType, numberSliceType},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := validateArguments(tt.args.arguments, tt.args.params); (err != nil) != tt.wantErr {
+				t.Errorf("validateArguments() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

@@ -1,9 +1,5 @@
 package lang
 
-import (
-	"image"
-)
-
 // Compile compiles the given source code into a executable Program.
 func Compile(src string) (Program, error) {
 	tokens, err := lex(src)
@@ -29,18 +25,6 @@ func (prog Program) Execute(bitmap BitmapContext) error {
 
 // Number is the number type used by the interpreter
 type Number float32
-
-// String is the string type used by the interpreter
-type String string
-
-// Position is a x,y position in an image
-type Position image.Point
-
-// Rect holds a rectangle
-type Rect image.Rectangle
-
-// Bool is the boolean type used by the interpreter
-type Bool bool
 
 // Color represents a color with RGBA channels, each channel value held as a floating-point number
 // with range 0..255. This range can be exceeded as a result of a computation.

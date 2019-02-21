@@ -13,7 +13,7 @@ type functionDecl struct {
 }
 
 var numberType = reflect.TypeOf(Number(0))
-var positionType = reflect.TypeOf(Position{})
+var positionType = reflect.TypeOf(point{})
 var kernelType = reflect.TypeOf(kernel{})
 
 var functions = map[string]functionDecl{
@@ -123,7 +123,7 @@ var functions = map[string]functionDecl{
 	},
 	"polygon": {
 		body:   invokePolygon,
-		params: []reflect.Type{reflect.TypeOf([]Position{})},
+		params: []reflect.Type{reflect.TypeOf([]point{})},
 	},
 }
 
@@ -145,14 +145,14 @@ func invokeSrgba(ir *interpreter, params []value) (value, error) {
 
 func invokeRect(ir *interpreter, params []value) (value, error) {
 	x, y := int(params[0].(Number)), int(params[1].(Number))
-	return Rect{
+	return rect{
 		Min: image.Point{x, y},
 		Max: image.Point{x + int(params[2].(Number)+0.5), y + int(params[3].(Number)+0.5)},
 	}, nil
 }
 
 func invokeConvolute(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(Position)
+	posVal := params[0].(point)
 	kernelVal := params[1].(kernel)
 	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values), nil
 }
@@ -174,7 +174,7 @@ func invokeSort(ir *interpreter, params []value) (value, error) {
 }
 
 func invokeMapR(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(Position)
+	posVal := params[0].(point)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapRed(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
@@ -182,7 +182,7 @@ func invokeMapR(ir *interpreter, params []value) (value, error) {
 }
 
 func invokeMapG(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(Position)
+	posVal := params[0].(point)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapGreen(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
@@ -190,7 +190,7 @@ func invokeMapG(ir *interpreter, params []value) (value, error) {
 }
 
 func invokeMapB(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(Position)
+	posVal := params[0].(point)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapBlue(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
@@ -198,7 +198,7 @@ func invokeMapB(ir *interpreter, params []value) (value, error) {
 }
 
 func invokeMapA(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(Position)
+	posVal := params[0].(point)
 	kernelVal := params[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
@@ -288,13 +288,13 @@ func invokeResize(ir *interpreter, params []value) (value, error) {
 	width := params[0].(Number)
 	height := params[1].(Number)
 	ir.bitmap.ResizeTarget(int(width), int(height))
-	return Rect{
+	return rect{
 		Max: image.Point{int(width), int(height)},
 	}, nil
 }
 
 func invokeLine(ir *interpreter, params []value) (value, error) {
-	point1, point2 := params[0].(Position), params[1].(Position)
+	point1, point2 := params[0].(point), params[1].(point)
 	return line{point1, point2}, nil
 }
 

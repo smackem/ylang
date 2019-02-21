@@ -399,7 +399,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				ifStmt{
 					stmtBase: stmtBase{},
-					cond:     Bool(true),
+					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
 							stmtBase:   stmtBase{},
@@ -471,7 +471,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				ifStmt{
 					stmtBase: stmtBase{},
-					cond:     Bool(true),
+					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
 							stmtBase:   stmtBase{},
@@ -493,7 +493,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				ifStmt{
 					stmtBase: stmtBase{},
-					cond:     Bool(true),
+					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
 							stmtBase:   stmtBase{},
@@ -503,7 +503,7 @@ func Test_parse_ast(t *testing.T) {
 					falseStmts: []statement{
 						ifStmt{
 							stmtBase: stmtBase{},
-							cond:     Bool(false),
+							cond:     boolean(false),
 							trueStmts: []statement{
 								logStmt{
 									stmtBase:   stmtBase{},
@@ -522,7 +522,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				ifStmt{
 					stmtBase: stmtBase{},
-					cond:     Bool(true),
+					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
 							stmtBase:   stmtBase{},
@@ -532,7 +532,7 @@ func Test_parse_ast(t *testing.T) {
 					falseStmts: []statement{
 						ifStmt{
 							stmtBase: stmtBase{},
-							cond:     Bool(false),
+							cond:     boolean(false),
 							trueStmts: []statement{
 								logStmt{
 									stmtBase:   stmtBase{},

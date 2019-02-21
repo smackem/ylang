@@ -609,11 +609,11 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttNumber:
 		return tok.parseNumber(), nil
 	case ttString:
-		return String(tok.Lexeme), nil
+		return str(tok.Lexeme), nil
 	case ttTrue:
-		return Bool(true), nil
+		return boolean(true), nil
 	case ttFalse:
-		return Bool(false), nil
+		return boolean(false), nil
 	case ttNil:
 		return nil, nil
 	case ttColor:
