@@ -115,7 +115,6 @@ type binaryExpr struct {
 
 type orExpr binaryExpr
 type andExpr binaryExpr
-
 type eqExpr binaryExpr
 type neqExpr binaryExpr
 type gtExpr binaryExpr
@@ -136,14 +135,17 @@ type unaryExpr struct {
 
 type negExpr unaryExpr
 type notExpr unaryExpr
+
 type posExpr struct {
 	x expression
 	y expression
 }
+
 type memberExpr struct {
 	recvr  expression
 	member string
 }
+
 type indexExpr struct {
 	recvr expression
 	index expression
@@ -151,13 +153,16 @@ type indexExpr struct {
 
 type identExpr string
 type atExpr unaryExpr
+
 type invokeExpr struct {
 	funcName   string
 	parameters []expression
 }
+
 type kernelExpr struct {
 	elements []expression
 }
+
 type functionExpr struct {
 	parameterNames []string
 	body           []statement

@@ -9,9 +9,12 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}",
+            "program": "${workspaceFolder}",
             "env": {},
-            "args": []
+            "args": [
+                "-code", "${workspaceFolder}/polygon.ylang",
+                "-image", "${workspaceFolder}/res/pub/_A01.jpg",
+                "-out", "${workspaceFolder}/temp/out.png" ]
         }
     ]
 }

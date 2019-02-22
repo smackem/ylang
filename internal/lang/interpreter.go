@@ -509,21 +509,11 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		if err != nil {
 			return nil, err
 		}
-		k, ok := recvr.(kernel)
-		if !ok {
-			return nil, fmt.Errorf("type mismatch: expected kernel@index but found %s@index", recvr)
-		}
 		index, err := ir.visitExpr(e.index)
 		if err != nil {
 			return nil, err
 		}
-		switch i := index.(type) {
-		case Number:
-			return k.values[int(i)], nil
-		case point:
-			return k.values[i.Y*k.width+i.X], nil
-		}
-		return nil, fmt.Errorf("type mismatch: expected kernel@number or kernel@point but found kernel@%s", index)
+		return recvr.index(index)
 
 	case str:
 		return e, nil

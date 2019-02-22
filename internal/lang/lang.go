@@ -23,79 +23,7 @@ func (prog Program) Execute(bitmap BitmapContext) error {
 	return interpret(prog, bitmap)
 }
 
-// Number is the number type used by the interpreter
-type Number float32
-
-// Color represents a color with RGBA channels, each channel value held as a floating-point number
-// with range 0..255. This range can be exceeded as a result of a computation.
-type Color struct {
-	R Number
-	G Number
-	B Number
-	A Number
-}
-
-// NewRgba creates a Color from r,g,b,a channel values.
-func NewRgba(r Number, g Number, b Number, a Number) Color {
-	return Color{
-		r,
-		g,
-		b,
-		a,
-	}
-}
-
-// NewSrgba creates a Color from r,g,b,a channel values which are normalized to the range 0..1.
-func NewSrgba(scr Number, scg Number, scb Number, sca Number) Color {
-	return Color{
-		scr * 255.0,
-		scg * 255.0,
-		scb * 255.0,
-		sca * 255.0,
-	}
-}
-
-// Clamp returns a Color with all channel values clamped to 0..255
-func (c Color) Clamp() Color {
-	return Color{
-		clamp(c.R),
-		clamp(c.G),
-		clamp(c.B),
-		clamp(c.A),
-	}
-}
-
-// Intensity returns the brightness of a color normalized to 0..255.
-func (c Color) Intensity() Number {
-	return 0.299*c.R + 0.587*c.G + 0.114*c.B
-}
-
-// ScIntensity returns the brightness of a color normalized to 0..1
-func (c Color) ScIntensity() Number {
-	return c.Intensity() / 255.0
-}
-
-// ScR returns the red channel value normalized to 0..1
-func (c Color) ScR() Number {
-	return c.R / 255.0
-}
-
-// ScG returns the green channel value normalized to 0..1
-func (c Color) ScG() Number {
-	return c.G / 255.0
-}
-
-// ScB returns the blue channel value normalized to 0..1
-func (c Color) ScB() Number {
-	return c.B / 255.0
-}
-
-// ScA returns the alpha value normalized to 0..1
-func (c Color) ScA() Number {
-	return c.A / 255.0
-}
-
-// BitmapContext is the surface a Program works on.
+// BitmapContext is the surface a ylang Program works on.
 type BitmapContext interface {
 	GetPixel(x int, y int) Color
 	SetPixel(x int, y int, color Color)
@@ -111,16 +39,4 @@ type BitmapContext interface {
 	BltToTarget(x, y, width, height int)
 	BltToSource(x, y, width, height int)
 	ResizeTarget(width, height int)
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-func clamp(n Number) Number {
-	if n > 255 {
-		return 255
-	}
-	if n < 0 {
-		return 0
-	}
-	return n
 }

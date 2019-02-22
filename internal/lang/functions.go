@@ -1,6 +1,7 @@
 package lang
 
 import (
+	"fmt"
 	"image"
 	"math"
 	"reflect"
@@ -127,122 +128,114 @@ var functions = map[string]functionDecl{
 	},
 }
 
-func invokeRgb(ir *interpreter, params []value) (value, error) {
-	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), 255), nil
+func invokeRgb(ir *interpreter, args []value) (value, error) {
+	return NewRgba(args[0].(Number), args[1].(Number), args[2].(Number), 255), nil
 }
 
-func invokeSrgb(ir *interpreter, params []value) (value, error) {
-	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), 1.0), nil
+func invokeSrgb(ir *interpreter, args []value) (value, error) {
+	return NewSrgba(args[0].(Number), args[1].(Number), args[2].(Number), 1.0), nil
 }
 
-func invokeRgba(ir *interpreter, params []value) (value, error) {
-	return NewRgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
+func invokeRgba(ir *interpreter, args []value) (value, error) {
+	return NewRgba(args[0].(Number), args[1].(Number), args[2].(Number), args[3].(Number)), nil
 }
 
-func invokeSrgba(ir *interpreter, params []value) (value, error) {
-	return NewSrgba(params[0].(Number), params[1].(Number), params[2].(Number), params[3].(Number)), nil
+func invokeSrgba(ir *interpreter, args []value) (value, error) {
+	return NewSrgba(args[0].(Number), args[1].(Number), args[2].(Number), args[3].(Number)), nil
 }
 
-func invokeRect(ir *interpreter, params []value) (value, error) {
-	x, y := int(params[0].(Number)), int(params[1].(Number))
+func invokeRect(ir *interpreter, args []value) (value, error) {
+	x, y := int(args[0].(Number)), int(args[1].(Number))
 	return rect{
 		Min: image.Point{x, y},
-		Max: image.Point{x + int(params[2].(Number)+0.5), y + int(params[3].(Number)+0.5)},
+		Max: image.Point{x + int(args[2].(Number)+0.5), y + int(args[3].(Number)+0.5)},
 	}, nil
 }
 
-func invokeConvolute(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(point)
-	kernelVal := params[1].(kernel)
+func invokeConvolute(ir *interpreter, args []value) (value, error) {
+	posVal := args[0].(point)
+	kernelVal := args[1].(kernel)
 	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values), nil
 }
 
-// implement sort.Interface for Number slice
-
-type numberSlice []Number
-
-func (p numberSlice) Len() int           { return len(p) }
-func (p numberSlice) Less(i, j int) bool { return p[i] < p[j] }
-func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-
-func invokeSort(ir *interpreter, params []value) (value, error) {
-	kernelVal := params[0].(kernel)
+func invokeSort(ir *interpreter, args []value) (value, error) {
+	kernelVal := args[0].(kernel)
 	result := kernelVal
 	result.values = append([]Number(nil), result.values...) // clone values
 	sort.Sort(numberSlice(result.values))
 	return result, nil
 }
 
-func invokeMapR(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(point)
-	kernelVal := params[1].(kernel)
+func invokeMapR(ir *interpreter, args []value) (value, error) {
+	posVal := args[0].(point)
+	kernelVal := args[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapRed(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
-func invokeMapG(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(point)
-	kernelVal := params[1].(kernel)
+func invokeMapG(ir *interpreter, args []value) (value, error) {
+	posVal := args[0].(point)
+	kernelVal := args[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapGreen(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
-func invokeMapB(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(point)
-	kernelVal := params[1].(kernel)
+func invokeMapB(ir *interpreter, args []value) (value, error) {
+	posVal := args[0].(point)
+	kernelVal := args[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapBlue(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
-func invokeMapA(ir *interpreter, params []value) (value, error) {
-	posVal := params[0].(point)
-	kernelVal := params[1].(kernel)
+func invokeMapA(ir *interpreter, args []value) (value, error) {
+	posVal := args[0].(point)
+	kernelVal := args[1].(kernel)
 	result := kernelVal
 	result.values = ir.bitmap.MapAlpha(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)
 	return result, nil
 }
 
-func invokeSin(ir *interpreter, params []value) (value, error) {
-	return Number(math.Sin(float64(params[0].(Number)))), nil
+func invokeSin(ir *interpreter, args []value) (value, error) {
+	return Number(math.Sin(float64(args[0].(Number)))), nil
 }
 
-func invokeCos(ir *interpreter, params []value) (value, error) {
-	return Number(math.Cos(float64(params[0].(Number)))), nil
+func invokeCos(ir *interpreter, args []value) (value, error) {
+	return Number(math.Cos(float64(args[0].(Number)))), nil
 }
 
-func invokeTan(ir *interpreter, params []value) (value, error) {
-	return Number(math.Tan(float64(params[0].(Number)))), nil
+func invokeTan(ir *interpreter, args []value) (value, error) {
+	return Number(math.Tan(float64(args[0].(Number)))), nil
 }
 
-func invokeAsin(ir *interpreter, params []value) (value, error) {
-	return Number(math.Asin(float64(params[0].(Number)))), nil
+func invokeAsin(ir *interpreter, args []value) (value, error) {
+	return Number(math.Asin(float64(args[0].(Number)))), nil
 }
 
-func invokeAcos(ir *interpreter, params []value) (value, error) {
-	return Number(math.Acos(float64(params[0].(Number)))), nil
+func invokeAcos(ir *interpreter, args []value) (value, error) {
+	return Number(math.Acos(float64(args[0].(Number)))), nil
 }
 
-func invokeAtan(ir *interpreter, params []value) (value, error) {
-	return Number(math.Atan(float64(params[0].(Number)))), nil
+func invokeAtan(ir *interpreter, args []value) (value, error) {
+	return Number(math.Atan(float64(args[0].(Number)))), nil
 }
 
-func invokeAtan2(ir *interpreter, params []value) (value, error) {
-	return Number(math.Atan2(float64(params[0].(Number)), float64(params[1].(Number)))), nil
+func invokeAtan2(ir *interpreter, args []value) (value, error) {
+	return Number(math.Atan2(float64(args[0].(Number)), float64(args[1].(Number)))), nil
 }
 
-func invokeSqrt(ir *interpreter, params []value) (value, error) {
-	return Number(math.Sqrt(float64(params[0].(Number)))), nil
+func invokeSqrt(ir *interpreter, args []value) (value, error) {
+	return Number(math.Sqrt(float64(args[0].(Number)))), nil
 }
 
-func invokeAbs(ir *interpreter, params []value) (value, error) {
-	return Number(math.Abs(float64(params[0].(Number)))), nil
+func invokeAbs(ir *interpreter, args []value) (value, error) {
+	return Number(math.Abs(float64(args[0].(Number)))), nil
 }
 
-func invokeMax(it *interpreter, params []value) (value, error) {
-	kernelVal := params[0].(kernel)
+func invokeMax(it *interpreter, args []value) (value, error) {
+	kernelVal := args[0].(kernel)
 	max := Number(math.MinInt32)
 	for _, n := range kernelVal.values {
 		if n > max {
@@ -252,8 +245,8 @@ func invokeMax(it *interpreter, params []value) (value, error) {
 	return Number(max), nil
 }
 
-func invokeMin(it *interpreter, params []value) (value, error) {
-	kernelVal := params[0].(kernel)
+func invokeMin(it *interpreter, args []value) (value, error) {
+	kernelVal := args[0].(kernel)
 	min := Number(math.MaxInt32)
 	for _, n := range kernelVal.values {
 		if n < min {
@@ -263,9 +256,9 @@ func invokeMin(it *interpreter, params []value) (value, error) {
 	return Number(min), nil
 }
 
-func invokeList(it *interpreter, params []value) (value, error) {
-	count := params[0].(Number)
-	val := params[1].(Number)
+func invokeList(it *interpreter, args []value) (value, error) {
+	count := args[0].(Number)
+	val := args[1].(Number)
 	values := make([]Number, int(count))
 	for i := range values {
 		values[i] = val
@@ -273,10 +266,10 @@ func invokeList(it *interpreter, params []value) (value, error) {
 	return kernel{values: values}, nil
 }
 
-func invokeKernel(ir *interpreter, params []value) (value, error) {
-	width := params[0].(Number)
-	height := params[1].(Number)
-	val := params[2].(Number)
+func invokeKernel(ir *interpreter, args []value) (value, error) {
+	width := args[0].(Number)
+	height := args[1].(Number)
+	val := args[2].(Number)
 	values := make([]Number, int(width*height))
 	for i := range values {
 		values[i] = val
@@ -284,20 +277,32 @@ func invokeKernel(ir *interpreter, params []value) (value, error) {
 	return kernel{width: int(width), height: int(height), values: values}, nil
 }
 
-func invokeResize(ir *interpreter, params []value) (value, error) {
-	width := params[0].(Number)
-	height := params[1].(Number)
+func invokeResize(ir *interpreter, args []value) (value, error) {
+	width := args[0].(Number)
+	height := args[1].(Number)
 	ir.bitmap.ResizeTarget(int(width), int(height))
 	return rect{
 		Max: image.Point{int(width), int(height)},
 	}, nil
 }
 
-func invokeLine(ir *interpreter, params []value) (value, error) {
-	point1, point2 := params[0].(point), params[1].(point)
+func invokeLine(ir *interpreter, args []value) (value, error) {
+	point1, point2 := args[0].(point), args[1].(point)
 	return line{point1, point2}, nil
 }
 
-func invokePolygon(ir *interpreter, params []value) (value, error) {
-	return nil, nil
+func invokePolygon(ir *interpreter, args []value) (value, error) {
+	if len(args) == 0 {
+		return nil, fmt.Errorf("polygon must not be empty")
+	}
+	points := make([]point, 0, len(args))
+	for _, param := range args {
+		points = append(points, param.(point))
+	}
+	if points[0] == points[len(points)-1] {
+		points = points[:len(points)-1]
+	}
+	return polygon{
+		vertices: points,
+	}, nil
 }
