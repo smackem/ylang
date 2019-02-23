@@ -1,0 +1,21 @@
+{
+    "name": "ylang",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": ">=0.9.0-pre.1"
+    },
+    "publisher": "smackem",
+    "contributes": {
+        "languages": [{
+            "id": "ylang",
+            "aliases": ["ylang"],
+            "extensions": [".ylang"]
+        }],
+        "grammars": [{
+            "language": "ylang",
+            "scopeName": "source.ylang",
+            "path": "./syntaxes/ylang.json"
+        }]
+    }
+}
+

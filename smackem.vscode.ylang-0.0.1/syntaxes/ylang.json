@@ -1,0 +1,334 @@
+{
+	"information_for_contributors": [
+		"This file has been converted from https://github.com/atom/language-ylang/blob/master/grammars/ylang.cson",
+		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
+		"Once accepted there, we are happy to receive an update request."
+	],
+	"version": "https://github.com/atom/language-ylang/commit/b6fd68f74efa109679e31fe6f4a41ac105262d0e",
+	"name": "ylang",
+	"scopeName": "source.ylang",
+	"comment": "ylang language",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"comment": "Interpreted string literals",
+			"begin": "\"",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.ylang"
+				}
+			},
+			"end": "\"",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.end.ylang"
+				}
+			},
+			"name": "string.quoted.double.ylang",
+			"patterns": [
+				{
+					"include": "#string_escaped_char"
+				},
+				{
+					"include": "#string_placeholder"
+				}
+			]
+		},
+		{
+			"comment": "Built-in functions",
+			"match": "\\b(rgb|srgb|rgba|srgba|sort|sqrt|abs|resize|sin|cos|tan|asin|acos|atan|atan2|list|kernel|rect|polygon|convolute|min|max)\\b(?=\\()",
+			"name": "support.function.builtin.ylang"
+		},
+		{
+			"comment": "Floating-point literals",
+			"match": "(\\.\\d+([Ee][-+]\\d+)?i?)\\b|\\b\\d+\\.\\d*(([Ee][-+]\\d+)?i?\\b)?",
+			"name": "constant.numeric.floating-point.ylang"
+		},
+		{
+			"comment": "Integers",
+			"match": "\\b((0x[0-9a-fA-F]+)|(0[0-7]+i?)|(\\d+([Ee]\\d+)?i?)|(\\d+[Ee][-+]\\d+i?))\\b",
+			"name": "constant.numeric.integer.ylang"
+		},
+		{
+			"comment": "Colors",
+			"match": "\\#[0-9a-fA-F]+",
+			"name": "constant.numeric.color.ylang"
+		},
+		{
+			"comment": "Language constants",
+			"match": "\\b(true|false|nil)\\b",
+			"name": "constant.language.ylang"
+		},
+		{
+			"comment": "Function call",
+			"match": "\\b(\\w+)\\(\\b",
+			"captures":{
+				"1": {
+					"name": "support.function.appdef.ylang"
+				}
+			}
+		},
+		{
+			"match": "\\b\\w+\\.(\\w+)",
+			"captures": {
+				"1": {
+					"name": "variable.other.property.ylang"
+				}
+			}
+		},
+		{
+			"match": "\\b(\\w+)\\b(?=\\s*:=)",
+			"captures": {
+				"1": {
+					"name": "variable.assignment.ylang"
+				}
+			}
+		},
+		{
+			"comment": "Terminators",
+			"match": ";",
+			"name": "punctuation.terminator.ylang"
+		},
+		{
+			"include": "#brackets"
+		},
+		{
+			"include": "#delimiters"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#storage_types"
+		}
+	],
+	"repository": {
+		"brackets": {
+			"patterns": [
+				{
+					"begin": "{",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.begin.bracket.curly.ylang"
+						}
+					},
+					"end": "}",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.end.bracket.curly.ylang"
+						}
+					},
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				{
+					"begin": "\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.begin.bracket.round.ylang"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.end.bracket.round.ylang"
+						}
+					},
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				{
+					"match": "\\[|\\]",
+					"name": "punctuation.definition.bracket.square.ylang"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"begin": "//",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.comment.ylang"
+						}
+					},
+					"end": "$",
+					"name": "comment.line.double-slash.ylang"
+				}
+			]
+		},
+		"delimiters": {
+			"patterns": [
+				{
+					"match": ",",
+					"name": "punctuation.other.comma.ylang"
+				},
+				{
+					"match": "\\.(?!\\.\\.)",
+					"name": "punctuation.other.period.ylang"
+				},
+				{
+					"match": ":(?!=)",
+					"name": "punctuation.other.colon.ylang"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"comment": "Flow control keywords",
+					"match": "\\b(else|for|if|in|return|yield)\\b",
+					"name": "keyword.control.ylang"
+				},
+				{
+					"match": "\\bfn\\b",
+					"name": "keyword.function.ylang"
+				},
+				{
+					"match": "\\b(log|blt|commit)\\b",
+					"name": "keyword.statements.ylang"
+				}
+			]
+		},
+		"operators": {
+			"comment": "Note that the order here is very important!",
+			"patterns": [
+				{
+					"match": "(==|!=|<=|>=|<(?!<)|>(?!>))",
+					"name": "keyword.operator.comparison.ylang"
+				},
+				{
+					"match": "(:=|=)",
+					"name": "keyword.operator.assignment.ylang"
+				},
+				{
+					"match": "(\\+|\\-|\\*|/|%|;)",
+					"name": "keyword.operator.arithmetic.ylang"
+				},
+				{
+					"match": "(&(?!\\^)|\\||\\^|&\\^|<<|>>|~)",
+					"name": "keyword.operator.arithmetic.bitwise.ylang"
+				},
+				{
+					"match": "\\b\\.\\.\\b",
+					"name": "keyword.operator.arithmetic.ylang"
+				},
+				{
+					"match": "\\b(or|and|not)\\b|@",
+					"name": "keyword.operator.expression.ylang"
+				}
+			]
+		},
+		"string_escaped_char": {
+			"patterns": [
+				{
+					"match": "\\\\([0-7]{3}|[abfnrtv\\\\'\"]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
+					"name": "constant.character.escape.ylang"
+				},
+				{
+					"match": "\\\\[^0-7xuUabfnrtv\\'\"]",
+					"name": "invalid.illegal.unknown-escape.ylang"
+				}
+			]
+		},
+		"string_placeholder": {
+			"patterns": [
+				{
+					"match": "%(\\[\\d+\\])?([\\+#\\-0\\x20]{,2}((\\d+|\\*)?(\\.?(\\d+|\\*|(\\[\\d+\\])\\*?)?(\\[\\d+\\])?)?))?[vT%tbcdoqxXUbeEfFgGsp]",
+					"name": "constant.other.placeholder.ylang"
+				}
+			]
+		},
+		"variables": {
+			"patterns": [
+				{
+					"match": "(\\w+(?:,\\s*\\w+)*)(\\s+\\*?\\w+(?:\\.\\w+)?\\s*)?(?=\\s*=)",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"match": "\\d\\w*",
+									"name": "invalid.illegal.identifier.ylang"
+								},
+								{
+									"match": "\\w+",
+									"name": "variable.other.assignment.ylang"
+								},
+								{
+									"include": "#delimiters"
+								}
+							]
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "$self"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "(\\w+(?:,\\s*\\w+)*)(\\s+(\\[(\\d*|\\.\\.\\.)\\])*\\*?(<-)?\\w+(?:\\.\\w+)?\\s*[^=].*)",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"match": "\\d\\w*",
+									"name": "invalid.illegal.identifier.ylang"
+								},
+								{
+									"match": "\\w+",
+									"name": "variable.other.declaration.ylang"
+								},
+								{
+									"include": "#delimiters"
+								}
+							]
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "$self"
+								}
+							]
+						}
+					}
+				},
+				{
+					"begin": "\\(",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.variables.begin.bracket.round.ylang"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.variables.end.bracket.round.ylang"
+						}
+					},
+					"patterns": [
+						{
+							"include": "$self"
+						},
+						{
+							"include": "#variables"
+						}
+					]
+				}
+			]
+		}
+	}
+}

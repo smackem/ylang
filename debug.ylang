@@ -19,11 +19,13 @@ Intersect := fn(p1, p2, p3, p4) {
 
     m1 := (p2.y - p1.y) / (p2.x - p1.x)
     m2 := (p4.y - p3.y) / (p4.x - p3.x)
+
     if m1 == m2 {
         // the lines are parallel
         return nil
     }
-    x := (m1 * p1.x  - m2 * p3.x + p3.y - p1.y) / (m1 - m2)
+
+    x := (m1 * p1.x - m2 * p3.x + p3.y - p1.y) / (m1 - m2)
     y := (x - p1.x) * m1 + p1.y
     return x;y
 }
