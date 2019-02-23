@@ -1,0 +1,17 @@
+OutBounds := resize(800, 600)
+
+for pt in OutBounds {
+    @pt = Black
+}
+
+for pt in polygon(0;0, 100;10, 200;100) {
+    @pt = White
+}
+
+for pt in polygon(0;200, 100;200, 100;300, 0;300) {
+    @pt = White
+}
+
+for pt in polygon(10;300, 200;300, 300;400, 200;500, 100;500, 200;400) {
+    @pt = White
+}

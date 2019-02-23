@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}",
             "env": {},
             "args": [
-                "-code", "${workspaceFolder}/polygon.ylang",
+                "-code", "${workspaceFolder}/debug.ylang",
                 "-image", "${workspaceFolder}/res/pub/_A01.jpg",
                 "-out", "${workspaceFolder}/temp/out.png" ]
         }

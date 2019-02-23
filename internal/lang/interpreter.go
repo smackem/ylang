@@ -408,11 +408,23 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 
 	case eqExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
+			if left == nil {
+				if right == nil {
+					return boolean(true), nil
+				}
+				return falseVal, nil
+			}
 			return left.equals(right)
 		})
 
 	case neqExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
+			if left == nil {
+				if right == nil {
+					return falseVal, nil
+				}
+				return boolean(true), nil
+			}
 			result, err := left.equals(right)
 			if err != nil {
 				return nil, err
