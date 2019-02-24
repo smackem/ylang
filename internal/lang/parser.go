@@ -420,7 +420,7 @@ func (p *parser) parseAndExpr() (expression, error) {
 }
 
 func (p *parser) parseCondExpr() (expression, error) {
-	left, err := p.parseTermExpr()
+	left, err := p.parseTupleExpr()
 	if err != nil {
 		return nil, err
 	}
@@ -428,47 +428,65 @@ func (p *parser) parseCondExpr() (expression, error) {
 	switch p.current().Type {
 	case ttEqEq:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return eqExpr{left, right}, nil
 	case ttNeq:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return neqExpr{left, right}, nil
 	case ttGt:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return gtExpr{left, right}, nil
 	case ttGe:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return geExpr{left, right}, nil
 	case ttLt:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return ltExpr{left, right}, nil
 	case ttLe:
 		p.next()
-		right, err := p.parseTermExpr()
+		right, err := p.parseTupleExpr()
 		if err != nil {
 			return nil, err
 		}
 		return leExpr{left, right}, nil
 	}
+	return left, nil
+}
+
+func (p *parser) parseTupleExpr() (expression, error) {
+	left, err := p.parseTermExpr()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.current().Type == ttSemicolon {
+		p.next()
+		right, err := p.parseTermExpr()
+		if err != nil {
+			return nil, err
+		}
+		return posExpr{x: left, y: right}, nil
+	}
+
 	return left, nil
 }
 
@@ -567,13 +585,6 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 
 	for {
 		switch p.current().Type {
-		case ttSemicolon:
-			p.next()
-			y, err := p.parseAtom()
-			if err != nil {
-				return nil, err
-			}
-			atom = posExpr{x: atom, y: y}
 		case ttDot:
 			p.next()
 			memberTok, err := p.expect(ttIdent)

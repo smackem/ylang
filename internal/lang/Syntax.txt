@@ -45,13 +45,16 @@ AndExpr:
     | Cond
 
 Cond:
-    | Term EQEQ Term
-    | Term NEQ Term
-    | Term GT Term
-    | Term GE Term
-    | Term LT Term
-    | Term LE Term
-    | Term
+    | Tuple EQEQ Tuple
+    | Tuple NEQ Tuple
+    | Tuple GT Tuple
+    | Tuple GE Tuple
+    | Tuple LT Tuple
+    | Tuple LE Tuple
+    | Tuple
+
+Tuple:
+    | Term SEMICOLON Term
 
 Term:
     | Term PLUS Molecule
@@ -65,7 +68,6 @@ Term:
 Molecule:
     | MINUS Atom
     | NOT Atom
-    | Molecule SEMICOLON Atom
     | Molecule DOT IDENT
     | Molecule LBRACKET Expr RBRACKET
     | Atom
