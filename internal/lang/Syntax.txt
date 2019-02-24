@@ -87,7 +87,8 @@ Atom:
     | FALSE
     | NIL
     | IDENT LPAREN ParameterListOpt RPAREN
-    | LBRACKET MoleculeList RBRACKET
+    | PIPE MoleculeList PIPE
+    | LBRACE KeyValuePairListOpt RBRACE
     | FunctionDef
 
 ParameterListOpt:
@@ -97,6 +98,14 @@ ParameterListOpt:
 ParameterList:
     | Expr COMMA ParameterList
     | Expr
+
+KeyValuePairListOpt:
+    | KeyValuePairList
+    |
+
+KeyValuePairList:
+    | IDENT COLON Expr COMMA KeyValuePairList
+    | IDENT COLON Expr
 
 FunctionDef:
     | FN LPAREN IdentListOpt RPAREN LBRACKET StatementList RBRACKET
