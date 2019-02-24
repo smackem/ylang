@@ -29,9 +29,6 @@
 			"name": "string.quoted.double.ylang",
 			"patterns": [
 				{
-					"include": "#string_escaped_char"
-				},
-				{
 					"include": "#string_placeholder"
 				}
 			]
@@ -80,6 +77,14 @@
 		},
 		{
 			"match": "\\b(\\w+)\\b(?=\\s*:=)",
+			"captures": {
+				"1": {
+					"name": "variable.other.assignment.ylang"
+				}
+			}
+		},
+		{
+			"match": "\\b(\\w+)\\b(?=\\s*:)\\b",
 			"captures": {
 				"1": {
 					"name": "variable.assignment.ylang"
@@ -188,7 +193,7 @@
 			"patterns": [
 				{
 					"comment": "Flow control keywords",
-					"match": "\\b(else|for|if|in|return|yield)\\b",
+					"match": "\\b(else|for|if|in|return|yield|or|and|not)\\b",
 					"name": "keyword.control.ylang"
 				},
 				{
@@ -221,24 +226,8 @@
 					"name": "keyword.operator.arithmetic.bitwise.ylang"
 				},
 				{
-					"match": "\\b\\.\\.\\b",
-					"name": "keyword.operator.arithmetic.ylang"
-				},
-				{
-					"match": "\\b(or|and|not)\\b|@",
+					"match": "@|(\\.\\.)",
 					"name": "keyword.operator.expression.ylang"
-				}
-			]
-		},
-		"string_escaped_char": {
-			"patterns": [
-				{
-					"match": "\\\\([0-7]{3}|[abfnrtv\\\\'\"]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
-					"name": "constant.character.escape.ylang"
-				},
-				{
-					"match": "\\\\[^0-7xuUabfnrtv\\'\"]",
-					"name": "invalid.illegal.unknown-escape.ylang"
 				}
 			]
 		},
@@ -247,86 +236,6 @@
 				{
 					"match": "%(\\[\\d+\\])?([\\+#\\-0\\x20]{,2}((\\d+|\\*)?(\\.?(\\d+|\\*|(\\[\\d+\\])\\*?)?(\\[\\d+\\])?)?))?[vT%tbcdoqxXUbeEfFgGsp]",
 					"name": "constant.other.placeholder.ylang"
-				}
-			]
-		},
-		"variables": {
-			"patterns": [
-				{
-					"match": "(\\w+(?:,\\s*\\w+)*)(\\s+\\*?\\w+(?:\\.\\w+)?\\s*)?(?=\\s*=)",
-					"captures": {
-						"1": {
-							"patterns": [
-								{
-									"match": "\\d\\w*",
-									"name": "invalid.illegal.identifier.ylang"
-								},
-								{
-									"match": "\\w+",
-									"name": "variable.other.assignment.ylang"
-								},
-								{
-									"include": "#delimiters"
-								}
-							]
-						},
-						"2": {
-							"patterns": [
-								{
-									"include": "$self"
-								}
-							]
-						}
-					}
-				},
-				{
-					"match": "(\\w+(?:,\\s*\\w+)*)(\\s+(\\[(\\d*|\\.\\.\\.)\\])*\\*?(<-)?\\w+(?:\\.\\w+)?\\s*[^=].*)",
-					"captures": {
-						"1": {
-							"patterns": [
-								{
-									"match": "\\d\\w*",
-									"name": "invalid.illegal.identifier.ylang"
-								},
-								{
-									"match": "\\w+",
-									"name": "variable.other.declaration.ylang"
-								},
-								{
-									"include": "#delimiters"
-								}
-							]
-						},
-						"2": {
-							"patterns": [
-								{
-									"include": "$self"
-								}
-							]
-						}
-					}
-				},
-				{
-					"begin": "\\(",
-					"beginCaptures": {
-						"0": {
-							"name": "punctuation.definition.variables.begin.bracket.round.ylang"
-						}
-					},
-					"end": "\\)",
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.definition.variables.end.bracket.round.ylang"
-						}
-					},
-					"patterns": [
-						{
-							"include": "$self"
-						},
-						{
-							"include": "#variables"
-						}
-					]
 				}
 			]
 		}

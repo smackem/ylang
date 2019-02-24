@@ -63,7 +63,7 @@ func Test_parse_syntax(t *testing.T) {
 		},
 		{
 			name:    "kernel_expr",
-			src:     "k := [1 2 3 4 5 6 7 8 9]",
+			src:     "k := |1 2 3 4 5 6 7 8 9|",
 			wantErr: false,
 		},
 		{

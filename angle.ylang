@@ -1,9 +1,9 @@
-SobelX := [-1  0  1
+SobelX := |-1  0  1
            -2  0  2
-           -1  0  1]
-SobelY := [ 1  2  1
+           -1  0  1|
+SobelY := | 1  2  1
             0  0  0
-           -1 -2 -1]
+           -1 -2 -1|
 
 for pos in Bounds {
     @pos = @pos.sci * White

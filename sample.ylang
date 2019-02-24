@@ -1,19 +1,19 @@
-SobelX := [-1  0  1
+SobelX := |-1  0  1
            -2  0  2
-           -1  0  1]
-SobelY := [ 1  2  1
+           -1  0  1|
+SobelY := | 1  2  1
             0  0  0
-           -1 -2 -1]
+           -1 -2 -1|
 
-Laplace := [-1 -1 -1
+Laplace := |-1 -1 -1
             -1  8 -1
-            -1 -1 -1]
+            -1 -1 -1|
 
-Gauss := [0 1 2 1 0
-          1 2 4 2 1
-          2 4 8 4 2
-          1 2 4 2 1
-          0 1 2 1 0]
+Gauss := |0  1  2  1  0
+          1  2  4  2  1
+          2  4  8  4  2
+          1  2  4  2  1
+          0  1  2  1  0|
 
 Median := kernel(5, 5, 1)
 MedianCenter := 2;2
@@ -33,18 +33,18 @@ Smoothen := fn() {
 }
 
 DetectEdges := fn() {
-    Q0   := [0 0 0
+    Q0   := |0 0 0
              1 1 1
-             0 0 0]
-    Q45  := [0 0 1
+             0 0 0|
+    Q45  := |0 0 1
              0 1 0
-             1 0 0]
-    Q90  := [0 1 0
+             1 0 0|
+    Q90  := |0 1 0
              0 1 0
-             0 1 0]
-    Q135 := [1 0 0
+             0 1 0|
+    Q135 := |1 0 0
              0 1 0
-             0 0 1]
+             0 0 1|
 
     for pos in Bounds {
         sx := convolute(pos, SobelX)
@@ -71,9 +71,9 @@ DetectEdges := fn() {
 }
 
 Hysteresis := fn() {
-    Neighbours := [1 1 1
+    Neighbours := |1 1 1
                    1 1 1
-                   1 1 1]
+                   1 1 1|
     for pos in Bounds {
         val := @pos.r
         if val > 10 {

@@ -97,7 +97,7 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "kernel",
-			src:  "k := [1 2 3 4]",
+			src:  "k := |1 2 3 4|",
 			want: scope{
 				"k": kernel{width: 2, height: 2, values: []Number{Number(1), Number(2), Number(3), Number(4)}},
 			},
@@ -136,21 +136,21 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "kernel_index",
-			src:  "n := [1 2 3 4][1]",
+			src:  "n := |1 2 3 4|[1]",
 			want: scope{
 				"n": Number(2),
 			},
 		},
 		{
 			name: "kernel_index_2",
-			src:  "n := [1 2 3 4][0;1]",
+			src:  "n := |1 2 3 4|[0;1]",
 			want: scope{
 				"n": Number(3),
 			},
 		},
 		{
 			name: "sort",
-			src:  "k := sort([4 1 3 2])",
+			src:  "k := sort(|4 1 3 2|)",
 			want: scope{
 				"k": kernel{
 					width:  2,
@@ -161,8 +161,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "min_max",
-			src: `min := min([4 1 3 2])
-			      max := max([4 1 3 2])`,
+			src: `min := min(|4 1 3 2|)
+			      max := max(|4 1 3 2|)`,
 			want: scope{
 				"min": Number(1),
 				"max": Number(4),

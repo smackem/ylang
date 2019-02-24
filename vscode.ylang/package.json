@@ -14,7 +14,7 @@
         "grammars": [{
             "language": "ylang",
             "scopeName": "source.ylang",
-            "path": "./syntaxes/ylang.json"
+            "path": "./syntaxes/ylang.tmLanguage.json"
         }]
     }
 }

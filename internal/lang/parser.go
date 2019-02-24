@@ -618,7 +618,7 @@ func (p *parser) parseAtom() (expression, error) {
 		return nil, nil
 	case ttColor:
 		return tok.parseColor(), nil
-	case ttLBracket:
+	case ttPipe:
 		return p.parseKernelAtom()
 	case ttFn:
 		return p.parseFunctionDef()
@@ -674,7 +674,7 @@ func (p *parser) parseKernelAtom() (expression, error) {
 	elements := []expression{}
 	for {
 		switch p.current().Type {
-		case ttRBracket:
+		case ttPipe:
 			width := math.Sqrt(float64(len(elements)))
 			if width-math.Trunc(width) != 0 {
 				return nil, fmt.Errorf("kernel defined in kernel expression must be quadratic")
