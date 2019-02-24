@@ -613,9 +613,9 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttTrue:
 		return boolean(true), nil
 	case ttFalse:
-		return boolean(false), nil
+		return falseVal, nil
 	case ttNil:
-		return nil, nil
+		return nilval{}, nil
 	case ttColor:
 		return tok.parseColor(), nil
 	case ttPipe:
