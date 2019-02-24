@@ -80,7 +80,7 @@ func (l line) property(ident string) (value, error) {
 	case "p1", "point1":
 		return l.point1, nil
 	case "p2", "point2":
-		return l.point1, nil
+		return l.point2, nil
 	case "len":
 		dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
 		return Number(math.Sqrt(float64(dx*dx + dy*dy))), nil

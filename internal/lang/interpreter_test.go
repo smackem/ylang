@@ -191,6 +191,48 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
+			name: "line_func",
+			src:  "l := line(0;0, 100;100)",
+			want: scope{
+				"l": line{
+					point1: point{0, 0},
+					point2: point{100, 100},
+				},
+			},
+		},
+		{
+			name: "line_props",
+			src: `p1 := line(0;1, 100;101).p1
+			      p2 := line(0;1, 100;101).p2`,
+			want: scope{
+				"p1": point{0, 1},
+				"p2": point{100, 101},
+			},
+		},
+		{
+			name: "polygon_func",
+			src:  "p := polygon(0;0, 100;0, 100;100, 0;0)",
+			want: scope{
+				"p": polygon{
+					vertices: []point{
+						point{0, 0},
+						point{100, 0},
+						point{100, 100},
+					},
+				},
+			},
+		},
+		{
+			name: "polygon_bounds",
+			src:  "b := polygon(0;0, 100;0, 100;100, 0;0).bounds",
+			want: scope{
+				"b": rect{
+					Min: image.Point{0, 0},
+					Max: image.Point{100, 100},
+				},
+			},
+		},
+		{
 			name: "indexed_assign",
 			src: `k := list(1, 0)
 			      k[0] = 123`,

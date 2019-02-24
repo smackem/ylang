@@ -1,0 +1,76 @@
+OutBounds := resize(800, 600)
+
+IntersectVertical := fn(p1, p2, x) {
+    if p1.x == p2.x {
+        // line is parallel to y axis
+        return nil
+    }
+    return x; ((x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x) + p1.y)
+}
+
+// calculate intersection point of line(p1, p2) and line(p3, p4)
+Intersect := fn(p1, p2, p3, p4) {
+    if p1.x == p2.x {
+        return IntersectVertical(p3, p4, p1.x)
+    }
+    if p3.x == p4.x {
+        return IntersectVertical(p1, p2, p3.x)
+    }
+
+    m1 := (p2.y - p1.y) / (p2.x - p1.x)
+    m2 := (p4.y - p3.y) / (p4.x - p3.x)
+
+    if m1 == m2 {
+        // the lines are parallel
+        return nil
+    }
+
+    x := (m1 * p1.x - m2 * p3.x + p3.y - p1.y) / (m1 - m2)
+    y := (x - p1.x) * m1 + p1.y
+    return x;y
+}
+
+DrawLine := fn(p1, p2, color) {
+    for p in line(p1, p2) {
+        @p = color
+    }
+}
+
+DrawDot := fn(p, color) {
+    rc := rect(p.x - 2, p.y - 2, 5, 5)
+    for pp in rect(p.x - 2, p.y - 2, 5, 5) {
+        if pp.x == rc.left and pp.y == rc.top
+        or pp.x == rc.left and pp.y == rc.bottom-1
+        or pp.x == rc.right-1 and pp.y == rc.top
+        or pp.x == rc.right-1 and pp.y == rc.bottom-1 {
+            // do nothing to round corners
+        } else {
+            @pp = color
+        }
+    }
+}
+
+DrawAndIntersect := fn(p1, p2, color12, p3, p4, color34) {
+    if color12 != nil {
+        DrawLine(p1, p2, color12)
+    }
+    if color34 != nil {
+        DrawLine(p3, p4, color34)
+    }
+    intersection := Intersect(p1, p2, p3, p4)
+    log(intersection)
+    DrawDot(intersection, #ff0000)
+}
+
+DrawAndIntersect(0;0, 100;100, #ffffff, 0;100, 100;0, #00ff00)
+DrawAndIntersect(30;150, 600;100, #ffff00, 0;250, 500;80, #0000ff)
+
+DrawAndIntersect(0;0, 100;100, nil, 60;0, 60;300, #ff00ff)
+DrawAndIntersect(0;100, 100;0, nil, 60;0, 60;300, nil)
+DrawAndIntersect(30;150, 600;100, nil, 60;0, 60;300, nil)
+DrawAndIntersect(0;250, 500;80, nil, 60;0, 60;300, nil)
+
+DrawAndIntersect(0;0, 100;100, nil, 0;70, 600;70, #00ffff)
+DrawAndIntersect(0;100, 100;0, nil, 0;70, 600;70, nil)
+DrawAndIntersect(60;0, 60;300, nil, 0;70, 600;70, nil)
+DrawAndIntersect(0;250, 500;80, nil, 0;70, 600;70, nil)

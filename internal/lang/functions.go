@@ -126,6 +126,10 @@ var functions = map[string]functionDecl{
 		body:   invokePolygon,
 		params: []reflect.Type{reflect.TypeOf([]point{})},
 	},
+	"intersect": {
+		body:   invokeIntersect,
+		params: []reflect.Type{reflect.TypeOf(line{}), reflect.TypeOf(line{})},
+	},
 }
 
 func invokeRgb(ir *interpreter, args []value) (value, error) {
@@ -270,17 +274,21 @@ func invokeKernel(ir *interpreter, args []value) (value, error) {
 	width := args[0].(Number)
 	height := args[1].(Number)
 	val := args[2].(Number)
+
 	values := make([]Number, int(width*height))
 	for i := range values {
 		values[i] = val
 	}
+
 	return kernel{width: int(width), height: int(height), values: values}, nil
 }
 
 func invokeResize(ir *interpreter, args []value) (value, error) {
 	width := args[0].(Number)
 	height := args[1].(Number)
+
 	ir.bitmap.ResizeTarget(int(width), int(height))
+
 	return rect{
 		Max: image.Point{int(width), int(height)},
 	}, nil
@@ -295,14 +303,55 @@ func invokePolygon(ir *interpreter, args []value) (value, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("polygon must not be empty")
 	}
+
 	points := make([]point, 0, len(args))
 	for _, param := range args {
 		points = append(points, param.(point))
 	}
+
 	if points[0] == points[len(points)-1] {
 		points = points[:len(points)-1]
 	}
+
 	return polygon{
 		vertices: points,
 	}, nil
+}
+
+func invokeIntersect(ir *interpreter, args []value) (value, error) {
+	line1, line2 := args[0].(line), args[1].(line)
+	p1, p2 := line1.point1, line1.point2
+	p3, p4 := line2.point1, line2.point2
+	x1, y1, x2, y2 := float32(p1.X), float32(p1.Y), float32(p2.X), float32(p2.Y)
+	x3, y3, x4, y4 := float32(p3.X), float32(p3.Y), float32(p4.X), float32(p4.Y)
+
+	if x1 == x2 {
+		return intersectVertical(p3, p4, p1.X), nil
+	}
+	if x3 == x4 {
+		return intersectVertical(p1, p2, p3.X), nil
+	}
+
+	m1 := (y2 - y1) / (x2 - x1)
+	m2 := (y4 - y3) / (x4 - x3)
+
+	if m1 == m2 {
+		// the lines are parallel
+		return nil, nil
+	}
+
+	x := (m1*x1 - m2*x3 + y3 - y1) / (m1 - m2)
+	y := (x-x1)*m1 + y1
+	return point{int(x + 0.5), int(y + 0.5)}, nil
+}
+
+func intersectVertical(p1 point, p2 point, x int) value {
+	if p1.X == p2.X {
+		// line is parallel to y axis
+		return nil
+	}
+	return point{
+		x,
+		((x-p1.X)*(p2.Y-p1.Y)/(p2.X-p1.X) + p1.Y),
+	}
 }
