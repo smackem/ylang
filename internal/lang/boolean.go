@@ -84,3 +84,7 @@ func (b boolean) iterate(visit func(value) error) error {
 func (b boolean) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: bool[index] not supported")
 }
+
+func (b boolean) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: bool[%s] not supported", reflect.TypeOf(index))
+}

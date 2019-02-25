@@ -167,3 +167,12 @@ type functionExpr struct {
 	parameterNames []string
 	body           []statement
 }
+
+type hashMapExpr struct {
+	entries []hashEntryExpr
+}
+
+type hashEntryExpr struct {
+	key   expression
+	value expression
+}

@@ -79,3 +79,7 @@ func (n nilval) iterate(visit func(value) error) error {
 func (n nilval) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: nil[index] not supported")
 }
+
+func (n nilval) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: nil[%s] not supported", reflect.TypeOf(index))
+}

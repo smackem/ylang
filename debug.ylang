@@ -1,5 +1,9 @@
 OutBounds := resize(800, 600)
 
+for p in OutBounds {
+    @p = Black
+}
+
 DrawLine := fn(line, color) {
     for p in line {
         @p = color
@@ -53,3 +57,12 @@ DrawAndIntersect(whiteLine, nil, cyanLine, #00ffff)
 DrawAndIntersect(greenLine, nil, cyanLine, nil)
 DrawAndIntersect(yellowLine, nil, cyanLine, nil)
 DrawAndIntersect(blueLine, nil, cyanLine, nil)
+
+lines := {
+    white: whiteLine,
+    green: greenLine,
+    blue: blueLine
+}
+log(lines.white)
+log(lines.green)
+log(lines.blue)

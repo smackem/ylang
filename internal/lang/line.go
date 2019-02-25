@@ -120,3 +120,7 @@ func (l line) iterate(visit func(value) error) error {
 func (l line) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: line[index] not supported")
 }
+
+func (l line) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: line[%s] not supported", reflect.TypeOf(index))
+}

@@ -221,3 +221,7 @@ func (p polygon) iterate(visit func(value) error) error {
 func (p polygon) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: polygon[index] not supported")
 }
+
+func (p polygon) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: polygon[%s] not supported", reflect.TypeOf(index))
+}

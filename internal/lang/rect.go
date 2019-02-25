@@ -106,3 +106,7 @@ func (rc rect) iterate(visit func(value) error) error {
 func (rc rect) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: rect[index] not supported")
 }
+
+func (rc rect) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: rect[%s] not supported", reflect.TypeOf(index))
+}

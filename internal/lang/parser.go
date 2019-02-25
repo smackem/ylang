@@ -620,7 +620,7 @@ func (p *parser) parseAtom() (expression, error) {
 	case ttNumber:
 		return tok.parseNumber(), nil
 	case ttString:
-		return str(tok.Lexeme), nil
+		return str(tok.parseString()), nil
 	case ttTrue:
 		return boolean(true), nil
 	case ttFalse:
@@ -633,6 +633,8 @@ func (p *parser) parseAtom() (expression, error) {
 		return p.parseKernelAtom()
 	case ttFn:
 		return p.parseFunctionDef()
+	case ttLBrace:
+		return p.parseHashMap()
 	}
 	return nil, fmt.Errorf("unexpected symbol '%s'", tok.Lexeme)
 }
@@ -762,7 +764,9 @@ func (p *parser) parseIdentList() ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		idents = append(idents, tok.Lexeme)
+
 		if p.current().Type == ttComma {
 			p.next()
 		} else {
@@ -770,4 +774,48 @@ func (p *parser) parseIdentList() ([]string, error) {
 		}
 	}
 	return idents, nil
+}
+
+func (p *parser) parseHashMap() (hashMapExpr, error) {
+	hashMap := hashMapExpr{}
+	if p.current().Type == ttRBrace {
+		p.next()
+		return hashMap, nil
+	}
+	for {
+		var key expression
+		var err error
+
+		tok := p.current()
+		if tok.Type == ttIdent {
+			key = str(tok.Lexeme)
+			p.next()
+		} else {
+			key, err = p.parseExpr()
+			if err != nil {
+				return hashMap, err
+			}
+		}
+
+		if _, err := p.expect(ttColon); err != nil {
+			return hashMap, err
+		}
+
+		value, err := p.parseExpr()
+		if err != nil {
+			return hashMap, err
+		}
+
+		hashMap.entries = append(hashMap.entries, hashEntryExpr{key, value})
+
+		if p.current().Type == ttComma {
+			p.next()
+		} else {
+			break
+		}
+	}
+	if _, err := p.expect(ttRBrace); err != nil {
+		return hashMap, err
+	}
+	return hashMap, nil
 }

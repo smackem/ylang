@@ -21,7 +21,7 @@ gmax := max(gs)
 bmax := max(bs)
 log("rmax:", rmax, "gmax:", gmax, "bmax:", bmax)
 
-OutBounds := resize(255, 100)
+OutBounds := resize(256, 100)
 for x in 0 .. OutBounds.width {
     r := rs[x] / rmax * 255
     g := gs[x] / gmax * 255

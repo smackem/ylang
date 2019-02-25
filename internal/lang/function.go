@@ -82,3 +82,7 @@ func (f function) iterate(visit func(value) error) error {
 func (f function) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: function[index] not supported")
 }
+
+func (f function) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: function[%s] not supported", reflect.TypeOf(index))
+}

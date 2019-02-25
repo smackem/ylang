@@ -162,19 +162,13 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		if err != nil {
 			return err
 		}
-		i, ok := ival.(Number)
-		if !ok {
-			return fmt.Errorf("expected numeric index expression")
-		}
 		rval, err := ir.visitExpr(s.rhs)
 		if err != nil {
 			return err
 		}
-		k, ok := lval.(kernel)
-		if !ok {
-			return fmt.Errorf("expected kernel expression")
+		if err := lval.indexAssign(ival, rval); err != nil {
+			return err
 		}
-		k.values[int(i)] = rval.(Number)
 
 	case pixelAssignStmt:
 		left, err := ir.visitExpr(s.lhs)
@@ -585,6 +579,21 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			body:           e.body,
 			closure:        ir.idents[2:], // omit constants and top scope - they are visible in any context
 		}, nil
+
+	case hashMapExpr:
+		h := make(hashMap)
+		for _, entry := range e.entries {
+			key, err := ir.visitExpr(entry.key)
+			if err != nil {
+				return nil, err
+			}
+			val, err := ir.visitExpr(entry.value)
+			if err != nil {
+				return nil, err
+			}
+			h[key] = val
+		}
+		return h, nil
 	}
 
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))

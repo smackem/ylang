@@ -85,5 +85,9 @@ func (s str) index(index value) (value, error) {
 		runeVal, _ := utf8.DecodeRuneInString(string(s[i:]))
 		return str(fmt.Sprint(runeVal)), nil
 	}
-	return nil, fmt.Errorf("type mismatch: number[index] not supported")
+	return nil, fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
+}
+
+func (s str) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
 }

@@ -104,3 +104,19 @@ func (k kernel) index(index value) (value, error) {
 	}
 	return nil, fmt.Errorf("type mismatch: expected kernel[number] or kernel[point] but found kernel[%s]", reflect.TypeOf(index))
 }
+
+func (k kernel) indexAssign(index value, val value) error {
+	nval, ok := val.(Number)
+	if !ok {
+		return fmt.Errorf("type mismatch: expected kernel[index] = number but found kernel[index] = %s", reflect.TypeOf(val))
+	}
+	switch i := index.(type) {
+	case Number:
+		k.values[int(i)] = nval
+		return nil
+	case point:
+		k.values[i.Y*k.width+i.X] = nval
+		return nil
+	}
+	return fmt.Errorf("type mismatch: expected kernel[number] or kernel[point] but found kernel[%s]", reflect.TypeOf(index))
+}

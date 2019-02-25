@@ -138,6 +138,14 @@ func (t token) parseNumber() Number {
 	panic(fmt.Sprintf("error converting %s to number", t.Lexeme))
 }
 
+func (t token) parseString() string {
+	if t.Type == ttString {
+		return strings.Trim(t.Lexeme, `"`)
+	}
+
+	panic(fmt.Sprintf("error converting %s to string", t.Lexeme))
+}
+
 func (t token) parseColor() Color {
 	if t.Type == ttColor {
 		str := t.Lexeme[1:]

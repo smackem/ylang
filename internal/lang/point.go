@@ -121,3 +121,7 @@ func (p point) iterate(visit func(value) error) error {
 func (p point) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: point[index] not supported")
 }
+
+func (p point) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: point[%s] not supported", reflect.TypeOf(index))
+}

@@ -212,3 +212,7 @@ func clamp(n Number) Number {
 	}
 	return n
 }
+
+func (c Color) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: color[%s] not supported", reflect.TypeOf(index))
+}

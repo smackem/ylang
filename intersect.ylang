@@ -5,7 +5,7 @@ IntersectVertical := fn(p1, p2, x) {
         // line is parallel to y axis
         return nil
     }
-    return x; ((x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x) + p1.y)
+    return x; (x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x) + p1.y
 }
 
 // calculate intersection point of line(p1, p2) and line(p3, p4)

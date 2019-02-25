@@ -145,3 +145,7 @@ type numberSlice []Number
 func (p numberSlice) Len() int           { return len(p) }
 func (p numberSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func (n Number) indexAssign(index value, val value) error {
+	return fmt.Errorf("type mismatch: number[%s] not supported", reflect.TypeOf(index))
+}

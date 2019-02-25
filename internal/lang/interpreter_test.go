@@ -245,6 +245,42 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
+			name: "indexed_assign_kernel",
+			src: `k := |1 2 3 4|
+				  k[0] = 0`,
+			want: scope{
+				"k": kernel{width: 2, height: 2, values: []Number{Number(0), Number(2), Number(3), Number(4)}},
+			},
+		},
+		{
+			name: "hashmap",
+			src:  `m := {a: 1, b: 2, c: 3}`,
+			want: scope{
+				"m": hashMap{str("a"): Number(1), str("b"): Number(2), str("c"): Number(3)},
+			},
+		},
+		{
+			name: "hashmap_index",
+			src: `m := {a: 1, b: 2, c: 3}
+				  a := m.a
+				  b := m.b
+				  c := m["c"]`,
+			want: scope{
+				"m": hashMap{str("a"): Number(1), str("b"): Number(2), str("c"): Number(3)},
+				"a": Number(1),
+				"b": Number(2),
+				"c": Number(3),
+			},
+		},
+		{
+			name: "hashmap_indexed_assign",
+			src: `m := {}
+				  m["a"] = 123`,
+			want: scope{
+				"m": hashMap{str("a"): Number(123)},
+			},
+		},
+		{
 			name: "function_call",
 			src: `f := fn() -> 123
 			      ret := f()`,

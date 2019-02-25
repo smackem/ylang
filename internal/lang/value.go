@@ -18,7 +18,8 @@ type value interface {
 	property(ident string) (value, error)
 	printStr() string
 	iterate(visit func(value) error) error
-	index(i value) (value, error)
+	index(index value) (value, error)
+	indexAssign(index value, val value) error
 }
 
 var falseVal = boolean(false)
