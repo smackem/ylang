@@ -188,7 +188,7 @@ func (c Color) property(ident string) (value, error) {
 	case "sci":
 		return c.ScIntensity(), nil
 	}
-	return nil, fmt.Errorf("unknown property 'color.%s'", ident)
+	return baseProperty(c, ident)
 }
 
 func (c Color) printStr() string {
@@ -215,4 +215,8 @@ func clamp(n Number) Number {
 
 func (c Color) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: color[%s] not supported", reflect.TypeOf(index))
+}
+
+func (c Color) runtimeTypeName() string {
+	return "color"
 }

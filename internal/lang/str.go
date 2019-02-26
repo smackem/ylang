@@ -68,7 +68,11 @@ func (s str) at(bitmap BitmapContext) (value, error) {
 }
 
 func (s str) property(ident string) (value, error) {
-	return nil, fmt.Errorf("unknown property 'string.%s'", ident)
+	switch ident {
+	case "len", "length":
+		return Number(len(s)), nil
+	}
+	return baseProperty(s, ident)
 }
 
 func (s str) printStr() string {
@@ -90,4 +94,8 @@ func (s str) index(index value) (value, error) {
 
 func (s str) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
+}
+
+func (s str) runtimeTypeName() string {
+	return "string"
 }

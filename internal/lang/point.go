@@ -107,7 +107,7 @@ func (p point) property(ident string) (value, error) {
 	case "y":
 		return Number(p.Y), nil
 	}
-	return nil, fmt.Errorf("unknown property 'point.%s'", ident)
+	return baseProperty(p, ident)
 }
 
 func (p point) printStr() string {
@@ -124,4 +124,8 @@ func (p point) index(index value) (value, error) {
 
 func (p point) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: point[%s] not supported", reflect.TypeOf(index))
+}
+
+func (p point) runtimeTypeName() string {
+	return "point"
 }

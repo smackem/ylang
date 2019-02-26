@@ -1,9 +1,3 @@
-OutBounds := resize(800, 600)
-
-for p in OutBounds {
-    @p = Black
-}
-
 DrawLine := fn(line, color) {
     for p in line {
         @p = color
@@ -38,31 +32,95 @@ DrawAndIntersect := fn(line1, color1, line2, color2) {
     }
 }
 
-whiteLine := line(0;0, 100;100)
-greenLine := line(0;100, 100;0)
-yellowLine := line(30;150, 600;100)
-blueLine := line(0;250, 500;80)
-magentaLine := line(60;0, 60;300)
-cyanLine := line(0;70, 600;70)
+Intersections := fn() {
+    OutBounds := resize(800, 600)
 
-DrawAndIntersect(whiteLine, #ffffff, greenLine, #00ff00)
-DrawAndIntersect(yellowLine, #ffff00, blueLine, #0000ff)
+    for p in OutBounds {
+        @p = Black
+    }
 
-DrawAndIntersect(whiteLine, nil, magentaLine, #ff00ff)
-DrawAndIntersect(greenLine, nil, magentaLine, nil)
-DrawAndIntersect(yellowLine, nil, magentaLine, nil)
-DrawAndIntersect(blueLine, nil, magentaLine, nil)
+    whiteLine := line(0;0, 100;100)
+    greenLine := line(0;100, 100;0)
+    yellowLine := line(30;150, 600;100)
+    blueLine := line(0;250, 500;80)
+    magentaLine := line(60;0, 60;300)
+    cyanLine := line(0;70, 600;70)
 
-DrawAndIntersect(whiteLine, nil, cyanLine, #00ffff)
-DrawAndIntersect(greenLine, nil, cyanLine, nil)
-DrawAndIntersect(yellowLine, nil, cyanLine, nil)
-DrawAndIntersect(blueLine, nil, cyanLine, nil)
+    DrawAndIntersect(whiteLine, #ffffff, greenLine, #00ff00)
+    DrawAndIntersect(yellowLine, #ffff00, blueLine, #0000ff)
 
-lines := {
-    white: whiteLine,
-    green: greenLine,
-    blue: blueLine
+    DrawAndIntersect(whiteLine, nil, magentaLine, #ff00ff)
+    DrawAndIntersect(greenLine, nil, magentaLine, nil)
+    DrawAndIntersect(yellowLine, nil, magentaLine, nil)
+    DrawAndIntersect(blueLine, nil, magentaLine, nil)
+
+    DrawAndIntersect(whiteLine, nil, cyanLine, #00ffff)
+    DrawAndIntersect(greenLine, nil, cyanLine, nil)
+    DrawAndIntersect(yellowLine, nil, cyanLine, nil)
+    DrawAndIntersect(blueLine, nil, cyanLine, nil)
 }
-log(lines.white)
-log(lines.green)
-log(lines.blue)
+
+//root := {
+//    name: "root",
+//    children: [
+//        { name: "item1" },
+//        { name: "item2" },
+//        { name: "item3" },
+//        {
+//            name: "item4",
+//            children: [
+//                { name: "item41" },
+//                { name: "item42" },
+//                {
+//                    name: "item43",
+//                    children: [
+//                        { name: "item431" },
+//                        { name: "item432" }
+//                    ]
+//                }
+//            ]
+//        }
+//    ]
+//}
+//
+//walk := fn(item, indent) {
+//    log(indent, item.name)
+//    if item.children != nil {
+//        for child in item.children {
+//            walk(child.val, indent + "  ")
+//        }
+//    }
+//}
+//
+//walk(root, "")
+
+hash := {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4,
+    e: 5,
+    f: 6
+}
+for entry in hash {
+    log(entry.key, entry.val)
+}
+
+for p in Bounds {
+    @p = @p
+}
+
+poly := polygon(0;200, 210;180, 420;210, 200;50, 345;10)
+polyBounds := poly.bounds
+roberts1 := | 1  0
+              0 -1|
+roberts2 := | 0  1
+             -1  0|
+for p in poly {
+    r1 := convolute(p, roberts1)
+    r2 := convolute(p, roberts2)
+    r := r1*r1*255 + r2*r2*255
+    @p = rgb(sqrt(r.r), sqrt(r.g), sqrt(r.b))
+}
+
+log(0.__type, " ", (0;1).__type, " ", rect(0,0,1,2).__type, " ", |1 2 3 4|.__type, " ", "".__type, " ", nil.__type)

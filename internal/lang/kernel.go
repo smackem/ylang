@@ -79,7 +79,7 @@ func (k kernel) property(ident string) (value, error) {
 	case "count":
 		return Number(len(k.values)), nil
 	}
-	return nil, fmt.Errorf("unknown property 'kernel.%s'", ident)
+	return baseProperty(k, ident)
 }
 
 func (k kernel) printStr() string {
@@ -119,4 +119,8 @@ func (k kernel) indexAssign(index value, val value) error {
 		return nil
 	}
 	return fmt.Errorf("type mismatch: expected kernel[number] or kernel[point] but found kernel[%s]", reflect.TypeOf(index))
+}
+
+func (k kernel) runtimeTypeName() string {
+	return "kernel"
 }

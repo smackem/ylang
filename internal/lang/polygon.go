@@ -96,7 +96,7 @@ func (p polygon) property(ident string) (value, error) {
 	case "bounds":
 		return p.bounds(), nil
 	}
-	return nil, fmt.Errorf("unknown property 'rect.%s'", ident)
+	return baseProperty(p, ident)
 }
 
 func (p polygon) printStr() string {
@@ -224,4 +224,8 @@ func (p polygon) index(index value) (value, error) {
 
 func (p polygon) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: polygon[%s] not supported", reflect.TypeOf(index))
+}
+
+func (p polygon) runtimeTypeName() string {
+	return "polygon"
 }

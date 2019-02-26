@@ -67,7 +67,7 @@ func (b boolean) at(bitmap BitmapContext) (value, error) {
 }
 
 func (b boolean) property(ident string) (value, error) {
-	return nil, fmt.Errorf("unknown property 'bool.%s'", ident)
+	return baseProperty(b, ident)
 }
 
 func (b boolean) printStr() string {
@@ -87,4 +87,8 @@ func (b boolean) index(index value) (value, error) {
 
 func (b boolean) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: bool[%s] not supported", reflect.TypeOf(index))
+}
+
+func (b boolean) runtimeTypeName() string {
+	return "boolean"
 }

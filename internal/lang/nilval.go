@@ -65,7 +65,7 @@ func (n nilval) at(bitmap BitmapContext) (value, error) {
 }
 
 func (n nilval) property(ident string) (value, error) {
-	return nil, fmt.Errorf("unknown property 'nil.%s'", ident)
+	return baseProperty(n, ident)
 }
 
 func (n nilval) printStr() string {
@@ -82,4 +82,8 @@ func (n nilval) index(index value) (value, error) {
 
 func (n nilval) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: nil[%s] not supported", reflect.TypeOf(index))
+}
+
+func (n nilval) runtimeTypeName() string {
+	return "nil"
 }

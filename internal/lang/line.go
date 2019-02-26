@@ -85,7 +85,7 @@ func (l line) property(ident string) (value, error) {
 		dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
 		return Number(math.Sqrt(float64(dx*dx + dy*dy))), nil
 	}
-	return nil, fmt.Errorf("unknown property 'rect.%s'", ident)
+	return baseProperty(l, ident)
 }
 
 func (l line) printStr() string {
@@ -123,4 +123,8 @@ func (l line) index(index value) (value, error) {
 
 func (l line) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: line[%s] not supported", reflect.TypeOf(index))
+}
+
+func (l line) runtimeTypeName() string {
+	return "line"
 }

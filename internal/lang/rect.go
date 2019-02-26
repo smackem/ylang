@@ -85,7 +85,7 @@ func (rc rect) property(ident string) (value, error) {
 	case "bottom":
 		return Number(rc.Max.Y), nil
 	}
-	return nil, fmt.Errorf("unknown property 'rect.%s'", ident)
+	return baseProperty(rc, ident)
 }
 
 func (rc rect) printStr() string {
@@ -109,4 +109,8 @@ func (rc rect) index(index value) (value, error) {
 
 func (rc rect) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: rect[%s] not supported", reflect.TypeOf(index))
+}
+
+func (rc rect) runtimeTypeName() string {
+	return "rect"
 }

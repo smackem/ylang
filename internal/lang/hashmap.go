@@ -72,7 +72,7 @@ func (h hashMap) property(ident string) (value, error) {
 			return val, nil
 		}
 	}
-	return nil, fmt.Errorf("unknown property 'hashMap.%s'", ident)
+	return baseProperty(h, ident)
 }
 
 func (h hashMap) printStr() string {
@@ -102,4 +102,8 @@ func (h hashMap) index(index value) (value, error) {
 func (h hashMap) indexAssign(index value, val value) error {
 	h[index] = val
 	return nil
+}
+
+func (h hashMap) runtimeTypeName() string {
+	return "hashmap"
 }

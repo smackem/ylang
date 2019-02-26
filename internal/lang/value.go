@@ -1,5 +1,7 @@
 package lang
 
+import "fmt"
+
 type value interface {
 	equals(other value) (value, error)
 	greaterThan(other value) (value, error)
@@ -20,6 +22,15 @@ type value interface {
 	iterate(visit func(value) error) error
 	index(index value) (value, error)
 	indexAssign(index value, val value) error
+	runtimeTypeName() string
 }
 
 var falseVal = boolean(false)
+
+func baseProperty(val value, ident string) (value, error) {
+	switch ident {
+	case "__type":
+		return str(val.runtimeTypeName()), nil
+	}
+	return nil, fmt.Errorf("unknown property '%s.%s'", val.runtimeTypeName(), ident)
+}

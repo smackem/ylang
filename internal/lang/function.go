@@ -68,7 +68,7 @@ func (f function) at(bitmap BitmapContext) (value, error) {
 }
 
 func (f function) property(ident string) (value, error) {
-	return nil, fmt.Errorf("unknown property 'function.%s'", ident)
+	return baseProperty(f, ident)
 }
 
 func (f function) printStr() string {
@@ -85,4 +85,8 @@ func (f function) index(index value) (value, error) {
 
 func (f function) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: function[%s] not supported", reflect.TypeOf(index))
+}
+
+func (f function) runtimeTypeName() string {
+	return "function"
 }

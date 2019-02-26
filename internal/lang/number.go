@@ -123,7 +123,7 @@ func (n Number) at(bitmap BitmapContext) (value, error) {
 }
 
 func (n Number) property(ident string) (value, error) {
-	return nil, fmt.Errorf("unknown property 'number.%s'", ident)
+	return baseProperty(n, ident)
 }
 
 func (n Number) printStr() string {
@@ -148,4 +148,8 @@ func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 func (n Number) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: number[%s] not supported", reflect.TypeOf(index))
+}
+
+func (n Number) runtimeTypeName() string {
+	return "number"
 }
