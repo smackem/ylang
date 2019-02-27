@@ -61,6 +61,7 @@ const (
 	ttArrow
 	ttNil
 	ttPipe
+	ttColonColon
 	ttEOF
 )
 
@@ -114,6 +115,7 @@ var tokenTypeNames = []string{
 	"->",
 	"nil",
 	"|",
+	"::",
 	"eof",
 }
 
@@ -272,6 +274,7 @@ var matchers = []matcher{
 	makeMatcher(`%`, func(string) tokenType { return ttPercent }),
 	makeMatcher(`,`, func(string) tokenType { return ttComma }),
 	makeMatcher(`\:=`, func(string) tokenType { return ttColonEq }),
+	makeMatcher(`\:\:`, func(string) tokenType { return ttColonColon }),
 	makeMatcher(`\:`, func(string) tokenType { return ttColon }),
 	makeMatcher(`\[`, func(string) tokenType { return ttLBracket }),
 	makeMatcher(`\]`, func(string) tokenType { return ttRBracket }),

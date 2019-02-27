@@ -124,3 +124,7 @@ func (k kernel) indexAssign(index value, val value) error {
 func (k kernel) runtimeTypeName() string {
 	return "kernel"
 }
+
+func (k kernel) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: kernel :: [%s] not supported", reflect.TypeOf(val))
+}

@@ -87,3 +87,7 @@ func (n nilval) indexAssign(index value, val value) error {
 func (n nilval) runtimeTypeName() string {
 	return "nil"
 }
+
+func (n nilval) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: nil :: [%s] not supported", reflect.TypeOf(val))
+}

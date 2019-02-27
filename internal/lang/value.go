@@ -23,6 +23,7 @@ type value interface {
 	index(index value) (value, error)
 	indexAssign(index value, val value) error
 	runtimeTypeName() string
+	concat(val value) (value, error)
 }
 
 var falseVal = boolean(false)

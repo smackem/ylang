@@ -297,31 +297,31 @@ func (p *parser) parseLog() (statement, error) {
 	if _, err := p.expect(ttLParen); err != nil {
 		return nil, err
 	}
-	parameters, err := p.parseParameterList()
+	args, err := p.parseArgumentList()
 	if err != nil {
 		return nil, err
 	}
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return logStmt{p.makeStmtBase(), parameters}, nil
+	return logStmt{p.makeStmtBase(), args}, nil
 }
 
-func (p *parser) parseParameterList() ([]expression, error) {
-	parameters := []expression{}
+func (p *parser) parseArgumentList() ([]expression, error) {
+	args := []expression{}
 	for {
-		parameter, err := p.parseExpr()
+		arg, err := p.parseExpr()
 		if err != nil {
 			return nil, err
 		}
-		parameters = append(parameters, parameter)
+		args = append(args, arg)
 		if p.current().Type == ttComma {
 			p.next()
 		} else {
 			break
 		}
 	}
-	return parameters, nil
+	return args, nil
 }
 
 func (p *parser) parseBlt() (statement, error) {
@@ -420,7 +420,7 @@ func (p *parser) parseAndExpr() (expression, error) {
 }
 
 func (p *parser) parseCondExpr() (expression, error) {
-	left, err := p.parseTupleExpr()
+	left, err := p.parseConcatExpr()
 	if err != nil {
 		return nil, err
 	}
@@ -428,48 +428,69 @@ func (p *parser) parseCondExpr() (expression, error) {
 	switch p.current().Type {
 	case ttEqEq:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return eqExpr{left, right}, nil
 	case ttNeq:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return neqExpr{left, right}, nil
 	case ttGt:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return gtExpr{left, right}, nil
 	case ttGe:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return geExpr{left, right}, nil
 	case ttLt:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return ltExpr{left, right}, nil
 	case ttLe:
 		p.next()
-		right, err := p.parseTupleExpr()
+		right, err := p.parseConcatExpr()
 		if err != nil {
 			return nil, err
 		}
 		return leExpr{left, right}, nil
 	}
 	return left, nil
+}
+
+func (p *parser) parseConcatExpr() (expression, error) {
+	left, err := p.parseTupleExpr()
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		switch p.current().Type {
+		case ttColonColon:
+			p.next()
+			right, err := p.parseTupleExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = concatExpr{left, right}
+		default:
+			return left, nil
+		}
+	}
 }
 
 func (p *parser) parseTupleExpr() (expression, error) {
@@ -635,6 +656,8 @@ func (p *parser) parseAtom() (expression, error) {
 		return p.parseFunctionDef()
 	case ttLBrace:
 		return p.parseHashMap()
+	case ttLBracket:
+		return p.parseList()
 	}
 	return nil, fmt.Errorf("unexpected symbol '%s'", tok.Lexeme)
 }
@@ -667,12 +690,12 @@ func (p *parser) parseIdentAtom(ident string) (expression, error) {
 }
 
 func (p *parser) parseInvocationAtom(ident string) (expression, error) {
-	var parameters []expression
+	var args []expression
 	var err error
 	if p.current().Type == ttRParen {
-		parameters = nil
+		args = nil
 	} else {
-		parameters, err = p.parseParameterList()
+		args, err = p.parseArgumentList()
 		if err != nil {
 			return nil, err
 		}
@@ -680,22 +703,19 @@ func (p *parser) parseInvocationAtom(ident string) (expression, error) {
 	if _, err := p.expect(ttRParen); err != nil {
 		return nil, err
 	}
-	return invokeExpr{funcName: ident, parameters: parameters}, nil
+	return invokeExpr{funcName: ident, args: args}, nil
 }
 
 func (p *parser) parseKernelAtom() (expression, error) {
 	elements := []expression{}
 	for {
-		switch p.current().Type {
-		case ttPipe:
+		if p.current().Type == ttPipe {
 			width := math.Sqrt(float64(len(elements)))
 			if width-math.Trunc(width) != 0 {
 				return nil, fmt.Errorf("kernel defined in kernel expression must be quadratic")
 			}
 			p.next()
 			return kernelExpr{elements}, nil
-		case ttEOF:
-			return nil, fmt.Errorf("unclosed kernel element list")
 		}
 		element, err := p.parseMoleculeExpr()
 		if err != nil {
@@ -776,15 +796,16 @@ func (p *parser) parseIdentList() ([]string, error) {
 	return idents, nil
 }
 
-func (p *parser) parseHashMap() (hashMapExpr, error) {
+func (p *parser) parseHashMap() (expression, error) {
 	hashMap := hashMapExpr{}
-	if p.current().Type == ttRBrace {
-		p.next()
-		return hashMap, nil
-	}
 	for {
 		var key expression
 		var err error
+
+		if p.current().Type == ttRBrace {
+			p.next()
+			return hashMap, nil
+		}
 
 		tok := p.current()
 		if tok.Type == ttIdent {
@@ -793,17 +814,17 @@ func (p *parser) parseHashMap() (hashMapExpr, error) {
 		} else {
 			key, err = p.parseExpr()
 			if err != nil {
-				return hashMap, err
+				return nil, err
 			}
 		}
 
 		if _, err := p.expect(ttColon); err != nil {
-			return hashMap, err
+			return nil, err
 		}
 
 		value, err := p.parseExpr()
 		if err != nil {
-			return hashMap, err
+			return nil, err
 		}
 
 		hashMap.entries = append(hashMap.entries, hashEntryExpr{key, value})
@@ -815,7 +836,34 @@ func (p *parser) parseHashMap() (hashMapExpr, error) {
 		}
 	}
 	if _, err := p.expect(ttRBrace); err != nil {
-		return hashMap, err
+		return nil, err
 	}
 	return hashMap, nil
+}
+
+func (p *parser) parseList() (expression, error) {
+	list := listExpr{}
+	for {
+		if p.current().Type == ttRBracket {
+			p.next()
+			return list, nil
+		}
+
+		expr, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+
+		list.elements = append(list.elements, expr)
+
+		if p.current().Type == ttComma {
+			p.next()
+		} else {
+			break
+		}
+	}
+	if _, err := p.expect(ttRBracket); err != nil {
+		return nil, err
+	}
+	return list, nil
 }

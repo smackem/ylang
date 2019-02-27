@@ -92,3 +92,7 @@ func (b boolean) indexAssign(index value, val value) error {
 func (b boolean) runtimeTypeName() string {
 	return "boolean"
 }
+
+func (b boolean) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: bool :: [%s] not supported", reflect.TypeOf(val))
+}

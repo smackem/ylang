@@ -149,8 +149,8 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
-			name: "sort",
-			src:  "k := sort(|4 1 3 2|)",
+			name: "sortKernel",
+			src:  "k := sortKernel(|4 1 3 2|)",
 			want: scope{
 				"k": kernel{
 					width:  2,
@@ -169,13 +169,11 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
-			name: "list",
+			name: "list_func",
 			src:  "l := list(4, 123)",
 			want: scope{
-				"l": kernel{
-					width:  0,
-					height: 0,
-					values: []Number{123, 123, 123, 123},
+				"l": list{
+					elements: []value{Number(123), Number(123), Number(123), Number(123)},
 				},
 			},
 		},
@@ -233,15 +231,23 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
-			name: "indexed_assign",
-			src: `k := list(1, 0)
-			      k[0] = 123`,
+			name: "polygon_vertices",
+			src:  "vs := polygon(0;0, 100;0, 100;100).vertices",
 			want: scope{
-				"k": kernel{
-					width:  0,
-					height: 0,
-					values: []Number{123},
+				"vs": list{
+					elements: []value{
+						point{0, 0},
+						point{100, 0},
+						point{100, 100},
+					},
 				},
+			},
+		},
+		{
+			name: "polygon_vertices_count",
+			src:  "c := polygon(0;0, 100;0, 100;100).vertices.count",
+			want: scope{
+				"c": Number(3),
 			},
 		},
 		{
@@ -261,7 +267,7 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "hashmap_index",
-			src: `m := {a: 1, b: 2, c: 3}
+			src: `m := {a: 1, b: 2, c: 3,}
 				  a := m.a
 				  b := m.b
 				  c := m["c"]`,
@@ -278,6 +284,65 @@ func Test_interpret(t *testing.T) {
 				  m["a"] = 123`,
 			want: scope{
 				"m": hashMap{str("a"): Number(123)},
+			},
+		},
+		{
+			name: "list",
+			src:  `l := [1, 2, 3]`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2), Number(3)},
+				},
+			},
+		},
+		{
+			name: "list_empty",
+			src:  `l := []`,
+			want: scope{
+				"l": list{
+					elements: []value{},
+				},
+			},
+		},
+		{
+			name: "list_index",
+			src: `l := [1, 2, 3]
+				  v := l[0]`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2), Number(3)},
+				},
+				"v": Number(1),
+			},
+		},
+		{
+			name: "list_index_assign",
+			src: `l := [0]
+				  l[0] = 1`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1)},
+				},
+			},
+		},
+		{
+			name: "list_concat_scalars",
+			src: `l := []
+				  l = l :: 1 :: 2`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2)},
+				},
+			},
+		},
+		{
+			name: "list_concat_list",
+			src: `l := [1, 2]
+				  l = l :: [3, 4]`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2), Number(3), Number(4)},
+				},
 			},
 		},
 		{

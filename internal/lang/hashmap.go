@@ -107,3 +107,7 @@ func (h hashMap) indexAssign(index value, val value) error {
 func (h hashMap) runtimeTypeName() string {
 	return "hashmap"
 }
+
+func (h hashMap) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap :: [%s] not supported", reflect.TypeOf(val))
+}

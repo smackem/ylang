@@ -90,3 +90,7 @@ func (f function) indexAssign(index value, val value) error {
 func (f function) runtimeTypeName() string {
 	return "function"
 }
+
+func (f function) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: function :: [%s] not supported", reflect.TypeOf(val))
+}

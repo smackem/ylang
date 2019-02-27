@@ -153,3 +153,7 @@ func (n Number) indexAssign(index value, val value) error {
 func (n Number) runtimeTypeName() string {
 	return "number"
 }
+
+func (n Number) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: number :: [%s] not supported", reflect.TypeOf(val))
+}

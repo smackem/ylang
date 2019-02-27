@@ -99,3 +99,7 @@ func (s str) indexAssign(index value, val value) error {
 func (s str) runtimeTypeName() string {
 	return "string"
 }
+
+func (s str) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: string :: [%s] not supported", reflect.TypeOf(val))
+}

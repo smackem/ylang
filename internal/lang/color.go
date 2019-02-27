@@ -220,3 +220,7 @@ func (c Color) indexAssign(index value, val value) error {
 func (c Color) runtimeTypeName() string {
 	return "color"
 }
+
+func (c Color) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: color :: [%s] not supported", reflect.TypeOf(val))
+}

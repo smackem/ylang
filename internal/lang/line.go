@@ -128,3 +128,7 @@ func (l line) indexAssign(index value, val value) error {
 func (l line) runtimeTypeName() string {
 	return "line"
 }
+
+func (l line) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line :: [%s] not supported", reflect.TypeOf(val))
+}

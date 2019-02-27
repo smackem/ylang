@@ -60,39 +60,39 @@ Intersections := fn() {
     DrawAndIntersect(blueLine, nil, cyanLine, nil)
 }
 
-//root := {
-//    name: "root",
-//    children: [
-//        { name: "item1" },
-//        { name: "item2" },
-//        { name: "item3" },
-//        {
-//            name: "item4",
-//            children: [
-//                { name: "item41" },
-//                { name: "item42" },
-//                {
-//                    name: "item43",
-//                    children: [
-//                        { name: "item431" },
-//                        { name: "item432" }
-//                    ]
-//                }
-//            ]
-//        }
-//    ]
-//}
-//
-//walk := fn(item, indent) {
-//    log(indent, item.name)
-//    if item.children != nil {
-//        for child in item.children {
-//            walk(child.val, indent + "  ")
-//        }
-//    }
-//}
-//
-//walk(root, "")
+root := {
+    name: "root",
+    children: [
+        { name: "item1" },
+        { name: "item2" },
+        { name: "item3" },
+        {
+            name: "item4",
+            children: [
+                { name: "item41" },
+                { name: "item42" },
+                {
+                    name: "item43",
+                    children: [
+                        { name: "item431" },
+                        { name: "item432" }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+walk := fn(item, indent) {
+    log(indent, item.name)
+    if item.children != nil {
+        for child in item.children {
+            walk(child, indent + "  ")
+        }
+    }
+}
+
+walk(root, "")
 
 hash := {
     a: 1,
@@ -110,7 +110,7 @@ for p in Bounds {
     @p = @p
 }
 
-poly := polygon(0;200, 210;180, 420;210, 200;50, 345;10)
+poly := polygon(200;300, 410;280, 620;310, 400;150, 545;110)
 polyBounds := poly.bounds
 roberts1 := | 1  0
               0 -1|
@@ -122,5 +122,33 @@ for p in poly {
     r := r1*r1*255 + r2*r2*255
     @p = rgb(sqrt(r.r), sqrt(r.g), sqrt(r.b))
 }
+
+Gauss := |0 1 0
+          1 2 1
+          0 1 0|
+BlurLine := fn(line) {
+    for p in line {
+        @p = convolute(p, Gauss)
+    }
+}
+
+prevPt := nil
+for pt in poly.vertices {
+    if prevPt != nil {
+        DrawLine(line(prevPt, pt), #ffffff)
+    }
+    prevPt = pt
+}
+DrawLine(line(prevPt, poly.vertices[0]), #ffffff)
+commit(polyBounds)
+
+prevPt = nil
+for pt in poly.vertices {
+    if prevPt != nil {
+        BlurLine(line(prevPt, pt))
+    }
+    prevPt = pt
+}
+BlurLine(line(prevPt, poly.vertices[0]))
 
 log(0.__type, " ", (0;1).__type, " ", rect(0,0,1,2).__type, " ", |1 2 3 4|.__type, " ", "".__type, " ", nil.__type)

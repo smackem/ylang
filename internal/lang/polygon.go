@@ -95,6 +95,14 @@ func (p polygon) property(ident string) (value, error) {
 	switch ident {
 	case "bounds":
 		return p.bounds(), nil
+	case "vertices":
+		values := make([]value, len(p.vertices))
+		for i, vertex := range p.vertices {
+			values[i] = vertex
+		}
+		return list{
+			elements: values,
+		}, nil
 	}
 	return baseProperty(p, ident)
 }
@@ -228,4 +236,8 @@ func (p polygon) indexAssign(index value, val value) error {
 
 func (p polygon) runtimeTypeName() string {
 	return "polygon"
+}
+
+func (p polygon) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon  :: [%s] not supported", reflect.TypeOf(val))
 }

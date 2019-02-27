@@ -119,10 +119,10 @@ func Test_parse_ast(t *testing.T) {
 					ident:    "x",
 					rhs: invokeExpr{
 						funcName: "sort",
-						parameters: []expression{
+						args: []expression{
 							invokeExpr{
 								funcName: "a",
-								parameters: []expression{
+								args: []expression{
 									Number(1),
 								},
 							},
@@ -202,7 +202,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				logStmt{
 					stmtBase: stmtBase{},
-					parameters: []expression{
+					args: []expression{
 						Number(1),
 					},
 				},
@@ -218,10 +218,47 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				logStmt{
 					stmtBase: stmtBase{},
-					parameters: []expression{
+					args: []expression{
 						Number(1),
 						Number(2),
 						Number(3),
+					},
+				},
+			},
+		},
+		{
+			name: "list_empty",
+			src:  "l := []",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "l",
+					rhs:      listExpr{},
+				},
+			},
+		},
+		{
+			name: "list",
+			src:  "l := [1,2,3]",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "l",
+					rhs: listExpr{
+						elements: []expression{Number(1), Number(2), Number(3)},
+					},
+				},
+			},
+		},
+		{
+			name: "list_trailing_comma",
+			src:  "l := [1,]",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "l",
+					rhs: listExpr{
+						elements: []expression{Number(1)},
 					},
 				},
 			},
@@ -235,8 +272,8 @@ func Test_parse_ast(t *testing.T) {
 					rect:     identExpr("BOUNDS"),
 				},
 				logStmt{
-					stmtBase:   stmtBase{},
-					parameters: []expression{Number(1)},
+					stmtBase: stmtBase{},
+					args:     []expression{Number(1)},
 				},
 			},
 		},
@@ -249,8 +286,8 @@ func Test_parse_ast(t *testing.T) {
 					rect:     identExpr("IMAGE"),
 				},
 				logStmt{
-					stmtBase:   stmtBase{},
-					parameters: []expression{Number(1)},
+					stmtBase: stmtBase{},
+					args:     []expression{Number(1)},
 				},
 			},
 		},
@@ -289,6 +326,25 @@ func Test_parse_ast(t *testing.T) {
 								y: Number(2),
 							},
 						},
+					},
+				},
+			},
+		},
+		{
+			name: "concat",
+			src:  "l := [1] :: 2 :: 3",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "l",
+					rhs: concatExpr{
+						left: concatExpr{
+							left: listExpr{
+								elements: []expression{Number(1)},
+							},
+							right: Number(2),
+						},
+						right: Number(3),
 					},
 				},
 			},
@@ -333,7 +389,7 @@ func Test_parse_ast(t *testing.T) {
 			want: []statement{
 				logStmt{
 					stmtBase: stmtBase{},
-					parameters: []expression{
+					args: []expression{
 						memberExpr{
 							member: "member3",
 							recvr: memberExpr{
@@ -353,8 +409,8 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(#ffee44:0f)",
 			want: []statement{
 				logStmt{
-					stmtBase:   stmtBase{},
-					parameters: []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
+					stmtBase: stmtBase{},
+					args:     []expression{NewRgba(0xff, 0xee, 0x44, 0x0f)},
 				},
 			},
 		},
@@ -363,10 +419,10 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(fun())",
 			want: []statement{
 				logStmt{
-					parameters: []expression{
+					args: []expression{
 						invokeExpr{
-							funcName:   "fun",
-							parameters: nil,
+							funcName: "fun",
+							args:     nil,
 						},
 					},
 				},
@@ -377,13 +433,13 @@ func Test_parse_ast(t *testing.T) {
 			src:  "log(sort(map_b(1)))",
 			want: []statement{
 				logStmt{
-					parameters: []expression{
+					args: []expression{
 						invokeExpr{
 							funcName: "sort",
-							parameters: []expression{
+							args: []expression{
 								invokeExpr{
 									funcName: "map_b",
-									parameters: []expression{
+									args: []expression{
 										Number(1),
 									},
 								},
@@ -402,8 +458,8 @@ func Test_parse_ast(t *testing.T) {
 					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 					falseStmts: nil,
@@ -422,8 +478,8 @@ func Test_parse_ast(t *testing.T) {
 					upper:    Number(10),
 					stmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 				},
@@ -441,8 +497,8 @@ func Test_parse_ast(t *testing.T) {
 					upper:    Number(10),
 					stmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 				},
@@ -458,8 +514,8 @@ func Test_parse_ast(t *testing.T) {
 					collection: identExpr("coll"),
 					stmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 				},
@@ -474,14 +530,14 @@ func Test_parse_ast(t *testing.T) {
 					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(2)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(2)},
 						},
 					},
 				},
@@ -496,8 +552,8 @@ func Test_parse_ast(t *testing.T) {
 					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
@@ -506,8 +562,8 @@ func Test_parse_ast(t *testing.T) {
 							cond:     boolean(false),
 							trueStmts: []statement{
 								logStmt{
-									stmtBase:   stmtBase{},
-									parameters: []expression{Number(2)},
+									stmtBase: stmtBase{},
+									args:     []expression{Number(2)},
 								},
 							},
 							falseStmts: nil,
@@ -525,8 +581,8 @@ func Test_parse_ast(t *testing.T) {
 					cond:     boolean(true),
 					trueStmts: []statement{
 						logStmt{
-							stmtBase:   stmtBase{},
-							parameters: []expression{Number(1)},
+							stmtBase: stmtBase{},
+							args:     []expression{Number(1)},
 						},
 					},
 					falseStmts: []statement{
@@ -535,14 +591,14 @@ func Test_parse_ast(t *testing.T) {
 							cond:     boolean(false),
 							trueStmts: []statement{
 								logStmt{
-									stmtBase:   stmtBase{},
-									parameters: []expression{Number(2)},
+									stmtBase: stmtBase{},
+									args:     []expression{Number(2)},
 								},
 							},
 							falseStmts: []statement{
 								logStmt{
-									stmtBase:   stmtBase{},
-									parameters: []expression{Number(3)},
+									stmtBase: stmtBase{},
+									args:     []expression{Number(3)},
 								},
 							},
 						},

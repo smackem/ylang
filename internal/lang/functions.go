@@ -14,7 +14,7 @@ type functionDecl struct {
 }
 
 var numberType = reflect.TypeOf(Number(0))
-var positionType = reflect.TypeOf(point{})
+var pointType = reflect.TypeOf(point{})
 var kernelType = reflect.TypeOf(kernel{})
 
 var functions = map[string]functionDecl{
@@ -40,27 +40,27 @@ var functions = map[string]functionDecl{
 	},
 	"convolute": {
 		body:   invokeConvolute,
-		params: []reflect.Type{positionType, kernelType},
+		params: []reflect.Type{pointType, kernelType},
 	},
-	"sort": {
+	"sortKernel": {
 		body:   invokeSort,
 		params: []reflect.Type{kernelType},
 	},
-	"map_r": {
-		body:   invokeMapR,
-		params: []reflect.Type{positionType, kernelType},
+	"fetchR": {
+		body:   invokeFetchR,
+		params: []reflect.Type{pointType, kernelType},
 	},
-	"map_g": {
-		body:   invokeMapG,
-		params: []reflect.Type{positionType, kernelType},
+	"fetchG": {
+		body:   invokeFetchG,
+		params: []reflect.Type{pointType, kernelType},
 	},
-	"map_b": {
-		body:   invokeMapB,
-		params: []reflect.Type{positionType, kernelType},
+	"fetchB": {
+		body:   invokeFetchB,
+		params: []reflect.Type{pointType, kernelType},
 	},
-	"map_a": {
-		body:   invokeMapA,
-		params: []reflect.Type{positionType, kernelType},
+	"fetchA": {
+		body:   invokeFetchA,
+		params: []reflect.Type{pointType, kernelType},
 	},
 	"sin": {
 		body:   invokeSin,
@@ -120,7 +120,7 @@ var functions = map[string]functionDecl{
 	},
 	"line": {
 		body:   invokeLine,
-		params: []reflect.Type{positionType, positionType},
+		params: []reflect.Type{pointType, pointType},
 	},
 	"polygon": {
 		body:   invokePolygon,
@@ -170,7 +170,7 @@ func invokeSort(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeMapR(ir *interpreter, args []value) (value, error) {
+func invokeFetchR(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -178,7 +178,7 @@ func invokeMapR(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeMapG(ir *interpreter, args []value) (value, error) {
+func invokeFetchG(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -186,7 +186,7 @@ func invokeMapG(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeMapB(ir *interpreter, args []value) (value, error) {
+func invokeFetchB(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -194,7 +194,7 @@ func invokeMapB(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeMapA(ir *interpreter, args []value) (value, error) {
+func invokeFetchA(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -263,11 +263,11 @@ func invokeMin(it *interpreter, args []value) (value, error) {
 func invokeList(it *interpreter, args []value) (value, error) {
 	count := args[0].(Number)
 	val := args[1].(Number)
-	values := make([]Number, int(count))
+	values := make([]value, int(count))
 	for i := range values {
 		values[i] = val
 	}
-	return kernel{values: values}, nil
+	return list{elements: values}, nil
 }
 
 func invokeKernel(ir *interpreter, args []value) (value, error) {

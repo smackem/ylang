@@ -114,3 +114,7 @@ func (rc rect) indexAssign(index value, val value) error {
 func (rc rect) runtimeTypeName() string {
 	return "rect"
 }
+
+func (rc rect) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: rect  :: [%s] not supported", reflect.TypeOf(val))
+}

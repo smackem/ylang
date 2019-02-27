@@ -11,7 +11,7 @@ Statement:
     | IfStatement
     | ForStatement
     | YIELD Expr
-    | LOG LPAREN ParameterList RPAREN
+    | LOG LPAREN ArgumentList RPAREN
     | BLT LPAREN Expr RPAREN
     | CommitStatement
     | RETURN Expr
@@ -20,7 +20,7 @@ IdentStatement:
     | IDENT COLONEQ Expr
     | IDENT EQ Expr
     | IDENT LBRACKET Expr RBRACKET EQ Expr
-    | IDENT LPAREN ParameterListOpt RPAREN
+    | IDENT LPAREN ArgumentListOpt RPAREN
 
 IfStatement:
     | IF Expr LBRACE StatementList RBRACE
@@ -45,13 +45,16 @@ AndExpr:
     | Cond
 
 Cond:
-    | Tuple EQEQ Tuple
-    | Tuple NEQ Tuple
-    | Tuple GT Tuple
-    | Tuple GE Tuple
-    | Tuple LT Tuple
-    | Tuple LE Tuple
-    | Tuple
+    | Concat EQEQ Concat
+    | Concat NEQ Concat
+    | Concat GT Concat
+    | Concat GE Concat
+    | Concat LT Concat
+    | Concat LE Concat
+    | Concat
+
+Concat:
+    | Tuple COLONCOLON Tuple
 
 Tuple:
     | Term SEMICOLON Term
@@ -86,26 +89,28 @@ Atom:
     | TRUE
     | FALSE
     | NIL
-    | IDENT LPAREN ParameterListOpt RPAREN
+    | IDENT LPAREN ArgumentListOpt RPAREN
     | PIPE MoleculeList PIPE
     | LBRACE HashEntryListOpt RBRACE
+    | LBRACKET ListElementListOpt RBRACKET
     | FunctionDef
 
-ParameterListOpt:
-    | ParameterList
+ArgumentListOpt:
+    | ArgumentList
     |
 
-ParameterList:
-    | Expr COMMA ParameterList
+ArgumentList:
+    | Expr COMMA ArgumentList
     | Expr
 
 HashEntryListOpt:
     | HashEntryList
+    | HashEntryList COMMA
     |
 
 HashEntryList:
-    | Expression COLON Expr COMMA HashEntryList
-    | Expression COLON Expr
+    | Expr COLON Expr COMMA HashEntryList
+    | Expr COLON Expr
 
 FunctionDef:
     | FN LPAREN IdentListOpt RPAREN LBRACKET StatementList RBRACKET
@@ -118,3 +123,12 @@ IdentListOpt:
 IdentList:
     | IDENT COMMA IdentList
     | IDENT
+
+ListElementListOpt:
+    | ListElementList
+    | ListElementList COMMA
+    |
+
+ListElementList:
+    | Expr COMMA ListElementList
+    | Expr

@@ -129,3 +129,7 @@ func (p point) indexAssign(index value, val value) error {
 func (p point) runtimeTypeName() string {
 	return "point"
 }
+
+func (p point) concat(val value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: point  :: [%s] not supported", reflect.TypeOf(val))
+}

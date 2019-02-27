@@ -274,7 +274,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 
 	case logStmt:
 		buf := bytes.NewBuffer(nil)
-		for _, expr := range s.parameters {
+		for _, expr := range s.args {
 			v, err := ir.visitExpr(expr)
 			if err != nil {
 				return err
@@ -434,6 +434,11 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			return left.lessThanOrEqual(right)
 		})
 
+	case concatExpr:
+		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
+			return left.concat(right)
+		})
+
 	case addExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
 			return left.add(right)
@@ -543,19 +548,19 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 		return ir.bitmap.GetPixel(pos.X, pos.Y), nil
 
 	case invokeExpr:
-		parameterVals := []value{}
-		for _, parameter := range e.parameters {
-			parameterVal, err := ir.visitExpr(parameter)
+		args := []value{}
+		for _, arg := range e.args {
+			arg, err := ir.visitExpr(arg)
 			if err != nil {
 				return nil, err
 			}
-			parameterVals = append(parameterVals, parameterVal)
+			args = append(args, arg)
 		}
-		return ir.invokeFunc(e.funcName, parameterVals)
+		return ir.invokeFunc(e.funcName, args)
 
 	case kernelExpr:
-		elementNumbers := []Number{}
-		for _, element := range e.elements {
+		elementNumbers := make([]Number, len(e.elements))
+		for i, element := range e.elements {
 			elementVal, err := ir.visitExpr(element)
 			if err != nil {
 				return nil, err
@@ -564,7 +569,7 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: kernel expr expects number elements")
 			}
-			elementNumbers = append(elementNumbers, n)
+			elementNumbers[i] = n
 		}
 		rootOfLen := int(math.Sqrt(float64(len(elementNumbers))))
 		return kernel{
@@ -594,6 +599,19 @@ func (ir *interpreter) visitExpr(expr expression) (value, error) {
 			h[key] = val
 		}
 		return h, nil
+
+	case listExpr:
+		l := list{
+			elements: make([]value, len(e.elements)),
+		}
+		for i, elem := range e.elements {
+			val, err := ir.visitExpr(elem)
+			if err != nil {
+				return nil, err
+			}
+			l.elements[i] = val
+		}
+		return l, nil
 	}
 
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))

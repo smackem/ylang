@@ -82,7 +82,7 @@ type yieldStmt struct {
 
 type logStmt struct {
 	stmtBase
-	parameters []expression
+	args []expression
 }
 
 type bltStmt struct {
@@ -122,6 +122,8 @@ type geExpr binaryExpr
 type ltExpr binaryExpr
 type leExpr binaryExpr
 
+type concatExpr binaryExpr
+
 type addExpr binaryExpr
 type subExpr binaryExpr
 type mulExpr binaryExpr
@@ -155,8 +157,8 @@ type identExpr string
 type atExpr unaryExpr
 
 type invokeExpr struct {
-	funcName   string
-	parameters []expression
+	funcName string
+	args     []expression
 }
 
 type kernelExpr struct {
@@ -175,4 +177,8 @@ type hashMapExpr struct {
 type hashEntryExpr struct {
 	key   expression
 	value expression
+}
+
+type listExpr struct {
+	elements []expression
 }
