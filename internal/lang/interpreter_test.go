@@ -279,6 +279,19 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
+			name: "hashmap_index_2",
+			src: `m := {a: 1}
+				  a := m.a
+				  a1 := m["a"]
+				  b := m["c"]`,
+			want: scope{
+				"m":  hashMap{str("a"): Number(1)},
+				"a":  Number(1),
+				"a1": Number(2),
+				"c":  nilval{},
+			},
+		},
+		{
 			name: "hashmap_indexed_assign",
 			src: `m := {}
 				  m["a"] = 123`,

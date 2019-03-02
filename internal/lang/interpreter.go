@@ -341,6 +341,17 @@ func (ir *interpreter) visitBinaryExpr(left expression, right expression, visito
 }
 
 func (ir *interpreter) visitExpr(expr expression) (value, error) {
+	v, err := ir.visitExprInner(expr)
+	if err != nil {
+		return nil, err
+	}
+	if v == nil {
+		return nilval{}, nil
+	}
+	return v, nil
+}
+
+func (ir *interpreter) visitExprInner(expr expression) (value, error) {
 	switch e := expr.(type) {
 	case ternaryExpr:
 		condVal, err := ir.visitExpr(e.cond)

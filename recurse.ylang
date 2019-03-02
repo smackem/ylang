@@ -1,0 +1,62 @@
+HashWalk := fn () {
+    root := {
+        name: "root",
+        children: [
+            { name: "item1" },
+            { name: "item2" },
+            { name: "item3" },
+            {
+                name: "item4",
+                children: [
+                    { name: "item41" },
+                    { name: "item42" },
+                    {
+                        name: "item43",
+                        children: [
+                            { name: "item431" },
+                            { name: "item432" },
+                        ],
+                    },
+                ],
+            },
+            { name: "item5" },
+        ],
+    }
+
+    walk := fn(item, indent) {
+        log(indent, item.name)
+        if item["children"] != nil {
+            for child in item.children {
+                walk(child, indent + "  ")
+            }
+        }
+    }
+
+    walk(root, "")
+}
+
+SimpleRecurse := fn() {
+    recurse := fn(n, indent) {
+        log(indent, n)
+        if n < 10 {
+            recurse(n + 1, indent + "  ")
+        }
+    }
+    recurse(1, "")
+}
+
+ListRecurse := fn() {
+    walk := fn(obj, indent) {
+        log(indent, obj)
+        if obj.__type == "list" {
+            for child in obj {
+                walk(child, "  " + indent)
+            }
+        }
+    }
+    walk([0, 1, [1.1, 2.1], [2.1, 2.2], [3.1, 3.2, [3.21, 3.22]]], "")
+}
+
+SimpleRecurse()
+ListRecurse()
+HashWalk()
