@@ -121,6 +121,10 @@ func (l line) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: line[index] not supported")
 }
 
+func (l line) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: line[lower..upper] not supported")
+}
+
 func (l line) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: line[%s] not supported", reflect.TypeOf(index))
 }

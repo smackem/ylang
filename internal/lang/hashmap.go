@@ -99,6 +99,10 @@ func (h hashMap) index(index value) (value, error) {
 	return nil, nil
 }
 
+func (h hashMap) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap[lower..upper] not supported")
+}
+
 func (h hashMap) indexAssign(index value, val value) error {
 	h[index] = val
 	return nil

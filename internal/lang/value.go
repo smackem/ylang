@@ -21,6 +21,7 @@ type value interface {
 	printStr() string
 	iterate(visit func(value) error) error
 	index(index value) (value, error)
+	indexRange(lower, upper value) (value, error)
 	indexAssign(index value, val value) error
 	runtimeTypeName() string
 	concat(val value) (value, error)
@@ -34,4 +35,11 @@ func baseProperty(val value, ident string) (value, error) {
 		return str(val.runtimeTypeName()), nil
 	}
 	return nil, fmt.Errorf("unknown property '%s.%s'", val.runtimeTypeName(), ident)
+}
+
+func indexAt(n Number, count int) int {
+	if n < 0 {
+		return count - int(n)
+	}
+	return int(n)
 }

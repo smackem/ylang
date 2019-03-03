@@ -283,12 +283,12 @@ func Test_interpret(t *testing.T) {
 			src: `m := {a: 1}
 				  a := m.a
 				  a1 := m["a"]
-				  b := m["c"]`,
+				  b := m["b"]`,
 			want: scope{
 				"m":  hashMap{str("a"): Number(1)},
 				"a":  Number(1),
-				"a1": Number(2),
-				"c":  nilval{},
+				"a1": Number(1),
+				"b":  nilval{},
 			},
 		},
 		{
@@ -326,6 +326,31 @@ func Test_interpret(t *testing.T) {
 					elements: []value{Number(1), Number(2), Number(3)},
 				},
 				"v": Number(1),
+			},
+		},
+		{
+			name: "list_index_range",
+			src: `l := [1, 2, 3, 4]
+				  s1 := l[0..2]
+				  s2 := l[2..-1]
+				  s3 := l[0..0]
+				  s4 := l[l.count-2 .. l.count-1]`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2), Number(3), Number(4)},
+				},
+				"s1": list{
+					elements: []value{Number(1), Number(2), Number(3)},
+				},
+				"s2": list{
+					elements: []value{Number(3), Number(4)},
+				},
+				"s3": list{
+					elements: []value{Number(1)},
+				},
+				"s4": list{
+					elements: []value{Number(3), Number(4)},
+				},
 			},
 		},
 		{

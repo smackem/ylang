@@ -203,6 +203,10 @@ func (c Color) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color[index] not supported")
 }
 
+func (c Color) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: color[lower..upper] not supported")
+}
+
 func clamp(n Number) Number {
 	if n > 255 {
 		return 255

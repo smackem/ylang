@@ -350,6 +350,21 @@ func Test_parse_ast(t *testing.T) {
 			},
 		},
 		{
+			name: "indexRange",
+			src:  "s := ls[1..10]",
+			want: []statement{
+				declStmt{
+					stmtBase: stmtBase{},
+					ident:    "s",
+					rhs: indexRangeExpr{
+						recvr: identExpr("ls"),
+						lower: Number(1),
+						upper: Number(10),
+					},
+				},
+			},
+		},
+		{
 			name: "term",
 			src:  "x := 1 + 3 - 2",
 			want: []statement{

@@ -230,6 +230,10 @@ func (p polygon) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: polygon[index] not supported")
 }
 
+func (p polygon) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon[lower..upper] not supported")
+}
+
 func (p polygon) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: polygon[%s] not supported", reflect.TypeOf(index))
 }

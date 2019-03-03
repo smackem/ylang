@@ -80,6 +80,10 @@ func (n nilval) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: nil[index] not supported")
 }
 
+func (n nilval) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: nil[lower..upper] not supported")
+}
+
 func (n nilval) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: nil[%s] not supported", reflect.TypeOf(index))
 }

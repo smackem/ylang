@@ -29,7 +29,11 @@ IfStatement:
 
 ForStatement:
     | FOR IDENT IN Expr LBRACE StatementList RBRACE
-    | FOR IDENT IN Molecule DOTDOT Molecule LBRACE StatementList RBRACE
+    | FOR IDENT IN Range LBRACE StatementList RBRACE
+
+Range:
+    | Expr DOTDOT Expr
+    | Expr DOTDOT Expr DOTDOT Expr
 
 CommitStatement:
     | COMMIT LPAREN Expr RPAREN
@@ -73,6 +77,7 @@ Molecule:
     | NOT Atom
     | Molecule DOT IDENT
     | Molecule LBRACKET Expr RBRACKET
+    | Molecule LBRACKET Expr DOTDOT Expr RBRACKET
     | Atom
 
 MoleculeList:

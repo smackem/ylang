@@ -92,6 +92,10 @@ func (s str) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
 }
 
+func (s str) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: string[lower..upper] not supported")
+}
+
 func (s str) indexAssign(index value, val value) error {
 	return fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
 }

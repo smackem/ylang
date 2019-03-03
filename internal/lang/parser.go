@@ -619,7 +619,16 @@ func (p *parser) parseMoleculeExpr() (expression, error) {
 			if err != nil {
 				return nil, err
 			}
-			atom = indexExpr{recvr: atom, index: index}
+			if p.current().Type == ttDotDot {
+				p.next()
+				upper, err := p.parseExpr()
+				if err != nil {
+					return nil, err
+				}
+				atom = indexRangeExpr{recvr: atom, lower: index, upper: upper}
+			} else {
+				atom = indexExpr{recvr: atom, index: index}
+			}
 			if _, err := p.expect(ttRBracket); err != nil {
 				return nil, err
 			}

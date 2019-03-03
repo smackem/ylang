@@ -94,7 +94,23 @@ func (l list) index(index value) (value, error) {
 	if !ok {
 		return nil, fmt.Errorf("type mismatch: expected list[number] but found list[%s]", reflect.TypeOf(index))
 	}
-	return l.elements[int(i)], nil
+	return l.elements[indexAt(i, len(l.elements))], nil
+}
+
+func (l list) indexRange(lower, upper value) (value, error) {
+	lowern, ok := lower.(Number)
+	if !ok {
+		return nil, fmt.Errorf("type mismatch: kernel[%s..upper] not supported", reflect.TypeOf(lower))
+	}
+	loweri := indexAt(lowern, len(l.elements))
+	uppern, ok := upper.(Number)
+	if !ok {
+		return nil, fmt.Errorf("type mismatch: kernel[lower..%s] not supported", reflect.TypeOf(upper))
+	}
+	upperi := indexAt(uppern, len(l.elements))
+	return list{
+		elements: l.elements[int(loweri) : upperi+1],
+	}, nil
 }
 
 func (l list) indexAssign(index value, val value) error {
@@ -102,7 +118,7 @@ func (l list) indexAssign(index value, val value) error {
 	if !ok {
 		return fmt.Errorf("type mismatch: expected list[number] but found list[%s]", reflect.TypeOf(index))
 	}
-	l.elements[int(i)] = val
+	l.elements[indexAt(i, len(l.elements))] = val
 	return nil
 }
 

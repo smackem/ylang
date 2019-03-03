@@ -153,6 +153,12 @@ type indexExpr struct {
 	index expression
 }
 
+type indexRangeExpr struct {
+	recvr expression
+	lower expression
+	upper expression
+}
+
 type identExpr string
 type atExpr unaryExpr
 

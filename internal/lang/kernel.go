@@ -98,11 +98,15 @@ func (k kernel) iterate(visit func(value) error) error {
 func (k kernel) index(index value) (value, error) {
 	switch i := index.(type) {
 	case Number:
-		return k.values[int(i)], nil
+		return k.values[indexAt(i, len(k.values))], nil
 	case point:
 		return k.values[i.Y*k.width+i.X], nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected kernel[number] or kernel[point] but found kernel[%s]", reflect.TypeOf(index))
+}
+
+func (k kernel) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: kernel[lower..upper] not supported")
 }
 
 func (k kernel) indexAssign(index value, val value) error {
@@ -112,7 +116,7 @@ func (k kernel) indexAssign(index value, val value) error {
 	}
 	switch i := index.(type) {
 	case Number:
-		k.values[int(i)] = nval
+		k.values[indexAt(i, len(k.values))] = nval
 		return nil
 	case point:
 		k.values[i.Y*k.width+i.X] = nval

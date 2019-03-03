@@ -138,6 +138,10 @@ func (n Number) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: number[index] not supported")
 }
 
+func (n Number) indexRange(lower, upper value) (value, error) {
+	return nil, fmt.Errorf("type mismatch: number[lower..upper] not supported")
+}
+
 // implement sort.Interface for Number slice
 
 type numberSlice []Number

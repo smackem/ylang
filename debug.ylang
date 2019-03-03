@@ -1,0 +1,4 @@
+ls := [1,2,3]
+ls = ls :: 4
+v := ls[ls.count-1]
+ls := slice(ls, 0, ls.count-1)

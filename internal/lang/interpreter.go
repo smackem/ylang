@@ -525,6 +525,21 @@ func (ir *interpreter) visitExprInner(expr expression) (value, error) {
 		}
 		return recvr.index(index)
 
+	case indexRangeExpr:
+		recvr, err := ir.visitExpr(e.recvr)
+		if err != nil {
+			return nil, err
+		}
+		lower, err := ir.visitExpr(e.lower)
+		if err != nil {
+			return nil, err
+		}
+		upper, err := ir.visitExpr(e.upper)
+		if err != nil {
+			return nil, err
+		}
+		return recvr.indexRange(lower, upper)
+
 	case str:
 		return e, nil
 
