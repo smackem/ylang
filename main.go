@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/smackem/ylang/internal/lang"
 )
@@ -61,10 +62,12 @@ func main() {
 		log.Fatalf("compilation error: %s", err.Error())
 	}
 
+	start := time.Now()
 	err = prog.Execute(surf)
 	if err != nil {
 		log.Fatalf("execution error: %s", err.Error())
 	}
+	log.Printf("execution took %s", time.Since(start))
 
 	if err = saveImage(surf.target, *targetImgPath); err != nil {
 		log.Fatalf("error saving image %s: %s", *targetImgPath, err.Error())

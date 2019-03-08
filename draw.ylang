@@ -1,17 +1,17 @@
-PlotLine := fn(pos1, pos2) {
-    for pos in line(pos1, pos2) {
-        @pos = #0000FF
+PlotLine := fn(p1, p2) {
+    for p in line(p1, p2) {
+        @p = #0000FF
     }
 }
 
-PlotLine_old := fn(pos1, pos2) {
-    dist := pos2 - pos1
+PlotLine_old := fn(p1, p2) {
+    dist := p2 - p1
     steps := abs(dist.x) > abs(dist.y) ? abs(dist.x) : abs(dist.y)
     dx := dist.x / steps
     dy := dist.y / steps
 
-    x := pos1.x
-    y := pos1.y
+    x := p1.x
+    y := p1.y
 
     for i in 0 .. steps {
         @(x;y) = #88FF00
@@ -26,14 +26,14 @@ Center := Radius;Radius
 Inner := Radius/10
 Deg2Rad := Pi/180
 
-for pos in OutBounds {
-    @pos = Black
+for p in OutBounds {
+    @p = Black
 }
 
 for angle in 0 .. 15 .. 360 {
     radians := angle * Deg2Rad
     log(angle, " ", radians)
-    pos1 := (Center.x + sin(radians) * Inner); (Center.y + cos(radians) * Inner)
-    pos2 := (Center.x + sin(radians) * Radius); (Center.y + cos(radians) * Radius)
-    PlotLine(pos1, pos2)
+    p1 := Center.x + sin(radians) * Inner; Center.y + cos(radians) * Inner
+    p2 := Center.x + sin(radians) * Radius; Center.y + cos(radians) * Radius
+    PlotLine(p1, p2)
 }

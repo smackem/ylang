@@ -259,6 +259,14 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
+			name: "indexed_assign_kernel_neg",
+			src: `k := |1 2 3 4|
+				  k[-1] = 0`,
+			want: scope{
+				"k": kernel{width: 2, height: 2, values: []Number{Number(1), Number(2), Number(3), Number(0)}},
+			},
+		},
+		{
 			name: "hashmap",
 			src:  `m := {a: 1, b: 2, c: 3}`,
 			want: scope{
@@ -326,6 +334,17 @@ func Test_interpret(t *testing.T) {
 					elements: []value{Number(1), Number(2), Number(3)},
 				},
 				"v": Number(1),
+			},
+		},
+		{
+			name: "list_index_neg",
+			src: `l := [1, 2, 3]
+				  v := l[-1]`,
+			want: scope{
+				"l": list{
+					elements: []value{Number(1), Number(2), Number(3)},
+				},
+				"v": Number(3),
 			},
 		},
 		{

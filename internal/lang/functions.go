@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"math"
+	"math/rand"
 	"reflect"
 	"sort"
 )
@@ -96,6 +97,14 @@ var functions = map[string]functionDecl{
 	},
 	"abs": {
 		body:   invokeAbs,
+		params: []reflect.Type{numberType},
+	},
+	"round": {
+		body:   invokeRound,
+		params: []reflect.Type{numberType},
+	},
+	"random": {
+		body:   invokeRandom,
 		params: []reflect.Type{numberType},
 	},
 	"min": {
@@ -236,6 +245,14 @@ func invokeSqrt(ir *interpreter, args []value) (value, error) {
 
 func invokeAbs(ir *interpreter, args []value) (value, error) {
 	return Number(math.Abs(float64(args[0].(Number)))), nil
+}
+
+func invokeRound(ir *interpreter, args []value) (value, error) {
+	return Number(math.Round(float64(args[0].(Number)))), nil
+}
+
+func invokeRandom(ir *interpreter, args []value) (value, error) {
+	return Number(rand.Intn(int(args[0].(Number)))), nil
 }
 
 func invokeMax(it *interpreter, args []value) (value, error) {

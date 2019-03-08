@@ -42,7 +42,7 @@ func baseProperty(val value, ident string) (value, error) {
 
 func indexAt(n Number, count int) int {
 	if n < 0 {
-		return count - int(n)
+		return count + int(n)
 	}
 	return int(n)
 }
