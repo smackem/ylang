@@ -1,11 +1,11 @@
 package lang
 
 import (
-	"bytes"
 	"fmt"
 	"image"
 	"math"
 	"reflect"
+	"strings"
 )
 
 func interpret(program Program, bitmap BitmapContext) error {
@@ -273,15 +273,15 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		return fmt.Errorf("yield not yet implemented")
 
 	case logStmt:
-		buf := bytes.NewBuffer(nil)
+		buf := strings.Builder{}
 		for _, expr := range s.args {
 			v, err := ir.visitExpr(expr)
 			if err != nil {
 				return err
 			}
-			buf.WriteString(v.printStr())
+			buf.WriteString(formatValue(v, "", false))
 		}
-		fmt.Printf("%s\n", buf.String())
+		fmt.Println(buf.String())
 
 	case bltStmt:
 		expr, err := ir.visitExpr(s.rect)

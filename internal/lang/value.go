@@ -1,6 +1,9 @@
 package lang
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type value interface {
 	equals(other value) (value, error)
@@ -42,4 +45,58 @@ func indexAt(n Number, count int) int {
 		return count - int(n)
 	}
 	return int(n)
+}
+
+/*
+{
+	x: [
+		1,
+		2,
+		3,
+		4,
+		[
+			33,
+			44,
+			55,
+		]
+	],
+	y: abcdef,
+}
+*/
+
+func formatValue(val value, indent string, leadingIndent bool) string {
+	buf := strings.Builder{}
+	if leadingIndent {
+		buf.WriteString(indent)
+	}
+	switch v := val.(type) {
+	case list:
+		buf.WriteString("[\n")
+		innerIndent := indent + "  "
+		for _, elem := range v.elements {
+			buf.WriteString(fmt.Sprintf("%s,\n", formatValue(elem, innerIndent, true)))
+		}
+		buf.WriteString(fmt.Sprintf("%s]", indent))
+	case hashMap:
+		buf.WriteString("{\n")
+		innerIndent := indent + "  "
+		for key, elem := range v {
+			buf.WriteString(fmt.Sprintf("%s%s: %s,\n", innerIndent, key, formatValue(elem, innerIndent, false)))
+		}
+		buf.WriteString(fmt.Sprintf("%s}", indent))
+	case kernel:
+		buf.WriteByte('|')
+		innerIndent := indent + " "
+		for i, elem := range v.values {
+			if v.width != 0 && i > 0 && i%v.width == 0 {
+				buf.WriteByte('\n')
+				buf.WriteString(innerIndent)
+			}
+			buf.WriteString(fmt.Sprintf(" %5.2f", elem))
+		}
+		buf.WriteString("|")
+	default:
+		buf.WriteString(v.printStr())
+	}
+	return buf.String()
 }

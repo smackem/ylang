@@ -2,8 +2,8 @@ Program:
     | StatementList EOF
 
 StatementList:
-    | Statement StatementList
-    | Statement
+    | Statement EOL StatementList
+    | Statement EOL
 
 Statement:
     | IdentStatement

@@ -76,7 +76,7 @@ func (h hashMap) property(ident string) (value, error) {
 }
 
 func (h hashMap) printStr() string {
-	return fmt.Sprintf("hashMap with %d elements", len(h))
+	return fmt.Sprintf("hashMap(count: %d)", len(h))
 }
 
 func (h hashMap) iterate(visit func(value) error) error {

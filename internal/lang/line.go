@@ -89,7 +89,7 @@ func (l line) property(ident string) (value, error) {
 }
 
 func (l line) printStr() string {
-	return fmt.Sprintf("line(point1:%v, point2:%v)", l.point1, l.point2)
+	return fmt.Sprintf("line(point1:%s, point2:%s)", l.point1.printStr(), l.point2.printStr())
 }
 
 func (l line) iterate(visit func(value) error) error {

@@ -6,6 +6,7 @@ import (
 	"math"
 	"reflect"
 	"sort"
+	"strings"
 )
 
 type polygon struct {
@@ -108,7 +109,11 @@ func (p polygon) property(ident string) (value, error) {
 }
 
 func (p polygon) printStr() string {
-	return fmt.Sprintf("polygon(%v)", p.vertices)
+	verts := make([]string, len(p.vertices))
+	for i, vertex := range p.vertices {
+		verts[i] = vertex.printStr()
+	}
+	return fmt.Sprintf("polygon(%s)", strings.Join(verts, ", "))
 }
 
 func (p polygon) iterateHorizLine(x1, y, x2 int, visit func(value) error) error {

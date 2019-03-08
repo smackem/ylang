@@ -192,7 +192,7 @@ func (c Color) property(ident string) (value, error) {
 }
 
 func (c Color) printStr() string {
-	return fmt.Sprintf("%f:%f:%f@%f", c.R, c.G, c.B, c.A)
+	return fmt.Sprintf("rgba(%g,%g:%g,%g)", c.R, c.G, c.B, c.A)
 }
 
 func (c Color) iterate(visit func(value) error) error {

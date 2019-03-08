@@ -3,6 +3,7 @@ package lang
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type function struct {
@@ -72,7 +73,7 @@ func (f function) property(ident string) (value, error) {
 }
 
 func (f function) printStr() string {
-	return fmt.Sprintf("fn(%v) {...}", f.parameterNames)
+	return fmt.Sprintf("fn(%s)", strings.Join(f.parameterNames, ", "))
 }
 
 func (f function) iterate(visit func(value) error) error {

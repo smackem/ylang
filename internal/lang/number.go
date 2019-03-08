@@ -127,7 +127,7 @@ func (n Number) property(ident string) (value, error) {
 }
 
 func (n Number) printStr() string {
-	return fmt.Sprintf("%f", n)
+	return fmt.Sprintf("%g", n)
 }
 
 func (n Number) iterate(visit func(value) error) error {
