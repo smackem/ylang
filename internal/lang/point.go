@@ -3,6 +3,7 @@ package lang
 import (
 	"fmt"
 	"image"
+	"math"
 	"reflect"
 )
 
@@ -106,6 +107,9 @@ func (p point) property(ident string) (value, error) {
 		return Number(p.X), nil
 	case "y":
 		return Number(p.Y), nil
+	case "mag":
+		x, y := float64(p.X), float64(p.Y)
+		return Number(math.Sqrt(x*x + y*y)), nil
 	}
 	return baseProperty(p, ident)
 }

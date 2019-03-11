@@ -1,9 +1,7 @@
-Gauss := |0  1  2  1  0
-          1  2  4  2  1
-          2  4  8  4  2
-          1  2  4  2  1
-          0  1  2  1  0|
+line := line(100;101, 200;201)
+rect := rect(100,101, 200,201)
+poly := polygon(100;101, 200;201)
 
-for p in Bounds {
-    @p = -convolute(p, Gauss)
-}
+log(line, " ", translateLine(line, 1;2))
+log(rect, " ", translateRect(rect, 1;2))
+log(poly, " ", translatePolygon(poly, 1;2))

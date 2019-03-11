@@ -139,6 +139,18 @@ var functions = map[string]functionDecl{
 		body:   invokeIntersect,
 		params: []reflect.Type{reflect.TypeOf(line{}), reflect.TypeOf(line{})},
 	},
+	"translateLine": {
+		body:   invokeTranslateLine,
+		params: []reflect.Type{reflect.TypeOf(line{}), pointType},
+	},
+	"translateRect": {
+		body:   invokeTranslateRect,
+		params: []reflect.Type{reflect.TypeOf(rect{}), pointType},
+	},
+	"translatePolygon": {
+		body:   invokeTranslatePolygon,
+		params: []reflect.Type{reflect.TypeOf(polygon{}), pointType},
+	},
 }
 
 func invokeRgb(ir *interpreter, args []value) (value, error) {
@@ -371,4 +383,26 @@ func intersectVertical(p1 point, p2 point, x int) value {
 		x,
 		((x-p1.X)*(p2.Y-p1.Y)/(p2.X-p1.X) + p1.Y),
 	}
+}
+
+func invokeTranslateLine(ir *interpreter, args []value) (value, error) {
+	ln, pt := args[0].(line), args[1].(point)
+	return line{
+		point1: point{ln.point1.X + pt.X, ln.point1.Y + pt.Y},
+		point2: point{ln.point2.X + pt.X, ln.point2.Y + pt.Y},
+	}, nil
+}
+
+func invokeTranslateRect(ir *interpreter, args []value) (value, error) {
+	rc, pt := args[0].(rect), args[1].(point)
+	return rect(image.Rectangle(rc).Add(image.Point(pt))), nil
+}
+
+func invokeTranslatePolygon(ir *interpreter, args []value) (value, error) {
+	poly, pt := args[0].(polygon), args[1].(point)
+	newVertices := make([]point, len(poly.vertices))
+	for i, v := range poly.vertices {
+		newVertices[i] = point{v.X + pt.X, v.Y + pt.Y}
+	}
+	return polygon{newVertices}, nil
 }
