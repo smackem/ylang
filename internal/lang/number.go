@@ -2,11 +2,18 @@ package lang
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 )
 
 // Number is the number type used by the interpreter
 type Number float32
+
+// Number constants
+const (
+	MinNumber Number = Number(math.MinInt64)
+	MaxNumber Number = Number(math.MaxInt64)
+)
 
 func (n Number) equals(other value) (value, error) {
 	if r, ok := other.(Number); ok {

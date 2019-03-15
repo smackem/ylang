@@ -81,6 +81,10 @@ func (l line) property(ident string) (value, error) {
 		return l.point1, nil
 	case "p2", "point2":
 		return l.point2, nil
+	case "dx":
+		return Number(l.point2.X - l.point1.X), nil
+	case "dy":
+		return Number(l.point2.Y - l.point1.Y), nil
 	case "len":
 		dx, dy := l.point2.X-l.point1.X, l.point2.Y-l.point1.Y
 		return Number(math.Sqrt(float64(dx*dx + dy*dy))), nil
@@ -134,5 +138,5 @@ func (l line) runtimeTypeName() string {
 }
 
 func (l line) concat(val value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: line :: [%s] not supported", reflect.TypeOf(val))
+	return nil, fmt.Errorf("type mismatch: line :: %s not supported", reflect.TypeOf(val))
 }

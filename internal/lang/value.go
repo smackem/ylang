@@ -100,3 +100,17 @@ func formatValue(val value, indent string, leadingIndent bool) string {
 	}
 	return buf.String()
 }
+
+// implement sort.Interface for slice of values
+
+type valueSlice []value
+
+func (s valueSlice) Len() int { return len(s) }
+func (s valueSlice) Less(i int, j int) bool {
+	result, err := s[i].lessThan(s[j])
+	if err != nil {
+		return false
+	}
+	return bool(result.(boolean))
+}
+func (s valueSlice) Swap(i int, j int) { s[i], s[j] = s[j], s[i] }

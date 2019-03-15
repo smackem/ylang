@@ -1,7 +1,57 @@
-line := line(100;101, 200;201)
-rect := rect(100,101, 200,201)
-poly := polygon(100;101, 200;201)
+MakeGauss := fn(radius) {
+    len := radius * 2 + 1
+    k := kernel(len, len, 0)
+    for y in 0 .. len {
+        base := y > radius ? len - y - 1 : y
+        for x in 0 .. len {
+            k[x;y] = pow(2, base + (x > radius ? len - x - 1 : x))
+        }
+    }
+    return k
+}
 
-log(line, " ", translateLine(line, 1;2))
-log(rect, " ", translateRect(rect, 1;2))
-log(poly, " ", translatePolygon(poly, 1;2))
+Gauss := MakeGauss(10)
+
+Poly := translate_polygon(
+    polygon(100;100, 300;110, 200;400),
+    150;0)
+
+Outline := fn(thickness, func) {
+    withSingleLine := fn(l) {
+        angle := atan(l.dy / l.dx)
+        dx := abs(sin(angle))
+        dy := abs(cos(angle))
+        for delta in 0 .. thickness {
+            for p in translate_line(l, dx*delta - thickness/2; dy*delta - thickness/2) {
+                @p = func(p)
+            }
+        }
+    }
+    prevPt := nil
+    for p in Poly.vertices {
+        if prevPt != nil {
+            withSingleLine(line(prevPt, p))
+        }
+        prevPt = p
+    }
+    withSingleLine(line(prevPt, Poly.vertices[0]))
+}
+
+for p in Bounds {
+    @p = @p
+}
+
+roberts1 := | 1  0
+              0 -1|
+roberts2 := | 0  1
+             -1  0|
+for p in Poly {
+    a := convolute(p, roberts1)
+    b := convolute(p, roberts2)
+    mag := hypot_rgb(a, b)
+    @p = rgb(mag.r, mag.g, mag.b)
+}
+commit(Bounds)
+
+//Outline(5, fn(p) -> -@p)
+Outline(5, fn(p) -> convolute(p, Gauss))

@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
+	"math"
 )
 
 func main() {
-	for i := 0; i < 10; i++ {
-		fmt.Printf("%d\n", rand.Intn(100))
-	}
+	fmt.Printf("%g", 360-math.SmallestNonzeroFloat32)
 }

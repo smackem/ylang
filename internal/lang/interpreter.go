@@ -226,7 +226,7 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.ident, nil)
-		collVal.iterate(func(val value) error {
+		return collVal.iterate(func(val value) error {
 			ir.assignIdent(s.ident, val)
 			if err := ir.visitStmtList(s.stmts); err != nil {
 				return err

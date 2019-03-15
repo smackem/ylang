@@ -1,25 +1,3 @@
-OutBounds := resize(800, 600)
-
-for pt in OutBounds {
-    @pt = Black
-}
-
-for pt in polygon(0;0, 100;10, 200;100) {
-    @pt = White
-}
-
-for pt in polygon(0;200, 100;200, 100;300, 0;300) {
-    @pt = White
-}
-
-for pt in polygon(10;300, 200;300, 300;400, 200;500, 100;500, 200;400) {
-    @pt = White
-}
-
-for p in Bounds {
-    @p = @p
-}
-
 poly := polygon(200;300, 410;280, 620;310, 400;150, 545;110)
 polyBounds := poly.bounds
 roberts1 := | 1  0
@@ -32,13 +10,22 @@ for p in poly {
     r := r1*r1*255 + r2*r2*255
     @p = rgb(sqrt(r.r), sqrt(r.g), sqrt(r.b))
 }
+commit(polyBounds)
 
 Gauss := |0 1 0
           1 2 1
           0 1 0|
 BlurLine := fn(line) {
+    for dy in -3 .. 4 {
+        for p in translateLine(line, 0;dy) {
+            @p = convolute(p, Gauss)
+        }
+    }
+}
+
+DrawLine := fn(line, color) {
     for p in line {
-        @p = convolute(p, Gauss)
+        @p = color
     }
 }
 
@@ -60,5 +47,3 @@ for pt in poly.vertices {
     prevPt = pt
 }
 BlurLine(line(prevPt, poly.vertices[0]))
-
-log(0.__type, " ", (0;1).__type, " ", rect(0,0,1,2).__type, " ", |1 2 3 4|.__type, " ", "".__type, " ", nil.__type)

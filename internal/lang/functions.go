@@ -17,6 +17,8 @@ type functionDecl struct {
 var numberType = reflect.TypeOf(Number(0))
 var pointType = reflect.TypeOf(point{})
 var kernelType = reflect.TypeOf(kernel{})
+var listType = reflect.TypeOf(list{})
+var colorType = reflect.TypeOf(Color{})
 
 var functions = map[string]functionDecl{
 	"rgb": {
@@ -43,24 +45,28 @@ var functions = map[string]functionDecl{
 		body:   invokeConvolute,
 		params: []reflect.Type{pointType, kernelType},
 	},
-	"sortKernel": {
-		body:   invokeSort,
+	"sort_kernel": {
+		body:   invokeSortKernel,
 		params: []reflect.Type{kernelType},
 	},
-	"fetchR": {
-		body:   invokeFetchR,
+	"sort_list": {
+		body:   invokeSortList,
+		params: []reflect.Type{listType},
+	},
+	"fetch_red": {
+		body:   invokeFetchRed,
 		params: []reflect.Type{pointType, kernelType},
 	},
-	"fetchG": {
-		body:   invokeFetchG,
+	"fetch_green": {
+		body:   invokeFetchGreen,
 		params: []reflect.Type{pointType, kernelType},
 	},
-	"fetchB": {
-		body:   invokeFetchB,
+	"fetch_blue": {
+		body:   invokeFetchBlue,
 		params: []reflect.Type{pointType, kernelType},
 	},
-	"fetchA": {
-		body:   invokeFetchA,
+	"fetch_alpha": {
+		body:   invokeFetchAlpha,
 		params: []reflect.Type{pointType, kernelType},
 	},
 	"sin": {
@@ -95,6 +101,10 @@ var functions = map[string]functionDecl{
 		body:   invokeSqrt,
 		params: []reflect.Type{numberType},
 	},
+	"pow": {
+		body:   invokePow,
+		params: []reflect.Type{numberType, numberType},
+	},
 	"abs": {
 		body:   invokeAbs,
 		params: []reflect.Type{numberType},
@@ -103,16 +113,40 @@ var functions = map[string]functionDecl{
 		body:   invokeRound,
 		params: []reflect.Type{numberType},
 	},
+	"hypot": {
+		body:   invokeHypot,
+		params: []reflect.Type{numberType, numberType},
+	},
+	"hypot_rgb": {
+		body:   invokeHypotRgb,
+		params: []reflect.Type{colorType, colorType},
+	},
 	"random": {
 		body:   invokeRandom,
 		params: []reflect.Type{numberType},
 	},
 	"min": {
 		body:   invokeMin,
+		params: []reflect.Type{reflect.TypeOf([]Number{})},
+	},
+	"min_kernel": {
+		body:   invokeMinKernel,
 		params: []reflect.Type{kernelType},
+	},
+	"min_list": {
+		body:   invokeMinList,
+		params: []reflect.Type{listType},
 	},
 	"max": {
 		body:   invokeMax,
+		params: []reflect.Type{reflect.TypeOf([]Number{})},
+	},
+	"max_kernel": {
+		body:   invokeMaxKernel,
+		params: []reflect.Type{kernelType},
+	},
+	"max_list": {
+		body:   invokeMaxList,
 		params: []reflect.Type{kernelType},
 	},
 	"list": {
@@ -139,15 +173,15 @@ var functions = map[string]functionDecl{
 		body:   invokeIntersect,
 		params: []reflect.Type{reflect.TypeOf(line{}), reflect.TypeOf(line{})},
 	},
-	"translateLine": {
+	"translate_line": {
 		body:   invokeTranslateLine,
 		params: []reflect.Type{reflect.TypeOf(line{}), pointType},
 	},
-	"translateRect": {
+	"translate_rect": {
 		body:   invokeTranslateRect,
 		params: []reflect.Type{reflect.TypeOf(rect{}), pointType},
 	},
-	"translatePolygon": {
+	"translate_polygon": {
 		body:   invokeTranslatePolygon,
 		params: []reflect.Type{reflect.TypeOf(polygon{}), pointType},
 	},
@@ -183,7 +217,7 @@ func invokeConvolute(ir *interpreter, args []value) (value, error) {
 	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values), nil
 }
 
-func invokeSort(ir *interpreter, args []value) (value, error) {
+func invokeSortKernel(ir *interpreter, args []value) (value, error) {
 	kernelVal := args[0].(kernel)
 	result := kernelVal
 	result.values = append([]Number(nil), result.values...) // clone values
@@ -191,7 +225,15 @@ func invokeSort(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchR(ir *interpreter, args []value) (value, error) {
+func invokeSortList(ir *interpreter, args []value) (value, error) {
+	listVal := args[0].(list)
+	result := listVal
+	result.elements = append([]value(nil), result.elements...) // clone elements
+	sort.Sort(valueSlice(result.elements))
+	return result, nil
+}
+
+func invokeFetchRed(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -199,7 +241,7 @@ func invokeFetchR(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchG(ir *interpreter, args []value) (value, error) {
+func invokeFetchGreen(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -207,7 +249,7 @@ func invokeFetchG(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchB(ir *interpreter, args []value) (value, error) {
+func invokeFetchBlue(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -215,7 +257,7 @@ func invokeFetchB(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchA(ir *interpreter, args []value) (value, error) {
+func invokeFetchAlpha(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -255,6 +297,10 @@ func invokeSqrt(ir *interpreter, args []value) (value, error) {
 	return Number(math.Sqrt(float64(args[0].(Number)))), nil
 }
 
+func invokePow(ir *interpreter, args []value) (value, error) {
+	return Number(math.Pow(float64(args[0].(Number)), float64(args[1].(Number)))), nil
+}
+
 func invokeAbs(ir *interpreter, args []value) (value, error) {
 	return Number(math.Abs(float64(args[0].(Number)))), nil
 }
@@ -263,13 +309,41 @@ func invokeRound(ir *interpreter, args []value) (value, error) {
 	return Number(math.Round(float64(args[0].(Number)))), nil
 }
 
+func invokeHypot(ir *interpreter, args []value) (value, error) {
+	return Number(math.Hypot(float64(args[0].(Number)), float64(args[1].(Number)))), nil
+}
+
+func invokeHypotRgb(ir *interpreter, args []value) (value, error) {
+	a, b := args[0].(Color), args[1].(Color)
+	return Color{
+		R: Number(math.Hypot(float64(a.R), float64(b.R))),
+		G: Number(math.Hypot(float64(a.G), float64(b.G))),
+		B: Number(math.Hypot(float64(a.B), float64(b.B))),
+		A: a.A,
+	}, nil
+}
+
 func invokeRandom(ir *interpreter, args []value) (value, error) {
 	return Number(rand.Intn(int(args[0].(Number)))), nil
 }
 
 func invokeMax(it *interpreter, args []value) (value, error) {
+	if len(args) == 0 {
+		return nil, fmt.Errorf("min() arguments must not be empty")
+	}
+	max := MinNumber
+	for _, v := range args {
+		n := v.(Number)
+		if n > max {
+			max = n
+		}
+	}
+	return max, nil
+}
+
+func invokeMaxKernel(it *interpreter, args []value) (value, error) {
 	kernelVal := args[0].(kernel)
-	max := Number(math.MinInt32)
+	max := MinNumber
 	for _, n := range kernelVal.values {
 		if n > max {
 			max = n
@@ -278,15 +352,65 @@ func invokeMax(it *interpreter, args []value) (value, error) {
 	return Number(max), nil
 }
 
+func invokeMaxList(it *interpreter, args []value) (value, error) {
+	listVal := args[0].(list)
+	if len(listVal.elements) == 0 {
+		return nil, fmt.Errorf("max() arguments must not be empty")
+	}
+	var max value = MinNumber
+	for _, v := range listVal.elements {
+		isGt, err := v.greaterThan(max)
+		if err != nil {
+			return nil, err
+		}
+		if isGt.(boolean) {
+			max = v
+		}
+	}
+	return max, nil
+}
+
 func invokeMin(it *interpreter, args []value) (value, error) {
+	if len(args) == 0 {
+		return nil, fmt.Errorf("min() arguments must not be empty")
+	}
+	min := MaxNumber
+	for _, v := range args {
+		n := v.(Number)
+		if n < min {
+			min = n
+		}
+	}
+	return min, nil
+}
+
+func invokeMinKernel(it *interpreter, args []value) (value, error) {
 	kernelVal := args[0].(kernel)
-	min := Number(math.MaxInt32)
+	min := MinNumber
 	for _, n := range kernelVal.values {
 		if n < min {
 			min = n
 		}
 	}
 	return Number(min), nil
+}
+
+func invokeMinList(it *interpreter, args []value) (value, error) {
+	listVal := args[0].(list)
+	if len(listVal.elements) == 0 {
+		return nil, fmt.Errorf("min() arguments must not be empty")
+	}
+	var min value = MaxNumber
+	for _, v := range listVal.elements {
+		isLess, err := v.lessThan(min)
+		if err != nil {
+			return nil, err
+		}
+		if isLess.(boolean) {
+			min = v
+		}
+	}
+	return min, nil
 }
 
 func invokeList(it *interpreter, args []value) (value, error) {
@@ -339,6 +463,7 @@ func invokePolygon(ir *interpreter, args []value) (value, error) {
 	}
 
 	if points[0] == points[len(points)-1] {
+		// first and last are equal -> remove last
 		points = points[:len(points)-1]
 	}
 
