@@ -36,7 +36,7 @@ type BitmapContext interface {
 	MapGreen(x, y, width, height int, kernel []Number) []Number
 	MapBlue(x, y, width, height int, kernel []Number) []Number
 	MapAlpha(x, y, width, height int, kernel []Number) []Number
-	BltToTarget(x, y, width, height int)
-	BltToSource(x, y, width, height int)
+	Blt(x, y, width, height int)
 	ResizeTarget(width, height int)
+	Flip()
 }

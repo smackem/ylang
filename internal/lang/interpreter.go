@@ -48,8 +48,10 @@ func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir.newIdent("White", NewRgba(255, 255, 255, 255))
 	ir.newIdent("Transparent", NewRgba(255, 255, 255, 0))
 	ir.newIdent("Pi", Number(math.Pi))
+	ir.newIdent("Rad2Deg", Number(180/math.Pi))
+	ir.newIdent("Deg2Rad", Number(math.Pi/180))
 	if bitmap != nil {
-		ir.newIdent("Bounds", rect{image.Point{0, 0}, image.Point{bitmap.SourceWidth(), bitmap.SourceHeight()}})
+		ir.assignBounds(true)
 		ir.newIdent("W", Number(bitmap.SourceWidth()))
 		ir.newIdent("H", Number(bitmap.SourceHeight()))
 	}
@@ -113,6 +115,14 @@ func (ir *interpreter) assignIdent(ident string, val value) error {
 		}
 	}
 	return fmt.Errorf("identifier '%s' not found", ident)
+}
+
+func (ir *interpreter) assignBounds(new boolean) error {
+	bounds := rect{image.Point{0, 0}, image.Point{ir.bitmap.SourceWidth(), ir.bitmap.SourceHeight()}}
+	if new {
+		return ir.newIdent("Bounds", bounds)
+	}
+	return ir.assignIdent("Bounds", bounds)
 }
 
 func (ir *interpreter) visitStmtList(stmts []statement) error {
@@ -282,34 +292,6 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			buf.WriteString(formatValue(v, "", false))
 		}
 		fmt.Println(buf.String())
-
-	case bltStmt:
-		expr, err := ir.visitExpr(s.rect)
-		if err != nil {
-			return err
-		}
-		rect, ok := expr.(rect)
-		if !ok {
-			return fmt.Errorf("type mismatch: blt expects rect")
-		}
-		ir.bitmap.BltToTarget(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
-
-	case commitStmt:
-		var expr expression
-		if s.rect != nil {
-			var err error
-			expr, err = ir.visitExpr(s.rect)
-			if err != nil {
-				return err
-			}
-		} else {
-			expr, _ = ir.findIdent(lastRectIdent)
-		}
-		rect, ok := expr.(rect)
-		if !ok {
-			return fmt.Errorf("type mismatch: commit expects rect")
-		}
-		ir.bitmap.BltToSource(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
 
 	case returnStmt:
 		if len(ir.functionScopes) <= 0 {

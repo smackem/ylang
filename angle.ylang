@@ -15,7 +15,7 @@ for pos in Bounds {
     sy := convolute(pos, SobelY)
     mag := sqrt(sx.r * sx.r + sy.r * sy.r)
     color := nil
-    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
+    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * Rad2Deg + 90
     if angle >= 157.5 or angle < 22.5 {
         color = #ff0000 // 0 - red
     } else if angle < 67.5 {

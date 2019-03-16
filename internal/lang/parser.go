@@ -97,10 +97,6 @@ func (p *parser) parseStmt() (stmt statement, err error) {
 		stmt, err = p.parseYield()
 	case ttLog:
 		stmt, err = p.parseLog()
-	case ttBlt:
-		stmt, err = p.parseBlt()
-	case ttCommit:
-		stmt, err = p.parseCommit()
 	case ttReturn:
 		stmt, err = p.parseReturn()
 	default:
@@ -322,34 +318,6 @@ func (p *parser) parseArgumentList() ([]expression, error) {
 		}
 	}
 	return args, nil
-}
-
-func (p *parser) parseBlt() (statement, error) {
-	p.next()
-	rect, err := p.parseExpr()
-	if err != nil {
-		return nil, err
-	}
-	if _, err := p.expect(ttRParen); err != nil {
-		return nil, err
-	}
-	return bltStmt{p.makeStmtBase(), rect}, nil
-}
-
-func (p *parser) parseCommit() (statement, error) {
-	var rect expression
-	if p.current().Type == ttLParen {
-		p.next()
-		var err error
-		rect, err = p.parseExpr()
-		if err != nil {
-			return nil, err
-		}
-		if _, err := p.expect(ttRParen); err != nil {
-			return nil, err
-		}
-	}
-	return commitStmt{p.makeStmtBase(), rect}, nil
 }
 
 func (p *parser) parseReturn() (statement, error) {

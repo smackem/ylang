@@ -37,21 +37,44 @@ Outline := fn(thickness, func) {
     withSingleLine(line(prevPt, Poly.vertices[0]))
 }
 
-for p in Bounds {
-    @p = @p
-}
+blt(Bounds)
 
 roberts1 := | 1  0
               0 -1|
 roberts2 := | 0  1
              -1  0|
 for p in Poly {
-    a := convolute(p, roberts1)
-    b := convolute(p, roberts2)
-    mag := hypot_rgb(a, b)
+    mag := hypot_rgb(convolute(p, roberts1), convolute(p, roberts2))
     @p = rgb(mag.r, mag.g, mag.b)
 }
-commit(Bounds)
+flip()
 
-//Outline(5, fn(p) -> -@p)
 Outline(5, fn(p) -> convolute(p, Gauss))
+
+///////////////////////////////////////////////////////////////
+
+log("min: ", min(1, 10, 20, -1, -5, 100))
+log("min: ", min_list([1, 10, 20, -1, -5, 100]))
+log("min: ", min_kernel(|1 10 20 -1|))
+
+log("max: ", max(1, 10, 20, -1, -5, 100))
+log("max: ", max_list([1, 10, 20, -1, -5, 100]))
+log("max: ", max_kernel(|1 10 20 -1|))
+
+///////////////////////////////////////////////////////////////
+
+OutBounds := resize(360, 100)
+PlotVLine := fn(x, color) {
+    for y in 0 .. OutBounds.height {
+        @(x;y) = color
+    }
+}
+
+for x in 0 .. OutBounds.width {
+    ex := x * Deg2Rad
+    s := sin(ex)
+    c := cos(ex)
+    color := -srgb(max(s, 0), abs(min(s, 0)), abs(c))
+    //color := srgb((sin(ex) + 1) / 2, (cos(ex) + 1) / 2, (tan(ex) + 1) / 2)
+    PlotVLine(x, color)
+}

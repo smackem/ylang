@@ -134,7 +134,7 @@ func (surf *surface) MapAlpha(x, y, radius, width int, kernel []lang.Number) []l
 	return surf.mapChannel(x, y, radius, width, kernel, func(px lang.Color) lang.Number { return px.A })
 }
 
-func (surf *surface) BltToTarget(x, y, width, height int) {
+func (surf *surface) Blt(x, y, width, height int) {
 	if width == surf.SourceWidth() && height == surf.SourceHeight() && surf.target.width == surf.source.width && surf.source.height == surf.target.height {
 		copy(surf.target.pixels, surf.source.pixels)
 	} else {
@@ -147,24 +147,20 @@ func (surf *surface) BltToTarget(x, y, width, height int) {
 	}
 }
 
-func (surf *surface) BltToSource(x, y, width, height int) {
-	if width == surf.SourceWidth() && height == surf.SourceHeight() && surf.target.width == surf.source.width && surf.source.height == surf.target.height {
-		copy(surf.source.pixels, surf.target.pixels)
-	} else {
-		for iy := y; iy < height; iy++ {
-			for ix := x; ix < width; ix++ {
-				index := iy*surf.target.width + ix
-				surf.source.pixels[index] = surf.target.pixels[index]
-			}
-		}
-	}
-}
-
 func (surf *surface) ResizeTarget(width, height int) {
 	surf.target = &ymage{
 		width:  width,
 		height: height,
 		pixels: make([]lang.Color, width*height),
+	}
+}
+
+func (surf *surface) Flip() {
+	surf.source = surf.target
+	surf.target = &ymage{
+		width:  surf.source.width,
+		height: surf.source.height,
+		pixels: append([]lang.Color(nil), surf.source.pixels...),
 	}
 }
 

@@ -198,7 +198,7 @@ func Test_parse_ast(t *testing.T) {
 		},
 		{
 			name: "multiple_statements",
-			src:  "log(1) commit",
+			src:  "log(1) log(2)",
 			want: []statement{
 				logStmt{
 					stmtBase: stmtBase{},
@@ -206,9 +206,11 @@ func Test_parse_ast(t *testing.T) {
 						Number(1),
 					},
 				},
-				commitStmt{
+				logStmt{
 					stmtBase: stmtBase{},
-					rect:     nil,
+					args: []expression{
+						Number(2),
+					},
 				},
 			},
 		},
@@ -260,34 +262,6 @@ func Test_parse_ast(t *testing.T) {
 					rhs: listExpr{
 						elements: []expression{Number(1)},
 					},
-				},
-			},
-		},
-		{
-			name: "blt",
-			src:  "blt(BOUNDS) log(1)",
-			want: []statement{
-				bltStmt{
-					stmtBase: stmtBase{},
-					rect:     identExpr("BOUNDS"),
-				},
-				logStmt{
-					stmtBase: stmtBase{},
-					args:     []expression{Number(1)},
-				},
-			},
-		},
-		{
-			name: "blt_with_rect",
-			src:  "blt(IMAGE) log(1)",
-			want: []statement{
-				bltStmt{
-					stmtBase: stmtBase{},
-					rect:     identExpr("IMAGE"),
-				},
-				logStmt{
-					stmtBase: stmtBase{},
-					args:     []expression{Number(1)},
 				},
 			},
 		},

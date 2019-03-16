@@ -45,6 +45,14 @@ var functions = map[string]functionDecl{
 		body:   invokeConvolute,
 		params: []reflect.Type{pointType, kernelType},
 	},
+	"blt": {
+		body:   invokeBlt,
+		params: []reflect.Type{reflect.TypeOf(rect{})},
+	},
+	"flip": {
+		body:   invokeFlip,
+		params: []reflect.Type{},
+	},
 	"sort_kernel": {
 		body:   invokeSortKernel,
 		params: []reflect.Type{kernelType},
@@ -147,7 +155,7 @@ var functions = map[string]functionDecl{
 	},
 	"max_list": {
 		body:   invokeMaxList,
-		params: []reflect.Type{kernelType},
+		params: []reflect.Type{listType},
 	},
 	"list": {
 		body:   invokeList,
@@ -215,6 +223,18 @@ func invokeConvolute(ir *interpreter, args []value) (value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	return ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values), nil
+}
+
+func invokeBlt(ir *interpreter, args []value) (value, error) {
+	rect := args[0].(rect)
+	ir.bitmap.Blt(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
+	return nil, nil
+}
+
+func invokeFlip(ir *interpreter, args []value) (value, error) {
+	ir.bitmap.Flip()
+	ir.assignBounds(false)
+	return nil, nil
 }
 
 func invokeSortKernel(ir *interpreter, args []value) (value, error) {
@@ -386,7 +406,7 @@ func invokeMin(it *interpreter, args []value) (value, error) {
 
 func invokeMinKernel(it *interpreter, args []value) (value, error) {
 	kernelVal := args[0].(kernel)
-	min := MinNumber
+	min := MaxNumber
 	for _, n := range kernelVal.values {
 		if n < min {
 			min = n

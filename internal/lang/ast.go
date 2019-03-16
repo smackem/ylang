@@ -85,16 +85,6 @@ type logStmt struct {
 	args []expression
 }
 
-type bltStmt struct {
-	stmtBase
-	rect expression
-}
-
-type commitStmt struct {
-	stmtBase
-	rect expression // nillable
-}
-
 type returnStmt struct {
 	stmtBase
 	result expression

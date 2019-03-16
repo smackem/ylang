@@ -54,8 +54,6 @@ const (
 	ttQMark
 	ttColon
 	ttLog
-	ttBlt
-	ttCommit
 	ttFn
 	ttReturn
 	ttArrow
@@ -108,8 +106,6 @@ var tokenTypeNames = []string{
 	"?",
 	":",
 	"log",
-	"blt",
-	"commit",
 	"fn",
 	"return",
 	"->",
@@ -249,8 +245,6 @@ var keywordTokens = map[string]tokenType{
 	"true":   ttTrue,
 	"false":  ttFalse,
 	"log":    ttLog,
-	"blt":    ttBlt,
-	"commit": ttCommit,
 	"fn":     ttFn,
 	"return": ttReturn,
 	"nil":    ttNil,

@@ -12,8 +12,6 @@ Statement:
     | ForStatement
     | YIELD Expr
     | LOG LPAREN ArgumentList RPAREN
-    | BLT LPAREN Expr RPAREN
-    | CommitStatement
     | RETURN Expr
 
 IdentStatement:
@@ -34,10 +32,6 @@ ForStatement:
 Range:
     | Expr DOTDOT Expr
     | Expr DOTDOT Expr DOTDOT Expr
-
-CommitStatement:
-    | COMMIT LPAREN Expr RPAREN
-    | COMMIT
 
 Expr:
     | Expr QMARK Expr COLON Expr

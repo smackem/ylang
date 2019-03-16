@@ -24,7 +24,6 @@ Radius := 200
 OutBounds := resize(Radius*2, Radius*2)
 Center := Radius;Radius
 Inner := Radius/10
-Deg2Rad := Pi/180
 
 for p in OutBounds {
     @p = Black
