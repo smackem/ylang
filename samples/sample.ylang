@@ -22,14 +22,14 @@ Greyscale := fn() {
     for pos in Bounds {
         @pos = White * @pos.sci
     }
-    commit
+    flip()
 }
 
 Smoothen := fn() {
     for pos in Bounds {
         @pos = convolute(pos, Gauss)
     }
-    commit
+    flip()
 }
 
 DetectEdges := fn() {
@@ -67,7 +67,7 @@ DetectEdges := fn() {
         }
         @pos = rgb(mag, mag, mag)
     }
-    commit
+    flip()
 }
 
 Hysteresis := fn() {
@@ -91,7 +91,7 @@ Hysteresis := fn() {
 
         @pos = rgb(val, val, val)
     }
-    commit
+    flip()
 }
 
 Greyscale()

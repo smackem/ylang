@@ -8,7 +8,7 @@ SobelY := | 1  2  1
 for pos in Bounds {
     @pos = @pos.sci * White
 }
-commit
+flip()
 
 for pos in Bounds {
     sx := convolute(pos, SobelX)

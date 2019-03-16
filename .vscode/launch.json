@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}",
             "env": {},
             "args": [
-                "-code", "${workspaceFolder}/debug.ylang",
+                "-code", "${workspaceFolder}/samples/debug.ylang",
                 "-image", "${workspaceFolder}/res/pub/_A01.jpg",
                 "-out", "${workspaceFolder}/temp/out.png" ]
         }

@@ -35,7 +35,7 @@
 		},
 		{
 			"comment": "Built-in functions",
-			"match": "\\b(rgb|srgb|rgba|srgba|sort|sqrt|abs|resize|sin|cos|tan|asin|acos|atan|atan2|list|kernel|rect|polygon|convolute|min|max)\\b(?=\\()",
+			"match": "\\b(rgb|srgb|rgba|srgba|sort_kernel|sort_list|hypot|hypot_rgb|sqrt|abs|resize|sin|cos|tan|asin|acos|atan|atan2|list|kernel|rect|polygon|convolute|min|max)\\b(?=\\()",
 			"name": "support.function.builtin.ylang"
 		},
 		{
@@ -60,7 +60,7 @@
 		},
 		{
 			"comment": "Function call",
-			"match": "\\b(\\w+)\\(\\b",
+			"match": "(\\b(?!fn)(?:[A-Za-z0-9_]+))\\(",
 			"captures":{
 				"1": {
 					"name": "support.function.appdef.ylang"
@@ -201,7 +201,7 @@
 					"name": "keyword.function.ylang"
 				},
 				{
-					"match": "\\b(log|blt|commit)\\b",
+					"match": "\\b(log)\\b",
 					"name": "keyword.statements.ylang"
 				}
 			]
