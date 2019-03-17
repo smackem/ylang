@@ -72,9 +72,9 @@ func (k kernel) at(bitmap BitmapContext) (value, error) {
 
 func (k kernel) property(ident string) (value, error) {
 	switch ident {
-	case "width":
+	case "w", "width":
 		return Number(k.width), nil
-	case "height":
+	case "h", "height":
 		return Number(k.height), nil
 	case "count":
 		return Number(len(k.values)), nil

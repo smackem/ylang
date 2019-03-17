@@ -37,6 +37,14 @@ var functions = map[string]functionDecl{
 		body:   invokeSrgba,
 		params: []reflect.Type{numberType, numberType, numberType, numberType},
 	},
+	"grey": {
+		body:   invokeGrey,
+		params: []reflect.Type{numberType},
+	},
+	"sgrey": {
+		body:   invokeSgrey,
+		params: []reflect.Type{numberType},
+	},
 	"rect": {
 		body:   invokeRect,
 		params: []reflect.Type{numberType, numberType, numberType, numberType},
@@ -52,6 +60,10 @@ var functions = map[string]functionDecl{
 	"flip": {
 		body:   invokeFlip,
 		params: []reflect.Type{},
+	},
+	"recall": {
+		body:   invokeRecall,
+		params: []reflect.Type{numberType},
 	},
 	"sort_kernel": {
 		body:   invokeSortKernel,
@@ -165,6 +177,10 @@ var functions = map[string]functionDecl{
 		body:   invokeKernel,
 		params: []reflect.Type{numberType, numberType, numberType},
 	},
+	"gauss": {
+		body:   invokeGauss,
+		params: []reflect.Type{numberType},
+	},
 	"resize": {
 		body:   invokeResize,
 		params: []reflect.Type{numberType, numberType},
@@ -193,6 +209,10 @@ var functions = map[string]functionDecl{
 		body:   invokeTranslatePolygon,
 		params: []reflect.Type{reflect.TypeOf(polygon{}), pointType},
 	},
+	"clamp": {
+		body:   invokeClamp,
+		params: []reflect.Type{numberType, numberType, numberType},
+	},
 }
 
 func invokeRgb(ir *interpreter, args []value) (value, error) {
@@ -209,6 +229,16 @@ func invokeRgba(ir *interpreter, args []value) (value, error) {
 
 func invokeSrgba(ir *interpreter, args []value) (value, error) {
 	return NewSrgba(args[0].(Number), args[1].(Number), args[2].(Number), args[3].(Number)), nil
+}
+
+func invokeGrey(ir *interpreter, args []value) (value, error) {
+	v := args[0].(Number)
+	return NewRgba(v, v, v, 255), nil
+}
+
+func invokeSgrey(ir *interpreter, args []value) (value, error) {
+	v := args[0].(Number)
+	return NewSrgba(v, v, v, 1.0), nil
 }
 
 func invokeRect(ir *interpreter, args []value) (value, error) {
@@ -232,7 +262,16 @@ func invokeBlt(ir *interpreter, args []value) (value, error) {
 }
 
 func invokeFlip(ir *interpreter, args []value) (value, error) {
-	ir.bitmap.Flip()
+	imageID := ir.bitmap.Flip()
+	ir.assignBounds(false)
+	return Number(imageID), nil
+}
+
+func invokeRecall(ir *interpreter, args []value) (value, error) {
+	imageID := args[0].(Number)
+	if err := ir.bitmap.Recall(int(imageID)); err != nil {
+		return nil, err
+	}
 	ir.assignBounds(false)
 	return nil, nil
 }
@@ -456,6 +495,35 @@ func invokeKernel(ir *interpreter, args []value) (value, error) {
 	return kernel{width: int(width), height: int(height), values: values}, nil
 }
 
+func invokeGauss(ir *interpreter, args []value) (value, error) {
+	radius := int(args[0].(Number))
+	length := int(radius*2 + 1)
+
+	values := make([]Number, int(length*length))
+	i := 0
+	for y := 0; y < length; y++ {
+		var base int
+		if y > radius {
+			base = length - y - 1
+		} else {
+			base = y
+		}
+		for x := 0; x < length; x++ {
+			var val int
+			if x > radius {
+				val = length - x - 1
+			} else {
+				val = x
+			}
+			intVal := 1 << uint(base+val)
+			values[i] = Number(intVal)
+			i++
+		}
+	}
+
+	return kernel{width: int(length), height: int(length), values: values}, nil
+}
+
 func invokeResize(ir *interpreter, args []value) (value, error) {
 	width := args[0].(Number)
 	height := args[1].(Number)
@@ -550,4 +618,15 @@ func invokeTranslatePolygon(ir *interpreter, args []value) (value, error) {
 		newVertices[i] = point{v.X + pt.X, v.Y + pt.Y}
 	}
 	return polygon{newVertices}, nil
+}
+
+func invokeClamp(ir *interpreter, args []value) (value, error) {
+	n, min, max := args[0].(Number), args[1].(Number), args[2].(Number)
+	if n < min {
+		n = min
+	}
+	if n > max {
+		n = max
+	}
+	return n, nil
 }

@@ -15,8 +15,9 @@ import (
 )
 
 type surface struct {
-	source *ymage
-	target *ymage
+	source        *ymage
+	target        *ymage
+	sourceHistory []*ymage
 }
 
 type ymage struct {
@@ -35,7 +36,11 @@ func loadSurface(reader io.Reader) (*surface, error) {
 		width:  source.width,
 		height: source.height,
 	}
-	return &surface{source, target}, nil
+	return &surface{
+		source:        source,
+		target:        target,
+		sourceHistory: nil,
+	}, nil
 }
 
 func (surf *surface) GetPixel(x int, y int) lang.Color {
@@ -43,7 +48,9 @@ func (surf *surface) GetPixel(x int, y int) lang.Color {
 }
 
 func (surf *surface) SetPixel(x int, y int, col lang.Color) {
-	surf.target.pixels[y*surf.target.width+x] = col
+	if y >= 0 && y < surf.target.height && x >= 0 && x < surf.target.width {
+		surf.target.pixels[y*surf.target.width+x] = col
+	}
 }
 
 func (surf *surface) SourceWidth() int {
@@ -155,13 +162,24 @@ func (surf *surface) ResizeTarget(width, height int) {
 	}
 }
 
-func (surf *surface) Flip() {
+func (surf *surface) Flip() int {
+	oldSourceID := len(surf.sourceHistory)
+	surf.sourceHistory = append(surf.sourceHistory, surf.source)
 	surf.source = surf.target
 	surf.target = &ymage{
 		width:  surf.source.width,
 		height: surf.source.height,
 		pixels: append([]lang.Color(nil), surf.source.pixels...),
 	}
+	return oldSourceID
+}
+
+func (surf *surface) Recall(imageID int) error {
+	if imageID >= len(surf.sourceHistory) {
+		return fmt.Errorf("Unknown context %d - cannot recall", imageID)
+	}
+	surf.source = surf.sourceHistory[imageID]
+	return nil
 }
 
 func loadImage(reader io.Reader) (*ymage, error) {

@@ -6,5 +6,6 @@ import (
 )
 
 func main() {
-	fmt.Printf("%g", 360-math.SmallestNonzeroFloat32)
+	var l []int
+	fmt.Printf("%g, %d", 360-math.SmallestNonzeroFloat32, len(l))
 }

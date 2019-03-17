@@ -47,23 +47,6 @@ func indexAt(n Number, count int) int {
 	return int(n)
 }
 
-/*
-{
-	x: [
-		1,
-		2,
-		3,
-		4,
-		[
-			33,
-			44,
-			55,
-		]
-	],
-	y: abcdef,
-}
-*/
-
 func formatValue(val value, indent string, leadingIndent bool) string {
 	buf := strings.Builder{}
 	if leadingIndent {
@@ -87,18 +70,34 @@ func formatValue(val value, indent string, leadingIndent bool) string {
 	case kernel:
 		buf.WriteByte('|')
 		innerIndent := indent + " "
+		width := findMaxWidth(v.values) + 3
 		for i, elem := range v.values {
 			if v.width != 0 && i > 0 && i%v.width == 0 {
 				buf.WriteByte('\n')
 				buf.WriteString(innerIndent)
 			}
-			buf.WriteString(fmt.Sprintf(" %5.2f", elem))
+			buf.WriteString(fmt.Sprintf(" %*.2f", width, elem))
 		}
 		buf.WriteString("|")
 	default:
 		buf.WriteString(v.printStr())
 	}
 	return buf.String()
+}
+
+func findMaxWidth(values []Number) int {
+	max := 1
+	for _, v := range values {
+		count := 0
+		for v > 1 {
+			v /= 10
+			count++
+		}
+		if count > max {
+			max = count
+		}
+	}
+	return max
 }
 
 // implement sort.Interface for slice of values

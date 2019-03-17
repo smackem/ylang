@@ -38,5 +38,6 @@ type BitmapContext interface {
 	MapAlpha(x, y, width, height int, kernel []Number) []Number
 	Blt(x, y, width, height int)
 	ResizeTarget(width, height int)
-	Flip()
+	Flip() int // return imageID for Recall()
+	Recall(imageID int) error
 }

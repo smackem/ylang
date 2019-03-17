@@ -21,34 +21,26 @@ SobelY := | 1  2  1
             0  0  0
            -1 -2 -1|
 
-MaxRho := hypot(Bounds.w, Bounds.h)
-log("MaxRho: ", MaxRho)
-MaxTheta := 180 // degrees
-Acc := kernel(MaxRho * 2, MaxTheta, 0)
-
 for p in Bounds {
     gx := convolute(p, SobelX).r
     gy := convolute(p, SobelY).r
     mag := hypot(gx, gy)
-    if mag > 200 {
-        theta := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg
-        minTheta := 0
-        maxTheta := 180
-        if theta >= 157.5 or theta < 22.5  {
-            minTheta = 157
-            maxTheta = 203
-        } else if theta < 67.5 {
-            minTheta = 23
-            maxTheta = 68
-        } else if theta < 112.5 {
-            minTheta = 68
-            maxTheta = 113
-        } else if theta < 157.5 {
-            minTheta = 113
-            maxTheta = 158
-        }
-        for theta in minTheta .. maxTheta {
-            theta = theta % 180
+    angle := atan(gy / gx)
+    @p = mag > 200 ? grey(mag) : Black
+}
+
+flip()
+
+///////////////////////////////////////////////////////////////////////////////
+log("Accumulate...")
+
+MaxRho := hypot(Bounds.w, Bounds.h)
+log("MaxRho: ", MaxRho)
+MaxTheta := 180 // degrees
+Acc := kernel(MaxRho * 2, MaxTheta, 0)
+for p in Bounds {
+    if @p.r > 0 {
+        for theta in 0 .. MaxTheta {
             thetaRad := theta * Deg2Rad
             rho := p.x * cos(thetaRad) + p.y * sin(thetaRad)
             accX := MaxRho + rho
@@ -56,13 +48,8 @@ for p in Bounds {
             weight := Acc[accX;accY] + 1
             Acc[accX;accY] = weight
         }
-        @p = grey(mag)
-    } else {
-        @p = Black
     }
 }
-
-flip()
 
 ///////////////////////////////////////////////////////////////////////////////
 log("Find Maxima, Visualize...")
@@ -84,7 +71,7 @@ for p in Bounds {
 flip()
 
 lines := []
-threshold := maxWeight * 0.3
+threshold := maxWeight * 0.5
 for p in Bounds {
     if @p.r > threshold {
         lines = lines :: {
@@ -94,6 +81,24 @@ for p in Bounds {
     }
 }
 log(lines)
+
+DrawDot := fn(p, color) {
+    rc := rect(p.x - 2, p.y - 2, 5, 5)
+    for pp in rect(p.x - 2, p.y - 2, 5, 5) {
+        if pp.x == rc.left and pp.y == rc.top
+        or pp.x == rc.left and pp.y == rc.bottom-1
+        or pp.x == rc.right-1 and pp.y == rc.top
+        or pp.x == rc.right-1 and pp.y == rc.bottom-1 {
+            // do nothing to round corners
+        } else {
+            @pp = color
+        }
+    }
+}
+
+//for line in lines {
+//    DrawDot(line.rho;line.theta, #ff0000)
+//}
 
 
 ///////////////////////////////////////////////////////////////////////////////
