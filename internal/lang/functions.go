@@ -221,6 +221,10 @@ func initFunctions() {
 			body:   invokePolygonList,
 			params: []reflect.Type{listType},
 		},
+		"circle": {
+			body:   invokeCircle,
+			params: []reflect.Type{pointType, numberType},
+		},
 		"intersect": {
 			body:   invokeIntersect,
 			params: []reflect.Type{lineType, lineType},
@@ -673,6 +677,14 @@ func invokePolygonList(ir *interpreter, args []value) (value, error) {
 
 	return polygon{
 		vertices: points,
+	}, nil
+}
+
+func invokeCircle(ir *interpreter, args []value) (value, error) {
+	center, radius := args[0].(point), args[1].(Number)
+	return circle{
+		center: center,
+		radius: radius,
 	}, nil
 }
 

@@ -149,8 +149,8 @@ func Test_interpret(t *testing.T) {
 			},
 		},
 		{
-			name: "sortKernel",
-			src:  "k := sortKernel(|4 1 3 2|)",
+			name: "sort_kernel",
+			src:  "k := sort_kernel(|4 1 3 2|)",
 			want: scope{
 				"k": kernel{
 					width:  2,
@@ -161,8 +161,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "min_max",
-			src: `min := min(|4 1 3 2|)
-			      max := max(|4 1 3 2|)`,
+			src: `min := min_kernel(|4 1 3 2|)
+			      max := max_kernel(|4 1 3 2|)`,
 			want: scope{
 				"min": Number(1),
 				"max": Number(4),

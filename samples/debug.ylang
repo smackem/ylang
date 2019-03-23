@@ -1,22 +1,7 @@
 
 blt(Bounds)
 
-circle := fn(pt, r) {
-    r2 := r * r
-    area := r2 * 4
-    rr := r * 2
-
-    for i in 0 .. area {
-        tx := i % rr - r
-        ty := i / rr - r
-
-        if tx * tx + ty * ty <= r2 {
-            @(pt.x + tx; pt.y + ty) = #ff0000
-        }
-    }
-}
-
-circle(300;300, 5)
+for p in circle(300;300, 2) { @p = #ff0000 }
 
 return nil
 

@@ -1,10 +1,16 @@
 
 ///////////////////////////////////////////////////////////////////////////////
-log("Setup Caches...")
+log("Initialize...")
 
 MaxTheta := 180 // degrees
 Sin := kernel_fn(MaxTheta, 1, fn(angle, _) -> sin(angle * Deg2Rad))
 Cos := kernel_fn(MaxTheta, 1, fn(angle, _) -> cos(angle * Deg2Rad))
+
+Plot := fn(figure, color) {
+    for p in figure {
+        @p = color
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 log("Greyscale, Smoothen...")
@@ -86,22 +92,8 @@ for p in Bounds {
 }
 log(houghLines)
 
-DrawDot := fn(p, color) {
-    rc := rect(p.x - 2, p.y - 2, 5, 5)
-    for pp in rect(p.x - 2, p.y - 2, 5, 5) {
-        if pp.x == rc.left and pp.y == rc.top
-        or pp.x == rc.left and pp.y == rc.bottom-1
-        or pp.x == rc.right-1 and pp.y == rc.top
-        or pp.x == rc.right-1 and pp.y == rc.bottom-1 {
-            // do nothing to round corners
-        } else {
-            @pp = color
-        }
-    }
-}
-
 for l in houghLines {
-    DrawDot(l.rho;l.theta, #ff0000)
+    Plot(circle(l.rho;l.theta, 2), #ff0000)
 }
 
 return nil
@@ -133,5 +125,5 @@ for l in houghLines {
         lineToDraw = line(x1;0, x2;Bounds.h)
     }
     log(lineToDraw)
-    for p in lineToDraw { @p = color }
+    Plot(lineToDraw, color)
 }
