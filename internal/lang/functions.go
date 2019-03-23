@@ -245,6 +245,18 @@ func initFunctions() {
 			body:   invokeClampRgb,
 			params: []reflect.Type{colorType},
 		},
+		"compose": {
+			body:   invokeCompose,
+			params: []reflect.Type{colorType, colorType},
+		},
+		"sum_list": {
+			body:   invokeSumList,
+			params: []reflect.Type{listType},
+		},
+		"sum_kernel": {
+			body:   invokeSumKernel,
+			params: []reflect.Type{kernelType},
+		},
 	}
 }
 
@@ -738,4 +750,43 @@ func invokeClamp(ir *interpreter, args []value) (value, error) {
 func invokeClampRgb(ir *interpreter, args []value) (value, error) {
 	color := args[0].(Color)
 	return color.Clamp(), nil
+}
+
+func invokeCompose(ir *interpreter, args []value) (value, error) {
+	lower, upper := args[0].(Color), args[1].(Color)
+	lowerA, upperA := lower.ScA(), upper.ScA()
+	inverseUpperA := 1.0 - upperA
+	a := lowerA + (1.0-lowerA)*upperA
+
+	return NewRgba(
+		clamp((upper.R*upperA+lower.R*lowerA*inverseUpperA)/a),
+		clamp((upper.G*upperA+lower.G*lowerA*inverseUpperA)/a),
+		clamp((upper.B*upperA+lower.B*lowerA*inverseUpperA)/a),
+		clamp(255.0*a)), nil
+}
+
+func invokeSumList(ir *interpreter, args []value) (value, error) {
+	list := args[0].(list)
+	var sum value
+	var err error
+	for _, v := range list.elements {
+		if sum == nil {
+			sum = v
+		} else {
+			sum, err = sum.add(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	return sum, nil
+}
+
+func invokeSumKernel(ir *interpreter, args []value) (value, error) {
+	kernel := args[0].(kernel)
+	var sum Number
+	for _, v := range kernel.values {
+		sum += v
+	}
+	return sum, nil
 }

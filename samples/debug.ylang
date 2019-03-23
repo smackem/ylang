@@ -1,7 +1,43 @@
 
+blt(Bounds)
 
-p := polygon_list([100;101, 200;201, 300;301])
-log(p)
+circle := fn(pt, r) {
+    r2 := r * r
+    area := r2 * 4
+    rr := r * 2
+
+    for i in 0 .. area {
+        tx := i % rr - r
+        ty := i / rr - r
+
+        if tx * tx + ty * ty <= r2 {
+            @(pt.x + tx; pt.y + ty) = #ff0000
+        }
+    }
+}
+
+circle(300;300, 5)
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
+
+l := [1,2,3]
+log(l, " ", sum_list(l))
+log([], " ", sum_list([]))
+
+k := |1 2 3 4|
+log(k, " ", sum_kernel(k))
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
+
+blt(Bounds)
+
+for p in polygon(100;100, 500;100, 300;300) {
+    @p = compose(@p, #000000:40)
+}
 return nil
 
 
