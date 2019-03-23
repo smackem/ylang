@@ -32,8 +32,9 @@ for p in Bounds {
     mag := hypot(gx, gy)
     if mag > 200 {
         theta := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg
-        minTheta := 0
-        maxTheta := 180
+        minTheta := theta - 1
+        maxTheta := theta + 1
+        //log("mintheta: ", minTheta, " maxtheta: ", maxTheta)
         if theta >= 157.5 or theta < 22.5  {
             minTheta = 157
             maxTheta = 203
@@ -74,12 +75,18 @@ for p in outBounds {
 flip()
 
 k := kernel(11, 11, 1)
+log("k: ", k)
 maxWeight := 0
 for p in Bounds {
-    neighbours := fetch_red(p, k)
-    maximum := max_kernel(neighbours)
-    @p = grey(@p.r == maximum ? @p.r : 0)
-    maxWeight = max(maxWeight, maximum)
+    if @p.r > 0 {
+        neighbours := fetch_red(p, k)
+        maximum := max_kernel(neighbours)
+        @p = @p.r == maximum ? grey(@p.r) : Black
+        if @p.r == maximum {
+            log("neighbours: ", neighbours)
+        }
+        maxWeight = max(maxWeight, maximum)
+    }
 }
 flip()
 

@@ -6,16 +6,16 @@ SobelY := | 1  2  1
            -1 -2 -1|
 
 for pos in Bounds {
-    @pos = @pos.sci * White
+    @pos = grey(@pos.i)
 }
 flip()
 
 for pos in Bounds {
-    sx := convolute(pos, SobelX)
-    sy := convolute(pos, SobelY)
-    mag := sqrt(sx.r * sx.r + sy.r * sy.r)
+    gx := convolute(pos, SobelX).r
+    gy := convolute(pos, SobelY).r
+    mag := hypot(gx, gy)
     color := nil
-    angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * Rad2Deg + 90
+    angle := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg + 90
     if angle >= 157.5 or angle < 22.5 {
         color = #ff0000 // 0 - red
     } else if angle < 67.5 {

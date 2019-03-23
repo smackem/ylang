@@ -1,5 +1,10 @@
 package lang
 
+// package initialization
+func init() {
+	initFunctions()
+}
+
 // Compile compiles the given source code into a executable Program.
 func Compile(src string) (Program, error) {
 	tokens, err := lex(src)

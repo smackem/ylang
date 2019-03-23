@@ -294,15 +294,18 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 		fmt.Println(buf.String())
 
 	case returnStmt:
-		if len(ir.functionScopes) <= 0 {
-			return fmt.Errorf("Cannot return a value from root level")
-		}
 		result, err := ir.visitExpr(s.result)
 		if err != nil {
 			return err
 		}
-		ir.functionScopes[len(ir.functionScopes)-1].retval = result
-		return returnSig
+		if len(ir.functionScopes) > 0 {
+			ir.functionScopes[len(ir.functionScopes)-1].retval = result
+			return returnSig
+		}
+		if _, isNil := result.(nilval); isNil {
+			return returnSig
+		}
+		return fmt.Errorf("A script can only return 'nil' from root level")
 	}
 
 	return nil

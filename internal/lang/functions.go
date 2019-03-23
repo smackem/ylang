@@ -19,200 +19,233 @@ var pointType = reflect.TypeOf(point{})
 var kernelType = reflect.TypeOf(kernel{})
 var listType = reflect.TypeOf(list{})
 var colorType = reflect.TypeOf(Color{})
+var functionType = reflect.TypeOf(function{})
+var lineType = reflect.TypeOf(line{})
+var rectType = reflect.TypeOf(rect{})
+var polygonType = reflect.TypeOf(polygon{})
+var numberSliceType = reflect.TypeOf([]Number{})
+var pointSliceType = reflect.TypeOf([]point{})
 
-var functions = map[string]functionDecl{
-	"rgb": {
-		body:   invokeRgb,
-		params: []reflect.Type{numberType, numberType, numberType},
-	},
-	"srgb": {
-		body:   invokeSrgb,
-		params: []reflect.Type{numberType, numberType, numberType},
-	},
-	"rgba": {
-		body:   invokeRgba,
-		params: []reflect.Type{numberType, numberType, numberType, numberType},
-	},
-	"srgba": {
-		body:   invokeSrgba,
-		params: []reflect.Type{numberType, numberType, numberType, numberType},
-	},
-	"grey": {
-		body:   invokeGrey,
-		params: []reflect.Type{numberType},
-	},
-	"sgrey": {
-		body:   invokeSgrey,
-		params: []reflect.Type{numberType},
-	},
-	"rect": {
-		body:   invokeRect,
-		params: []reflect.Type{numberType, numberType, numberType, numberType},
-	},
-	"convolute": {
-		body:   invokeConvolute,
-		params: []reflect.Type{pointType, kernelType},
-	},
-	"blt": {
-		body:   invokeBlt,
-		params: []reflect.Type{reflect.TypeOf(rect{})},
-	},
-	"flip": {
-		body:   invokeFlip,
-		params: []reflect.Type{},
-	},
-	"recall": {
-		body:   invokeRecall,
-		params: []reflect.Type{numberType},
-	},
-	"sort_kernel": {
-		body:   invokeSortKernel,
-		params: []reflect.Type{kernelType},
-	},
-	"sort_list": {
-		body:   invokeSortList,
-		params: []reflect.Type{listType},
-	},
-	"fetch_red": {
-		body:   invokeFetchRed,
-		params: []reflect.Type{pointType, kernelType},
-	},
-	"fetch_green": {
-		body:   invokeFetchGreen,
-		params: []reflect.Type{pointType, kernelType},
-	},
-	"fetch_blue": {
-		body:   invokeFetchBlue,
-		params: []reflect.Type{pointType, kernelType},
-	},
-	"fetch_alpha": {
-		body:   invokeFetchAlpha,
-		params: []reflect.Type{pointType, kernelType},
-	},
-	"sin": {
-		body:   invokeSin,
-		params: []reflect.Type{numberType},
-	},
-	"cos": {
-		body:   invokeCos,
-		params: []reflect.Type{numberType},
-	},
-	"tan": {
-		body:   invokeTan,
-		params: []reflect.Type{numberType},
-	},
-	"asin": {
-		body:   invokeAsin,
-		params: []reflect.Type{numberType},
-	},
-	"acos": {
-		body:   invokeAcos,
-		params: []reflect.Type{numberType},
-	},
-	"atan": {
-		body:   invokeAtan,
-		params: []reflect.Type{numberType},
-	},
-	"atan2": {
-		body:   invokeAtan2,
-		params: []reflect.Type{numberType, numberType},
-	},
-	"sqrt": {
-		body:   invokeSqrt,
-		params: []reflect.Type{numberType},
-	},
-	"pow": {
-		body:   invokePow,
-		params: []reflect.Type{numberType, numberType},
-	},
-	"abs": {
-		body:   invokeAbs,
-		params: []reflect.Type{numberType},
-	},
-	"round": {
-		body:   invokeRound,
-		params: []reflect.Type{numberType},
-	},
-	"hypot": {
-		body:   invokeHypot,
-		params: []reflect.Type{numberType, numberType},
-	},
-	"hypot_rgb": {
-		body:   invokeHypotRgb,
-		params: []reflect.Type{colorType, colorType},
-	},
-	"random": {
-		body:   invokeRandom,
-		params: []reflect.Type{numberType},
-	},
-	"min": {
-		body:   invokeMin,
-		params: []reflect.Type{reflect.TypeOf([]Number{})},
-	},
-	"min_kernel": {
-		body:   invokeMinKernel,
-		params: []reflect.Type{kernelType},
-	},
-	"min_list": {
-		body:   invokeMinList,
-		params: []reflect.Type{listType},
-	},
-	"max": {
-		body:   invokeMax,
-		params: []reflect.Type{reflect.TypeOf([]Number{})},
-	},
-	"max_kernel": {
-		body:   invokeMaxKernel,
-		params: []reflect.Type{kernelType},
-	},
-	"max_list": {
-		body:   invokeMaxList,
-		params: []reflect.Type{listType},
-	},
-	"list": {
-		body:   invokeList,
-		params: []reflect.Type{numberType, numberType},
-	},
-	"kernel": {
-		body:   invokeKernel,
-		params: []reflect.Type{numberType, numberType, numberType},
-	},
-	"gauss": {
-		body:   invokeGauss,
-		params: []reflect.Type{numberType},
-	},
-	"resize": {
-		body:   invokeResize,
-		params: []reflect.Type{numberType, numberType},
-	},
-	"line": {
-		body:   invokeLine,
-		params: []reflect.Type{pointType, pointType},
-	},
-	"polygon": {
-		body:   invokePolygon,
-		params: []reflect.Type{reflect.TypeOf([]point{})},
-	},
-	"intersect": {
-		body:   invokeIntersect,
-		params: []reflect.Type{reflect.TypeOf(line{}), reflect.TypeOf(line{})},
-	},
-	"translate_line": {
-		body:   invokeTranslateLine,
-		params: []reflect.Type{reflect.TypeOf(line{}), pointType},
-	},
-	"translate_rect": {
-		body:   invokeTranslateRect,
-		params: []reflect.Type{reflect.TypeOf(rect{}), pointType},
-	},
-	"translate_polygon": {
-		body:   invokeTranslatePolygon,
-		params: []reflect.Type{reflect.TypeOf(polygon{}), pointType},
-	},
-	"clamp": {
-		body:   invokeClamp,
-		params: []reflect.Type{numberType, numberType, numberType},
-	},
+var functions map[string]functionDecl
+
+func initFunctions() {
+	if functions != nil {
+		return
+	}
+	functions = map[string]functionDecl{
+		"rgb": {
+			body:   invokeRgb,
+			params: []reflect.Type{numberType, numberType, numberType},
+		},
+		"srgb": {
+			body:   invokeSrgb,
+			params: []reflect.Type{numberType, numberType, numberType},
+		},
+		"rgba": {
+			body:   invokeRgba,
+			params: []reflect.Type{numberType, numberType, numberType, numberType},
+		},
+		"srgba": {
+			body:   invokeSrgba,
+			params: []reflect.Type{numberType, numberType, numberType, numberType},
+		},
+		"grey": {
+			body:   invokeGrey,
+			params: []reflect.Type{numberType},
+		},
+		"sgrey": {
+			body:   invokeSgrey,
+			params: []reflect.Type{numberType},
+		},
+		"rect": {
+			body:   invokeRect,
+			params: []reflect.Type{numberType, numberType, numberType, numberType},
+		},
+		"convolute": {
+			body:   invokeConvolute,
+			params: []reflect.Type{pointType, kernelType},
+		},
+		"blt": {
+			body:   invokeBlt,
+			params: []reflect.Type{rectType},
+		},
+		"flip": {
+			body:   invokeFlip,
+			params: []reflect.Type{},
+		},
+		"recall": {
+			body:   invokeRecall,
+			params: []reflect.Type{numberType},
+		},
+		"sort_kernel": {
+			body:   invokeSortKernel,
+			params: []reflect.Type{kernelType},
+		},
+		"sort_list": {
+			body:   invokeSortList,
+			params: []reflect.Type{listType},
+		},
+		"fetch_red": {
+			body:   invokeFetchRed,
+			params: []reflect.Type{pointType, kernelType},
+		},
+		"fetch_green": {
+			body:   invokeFetchGreen,
+			params: []reflect.Type{pointType, kernelType},
+		},
+		"fetch_blue": {
+			body:   invokeFetchBlue,
+			params: []reflect.Type{pointType, kernelType},
+		},
+		"fetch_alpha": {
+			body:   invokeFetchAlpha,
+			params: []reflect.Type{pointType, kernelType},
+		},
+		"sin": {
+			body:   invokeSin,
+			params: []reflect.Type{numberType},
+		},
+		"cos": {
+			body:   invokeCos,
+			params: []reflect.Type{numberType},
+		},
+		"tan": {
+			body:   invokeTan,
+			params: []reflect.Type{numberType},
+		},
+		"asin": {
+			body:   invokeAsin,
+			params: []reflect.Type{numberType},
+		},
+		"acos": {
+			body:   invokeAcos,
+			params: []reflect.Type{numberType},
+		},
+		"atan": {
+			body:   invokeAtan,
+			params: []reflect.Type{numberType},
+		},
+		"atan2": {
+			body:   invokeAtan2,
+			params: []reflect.Type{numberType, numberType},
+		},
+		"sqrt": {
+			body:   invokeSqrt,
+			params: []reflect.Type{numberType},
+		},
+		"pow": {
+			body:   invokePow,
+			params: []reflect.Type{numberType, numberType},
+		},
+		"abs": {
+			body:   invokeAbs,
+			params: []reflect.Type{numberType},
+		},
+		"round": {
+			body:   invokeRound,
+			params: []reflect.Type{numberType},
+		},
+		"hypot": {
+			body:   invokeHypot,
+			params: []reflect.Type{numberType, numberType},
+		},
+		"hypot_rgb": {
+			body:   invokeHypotRgb,
+			params: []reflect.Type{colorType, colorType},
+		},
+		"hypot_point": {
+			body:   invokeHypotPoint,
+			params: []reflect.Type{pointType},
+		},
+		"random": {
+			body:   invokeRandom,
+			params: []reflect.Type{numberType},
+		},
+		"min": {
+			body:   invokeMin,
+			params: []reflect.Type{numberSliceType},
+		},
+		"min_kernel": {
+			body:   invokeMinKernel,
+			params: []reflect.Type{kernelType},
+		},
+		"min_list": {
+			body:   invokeMinList,
+			params: []reflect.Type{listType},
+		},
+		"max": {
+			body:   invokeMax,
+			params: []reflect.Type{numberSliceType},
+		},
+		"max_kernel": {
+			body:   invokeMaxKernel,
+			params: []reflect.Type{kernelType},
+		},
+		"max_list": {
+			body:   invokeMaxList,
+			params: []reflect.Type{listType},
+		},
+		"list": {
+			body:   invokeList,
+			params: []reflect.Type{numberType, numberType},
+		},
+		"list_fn": {
+			body:   invokeListFn,
+			params: []reflect.Type{numberType, functionType},
+		},
+		"kernel": {
+			body:   invokeKernel,
+			params: []reflect.Type{numberType, numberType, numberType},
+		},
+		"kernel_fn": {
+			body:   invokeKernelFn,
+			params: []reflect.Type{numberType, numberType, functionType},
+		},
+		"gauss": {
+			body:   invokeGauss,
+			params: []reflect.Type{numberType},
+		},
+		"resize": {
+			body:   invokeResize,
+			params: []reflect.Type{numberType, numberType},
+		},
+		"line": {
+			body:   invokeLine,
+			params: []reflect.Type{pointType, pointType},
+		},
+		"polygon": {
+			body:   invokePolygon,
+			params: []reflect.Type{pointSliceType},
+		},
+		"polygon_list": {
+			body:   invokePolygonList,
+			params: []reflect.Type{listType},
+		},
+		"intersect": {
+			body:   invokeIntersect,
+			params: []reflect.Type{lineType, lineType},
+		},
+		"translate_line": {
+			body:   invokeTranslateLine,
+			params: []reflect.Type{lineType, pointType},
+		},
+		"translate_rect": {
+			body:   invokeTranslateRect,
+			params: []reflect.Type{rectType, pointType},
+		},
+		"translate_polygon": {
+			body:   invokeTranslatePolygon,
+			params: []reflect.Type{polygonType, pointType},
+		},
+		"clamp": {
+			body:   invokeClamp,
+			params: []reflect.Type{numberType, numberType, numberType},
+		},
+		"clamp_rgb": {
+			body:   invokeClampRgb,
+			params: []reflect.Type{colorType},
+		},
+	}
 }
 
 func invokeRgb(ir *interpreter, args []value) (value, error) {
@@ -382,6 +415,11 @@ func invokeHypotRgb(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
+func invokeHypotPoint(ir *interpreter, args []value) (value, error) {
+	p := args[0].(point)
+	return Number(math.Hypot(float64(p.X), float64(p.Y))), nil
+}
+
 func invokeRandom(ir *interpreter, args []value) (value, error) {
 	return Number(rand.Intn(int(args[0].(Number)))), nil
 }
@@ -482,6 +520,22 @@ func invokeList(it *interpreter, args []value) (value, error) {
 	return list{elements: values}, nil
 }
 
+func invokeListFn(it *interpreter, args []value) (value, error) {
+	count := args[0].(Number)
+	fn := args[1].(function)
+	values := make([]value, int(count))
+	fnArgs := make([]value, 1)
+	for i := range values {
+		fnArgs[0] = Number(i)
+		retVal, err := it.invokeFunctionExpr("<anon_fn>", fn, fnArgs)
+		if err != nil {
+			return nil, err
+		}
+		values[i] = retVal
+	}
+	return list{elements: values}, nil
+}
+
 func invokeKernel(ir *interpreter, args []value) (value, error) {
 	width := args[0].(Number)
 	height := args[1].(Number)
@@ -490,6 +544,34 @@ func invokeKernel(ir *interpreter, args []value) (value, error) {
 	values := make([]Number, int(width*height))
 	for i := range values {
 		values[i] = val
+	}
+
+	return kernel{width: int(width), height: int(height), values: values}, nil
+}
+
+func invokeKernelFn(ir *interpreter, args []value) (value, error) {
+	width := int(args[0].(Number))
+	height := int(args[1].(Number))
+	fn := args[2].(function)
+	values := make([]Number, width*height)
+	fnArgs := make([]value, 2)
+
+	i := 0
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			fnArgs[0] = Number(x)
+			fnArgs[1] = Number(y)
+			retVal, err := ir.invokeFunctionExpr("<anon_fn>", fn, fnArgs)
+			if err != nil {
+				return nil, err
+			}
+			retNum, ok := retVal.(Number)
+			if !ok {
+				return nil, fmt.Errorf("type mismatch: function passed to kernel_fn must return number, not %s", reflect.TypeOf(retVal))
+			}
+			values[i] = retNum
+			i++
+		}
 	}
 
 	return kernel{width: int(width), height: int(height), values: values}, nil
@@ -545,9 +627,31 @@ func invokePolygon(ir *interpreter, args []value) (value, error) {
 		return nil, fmt.Errorf("polygon must not be empty")
 	}
 
-	points := make([]point, 0, len(args))
-	for _, param := range args {
-		points = append(points, param.(point))
+	points := make([]point, len(args))
+	for i, param := range args {
+		points[i] = param.(point)
+	}
+
+	if points[0] == points[len(points)-1] {
+		// first and last are equal -> remove last
+		points = points[:len(points)-1]
+	}
+
+	return polygon{
+		vertices: points,
+	}, nil
+}
+
+func invokePolygonList(ir *interpreter, args []value) (value, error) {
+	list := args[0].(list)
+
+	points := make([]point, len(list.elements))
+	for i, param := range list.elements {
+		pt, ok := param.(point)
+		if !ok {
+			return nil, fmt.Errorf("type mismatch: polygon_list expects a list of points but found a %s", reflect.TypeOf(param))
+		}
+		points[i] = pt
 	}
 
 	if points[0] == points[len(points)-1] {
@@ -629,4 +733,9 @@ func invokeClamp(ir *interpreter, args []value) (value, error) {
 		n = max
 	}
 	return n, nil
+}
+
+func invokeClampRgb(ir *interpreter, args []value) (value, error) {
+	color := args[0].(Color)
+	return color.Clamp(), nil
 }

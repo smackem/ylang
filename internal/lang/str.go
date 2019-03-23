@@ -3,6 +3,7 @@ package lang
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -16,18 +17,30 @@ func (s str) equals(other value) (value, error) {
 }
 
 func (s str) greaterThan(other value) (value, error) {
+	if r, ok := other.(str); ok {
+		return boolean(strings.Compare(string(s), string(r)) > 0), nil
+	}
 	return nil, fmt.Errorf("type mismatch: string > %s not supported", reflect.TypeOf(other))
 }
 
 func (s str) greaterThanOrEqual(other value) (value, error) {
+	if r, ok := other.(str); ok {
+		return boolean(strings.Compare(string(s), string(r)) >= 0), nil
+	}
 	return nil, fmt.Errorf("type mismatch: string >= %s not supported", reflect.TypeOf(other))
 }
 
 func (s str) lessThan(other value) (value, error) {
+	if r, ok := other.(str); ok {
+		return boolean(strings.Compare(string(s), string(r)) < 0), nil
+	}
 	return nil, fmt.Errorf("type mismatch: string < %s not supported", reflect.TypeOf(other))
 }
 
 func (s str) lessThanOrEqual(other value) (value, error) {
+	if r, ok := other.(str); ok {
+		return boolean(strings.Compare(string(s), string(r)) <= 0), nil
+	}
 	return nil, fmt.Errorf("type mismatch: string <= %s not supported", reflect.TypeOf(other))
 }
 

@@ -63,7 +63,9 @@ func formatValue(val value, indent string, leadingIndent bool) string {
 	case hashMap:
 		buf.WriteString("{\n")
 		innerIndent := indent + "  "
-		for key, elem := range v {
+		keys := v.sortedKeys()
+		for _, key := range keys {
+			elem := v[key]
 			buf.WriteString(fmt.Sprintf("%s%s: %s,\n", innerIndent, key, formatValue(elem, innerIndent, false)))
 		}
 		buf.WriteString(fmt.Sprintf("%s}", indent))

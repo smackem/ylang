@@ -3,9 +3,21 @@ package lang
 import (
 	"fmt"
 	"reflect"
+	"sort"
 )
 
 type hashMap map[value]value
+
+func (h hashMap) sortedKeys() []value {
+	keys := make([]value, 0, len(h))
+	for key := range h {
+		keys = append(keys, key)
+	}
+	sort.Sort(valueSlice(keys))
+	return keys
+}
+
+// implement value
 
 func (h hashMap) equals(other value) (value, error) {
 	return falseVal, nil

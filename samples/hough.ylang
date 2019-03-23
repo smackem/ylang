@@ -1,5 +1,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
+log("Setup Caches...")
+
+MaxTheta := 180 // degrees
+Sin := kernel_fn(MaxTheta, 1, fn(angle, _) -> sin(angle * Deg2Rad))
+Cos := kernel_fn(MaxTheta, 1, fn(angle, _) -> cos(angle * Deg2Rad))
+
+///////////////////////////////////////////////////////////////////////////////
 log("Greyscale, Smoothen...")
 
 Gauss := gauss(7)
@@ -25,7 +32,6 @@ for p in Bounds {
     gx := convolute(p, SobelX).r
     gy := convolute(p, SobelY).r
     mag := hypot(gx, gy)
-    angle := atan(gy / gx)
     @p = mag > 200 ? grey(mag) : Black
 }
 
@@ -36,17 +42,15 @@ log("Accumulate...")
 
 MaxRho := hypot(Bounds.w, Bounds.h)
 log("MaxRho: ", MaxRho)
-MaxTheta := 180 // degrees
 Acc := kernel(MaxRho * 2, MaxTheta, 0)
+
 for p in Bounds {
     if @p.r > 0 {
         for theta in 0 .. MaxTheta {
-            thetaRad := theta * Deg2Rad
-            rho := p.x * cos(thetaRad) + p.y * sin(thetaRad)
-            accX := MaxRho + rho
-            accY := theta
-            weight := Acc[accX;accY] + 1
-            Acc[accX;accY] = weight
+            rho := p.x * Cos[theta] + p.y * Sin[theta]
+            ptAcc := MaxRho + rho; theta
+            weight := Acc[ptAcc] + 1
+            Acc[ptAcc] = weight
         }
     }
 }
@@ -65,22 +69,22 @@ maxWeight := 0
 for p in Bounds {
     neighbours := fetch_red(p, k)
     maximum := max_kernel(neighbours)
-    @p = grey(@p.r == maximum ? @p.r : 0)
+    @p = @p.r == maximum ? grey(@p.r) : Black
     maxWeight = max(maxWeight, maximum)
 }
 flip()
 
-lines := []
+houghLines := []
 threshold := maxWeight * 0.5
 for p in Bounds {
     if @p.r > threshold {
-        lines = lines :: {
+        houghLines = houghLines :: {
             rho: p.x,
             theta: p.y,
         }
     }
 }
-log(lines)
+log(houghLines)
 
 DrawDot := fn(p, color) {
     rc := rect(p.x - 2, p.y - 2, 5, 5)
@@ -96,10 +100,11 @@ DrawDot := fn(p, color) {
     }
 }
 
-//for line in lines {
-//    DrawDot(line.rho;line.theta, #ff0000)
-//}
+for l in houghLines {
+    DrawDot(l.rho;l.theta, #ff0000)
+}
 
+return nil
 
 ///////////////////////////////////////////////////////////////////////////////
 log("Draw Lines...")
@@ -108,23 +113,23 @@ recall(SourceImage)
 outBounds := resize(Bounds.w, Bounds.h)
 blt(Bounds)
 
-for l in lines {
+for l in houghLines {
     // rho = x * cos(theta) + y * sin(theta)
-    thetaRad := l.theta * Deg2Rad
+    theta := l.theta
     rho := l.rho - MaxRho
     lineToDraw := nil
     color := #00ff00
-    if l.theta >= 45 and l.theta <= 135 {
+    if theta >= 45 and theta <= 135 {
         // line has low slope -> intersect with x borders
         // y = (rho - x * cos(theta)) / sin(theta)
-        y1 := rho / sin(thetaRad)
-        y2 := (rho - Bounds.w * cos(thetaRad)) / sin(thetaRad)
+        y1 := rho / Sin[theta]
+        y2 := (rho - Bounds.w * Cos[theta]) / Sin[theta]
         lineToDraw = line(0;y1, Bounds.w;y2)
     } else {
         // line has high slope -> intersect with y borders
         // x = (rho - y * sin(theta)) / cos(theta)
-        x1 := rho / cos(thetaRad)
-        x2 := (rho - Bounds.h * sin(thetaRad)) / cos(thetaRad)
+        x1 := rho / Cos[theta]
+        x2 := (rho - Bounds.h * Sin[theta]) / Cos[theta]
         lineToDraw = line(x1;0, x2;Bounds.h)
     }
     log(lineToDraw)
