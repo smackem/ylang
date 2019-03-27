@@ -3,15 +3,15 @@ package lang
 import "math"
 
 type colorHsv struct {
-	H Number
-	S Number
-	V Number
+	h Number
+	s Number
+	v Number
 }
 
 func (hsv colorHsv) clamp() colorHsv {
-	h := hsv.H
-	s := hsv.S
-	v := hsv.V
+	h := hsv.h
+	s := hsv.s
+	v := hsv.v
 
 	if h >= 360 {
 		h = 360 - math.SmallestNonzeroFloat32
@@ -33,4 +33,3 @@ func (hsv colorHsv) clamp() colorHsv {
 
 	return colorHsv{h, s, v}
 }
-

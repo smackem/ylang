@@ -25,6 +25,7 @@ var rectType = reflect.TypeOf(rect{})
 var polygonType = reflect.TypeOf(polygon{})
 var numberSliceType = reflect.TypeOf([]Number{})
 var pointSliceType = reflect.TypeOf([]point{})
+var circleType = reflect.TypeOf(circle{})
 
 var functions map[string]functionDecl
 
@@ -241,6 +242,10 @@ func initFunctions() {
 			body:   invokeTranslatePolygon,
 			params: []reflect.Type{polygonType, pointType},
 		},
+		"translate_circle": {
+			body:   invokeTranslateCircle,
+			params: []reflect.Type{circleType, pointType},
+		},
 		"clamp": {
 			body:   invokeClamp,
 			params: []reflect.Type{numberType, numberType, numberType},
@@ -260,6 +265,18 @@ func initFunctions() {
 		"sum_kernel": {
 			body:   invokeSumKernel,
 			params: []reflect.Type{kernelType},
+		},
+		"outline_rect": {
+			body:   invokeOutlineRect,
+			params: []reflect.Type{rectType},
+		},
+		"outline_polygon": {
+			body:   invokeOutlinePolygon,
+			params: []reflect.Type{polygonType},
+		},
+		"outline_circle": {
+			body:   invokeOutlineCircle,
+			params: []reflect.Type{circleType},
 		},
 	}
 }
@@ -748,6 +765,16 @@ func invokeTranslatePolygon(ir *interpreter, args []value) (value, error) {
 	return polygon{newVertices}, nil
 }
 
+func invokeTranslateCircle(ir *interpreter, args []value) (value, error) {
+	cir, pt := args[0].(circle), args[1].(point)
+	return circle{
+		center: point{
+			X: cir.center.X + pt.X,
+			Y: cir.center.Y + pt.Y,
+		},
+	}, nil
+}
+
 func invokeClamp(ir *interpreter, args []value) (value, error) {
 	n, min, max := args[0].(Number), args[1].(Number), args[2].(Number)
 	if n < min {
@@ -801,4 +828,69 @@ func invokeSumKernel(ir *interpreter, args []value) (value, error) {
 		sum += v
 	}
 	return sum, nil
+}
+
+func invokeOutlineRect(ir *interpreter, args []value) (value, error) {
+	rc := args[0].(rect)
+	lines := make([]value, 4)
+	lines[0] = line{
+		point1: point(rc.Min),
+		point2: point{rc.Max.X, rc.Min.Y},
+	}
+	lines[1] = line{
+		point1: point{rc.Max.X, rc.Min.Y},
+		point2: point(rc.Max),
+	}
+	lines[2] = line{
+		point1: point(rc.Max),
+		point2: point{rc.Min.X, rc.Max.Y},
+	}
+	lines[3] = line{
+		point1: point{rc.Min.X, rc.Max.Y},
+		point2: point(rc.Min),
+	}
+	return list{lines}, nil
+}
+
+func invokeOutlinePolygon(ir *interpreter, args []value) (value, error) {
+	poly := args[0].(polygon)
+	lines := make([]value, len(poly.vertices))
+
+	for i, vertex := range poly.vertices {
+		inext := i + 1
+		if inext >= len(poly.vertices) {
+			inext = 0
+		}
+		nextVertex := poly.vertices[inext]
+		lines[i] = line{
+			point1: vertex,
+			point2: nextVertex,
+		}
+	}
+
+	return list{lines}, nil
+}
+
+func invokeOutlineCircle(ir *interpreter, args []value) (value, error) {
+	cir := args[0].(circle)
+	deg2rad := math.Pi / 180
+	var lines []value
+	var prevPt point
+
+	for i := 0; i <= 360; i++ {
+		angle := i % 360
+		pt := point{
+			X: int(float64(cir.center.X) + math.Sin(float64(angle)*deg2rad)*float64(cir.radius)),
+			Y: int(float64(cir.center.Y) + math.Cos(float64(angle)*deg2rad)*float64(cir.radius)),
+		}
+		if i > 0 && pt != prevPt {
+			l := line{
+				point1: prevPt,
+				point2: pt,
+			}
+			lines = append(lines, l)
+		}
+		prevPt = pt
+	}
+	return list{lines}, nil
 }

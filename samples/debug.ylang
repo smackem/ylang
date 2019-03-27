@@ -1,7 +1,46 @@
-
 blt(Bounds)
 
-for p in circle(300;300, 2) { @p = #ff0000 }
+cir := circle(400;200, 150)
+for l in outline_circle(cir) {
+    for p in l { @p = #ff0000 }
+}
+
+rc := rect(100, 100, 120, 60)
+for l in outline_rect(rc) {
+    for p in l { @p = #00ff00 }
+}
+
+poly := polygon(500;100, 600;120, 650;150, 550;300)
+for l in outline_polygon(poly) {
+    for p in l { @p = #0000ff }
+}
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
+
+circleA := circle(400;200, 150)
+
+for p in circleA {
+    @p = @p
+}
+
+flip()
+
+alphaKernel := kernel(7, 7, 1)
+Gauss := gauss(3)
+origSum := sum_kernel(alphaKernel)
+
+for p in circleA {
+    mask := fetch_alpha(p, alphaKernel)
+    if min_kernel(mask) != max_kernel(mask) {
+        alpha := sum_kernel(mask) / origSum
+        px := convolute(p, Gauss)
+        @p = rgba(px.r, px.g, px.b, alpha)
+    } else {
+        @p = @p
+    }
+}
 
 return nil
 
