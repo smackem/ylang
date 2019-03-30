@@ -10,6 +10,7 @@ Statement:
     | AT Atom EQ Expr
     | IfStatement
     | ForStatement
+    | WhileStatement
     | YIELD Expr
     | LOG LPAREN ArgumentList RPAREN
     | RETURN Expr
@@ -32,6 +33,9 @@ ForStatement:
 Range:
     | Expr DOTDOT Expr
     | Expr DOTDOT Expr DOTDOT Expr
+
+WhileStatement:
+    | WHILE Expr LBRACE StatementList RBRACE
 
 Expr:
     | Expr QMARK Expr COLON Expr

@@ -75,6 +75,12 @@ type forRangeStmt struct {
 	stmts []statement
 }
 
+type whileStmt struct {
+	stmtBase
+	cond  expression
+	stmts []statement
+}
+
 type yieldStmt struct {
 	stmtBase
 	result expression

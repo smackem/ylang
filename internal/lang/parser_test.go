@@ -595,6 +595,37 @@ func Test_parse_ast(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "while",
+			src:  "while true { log(1) }",
+			want: []statement{
+				whileStmt{
+					cond: boolean(true),
+					stmts: []statement{
+						logStmt{
+							args: []expression{Number(1)},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "while_2",
+			src:  "while x < y { log(100) }",
+			want: []statement{
+				whileStmt{
+					cond: ltExpr{
+						left:  identExpr("x"),
+						right: identExpr("y"),
+					},
+					stmts: []statement{
+						logStmt{
+							args: []expression{Number(100)},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

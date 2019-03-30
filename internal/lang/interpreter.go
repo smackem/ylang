@@ -279,6 +279,25 @@ func (ir *interpreter) visitStmt(stmt statement) error {
 			}
 		}
 
+	case whileStmt:
+		for {
+			condVal, err := ir.visitExpr(s.cond)
+			if err != nil {
+				return err
+			}
+			b, ok := condVal.(boolean)
+			if !ok {
+				return fmt.Errorf("type mismatch: expected while(boolean)")
+			}
+			if !b {
+				break
+			}
+			err = ir.visitStmtList(s.stmts)
+			if err != nil {
+				return err
+			}
+		}
+
 	case yieldStmt:
 		return fmt.Errorf("yield not yet implemented")
 

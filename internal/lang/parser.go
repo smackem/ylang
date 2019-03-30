@@ -93,6 +93,8 @@ func (p *parser) parseStmt() (stmt statement, err error) {
 		stmt, err = p.parseIf()
 	case ttFor:
 		stmt, err = p.parseFor()
+	case ttWhile:
+		stmt, err = p.parseWhile()
 	case ttYield:
 		stmt, err = p.parseYield()
 	case ttLog:
@@ -279,6 +281,24 @@ func (p *parser) parseFor() (statement, error) {
 		return forRangeStmt{ident: identTok.Lexeme, lower: collection, upper: upper, step: step, stmts: stmts}, nil
 	}
 	return forStmt{p.makeStmtBase(), identTok.Lexeme, collection, stmts}, nil
+}
+
+func (p *parser) parseWhile() (statement, error) {
+	cond, err := p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttLBrace); err != nil {
+		return nil, err
+	}
+	stmts, err := p.parseStmtList(ttRBrace)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.expect(ttRBrace); err != nil {
+		return nil, err
+	}
+	return whileStmt{p.makeStmtBase(), cond, stmts}, nil
 }
 
 func (p *parser) parseYield() (statement, error) {

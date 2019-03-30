@@ -60,6 +60,7 @@ const (
 	ttNil
 	ttPipe
 	ttColonColon
+	ttWhile
 	ttEOF
 )
 
@@ -112,6 +113,7 @@ var tokenTypeNames = []string{
 	"nil",
 	"|",
 	"::",
+	"while",
 	"eof",
 }
 
@@ -248,6 +250,7 @@ var keywordTokens = map[string]tokenType{
 	"fn":     ttFn,
 	"return": ttReturn,
 	"nil":    ttNil,
+	"while":  ttWhile,
 }
 
 func lookupKeyword(lexeme string) tokenType {
