@@ -175,24 +175,24 @@ func (c Color) property(ident string) (value, error) {
 		return c.B, nil
 	case "a":
 		return c.A, nil
-	case "scr":
+	case "r01":
 		return Number(c.ScR()), nil
-	case "scg":
+	case "g01":
 		return Number(c.ScG()), nil
-	case "scb":
+	case "b01":
 		return Number(c.ScB()), nil
-	case "sca":
+	case "a01":
 		return Number(c.ScA()), nil
 	case "i":
 		return c.Intensity(), nil
-	case "sci":
+	case "i01":
 		return c.ScIntensity(), nil
 	}
 	return baseProperty(c, ident)
 }
 
 func (c Color) printStr() string {
-	return fmt.Sprintf("rgba(%g,%g:%g,%g)", c.R, c.G, c.B, c.A)
+	return fmt.Sprintf("rgba(%g,%g,%g:%g)", c.R, c.G, c.B, c.A)
 }
 
 func (c Color) iterate(visit func(value) error) error {

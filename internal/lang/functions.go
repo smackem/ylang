@@ -26,6 +26,7 @@ var polygonType = reflect.TypeOf(polygon{})
 var numberSliceType = reflect.TypeOf([]Number{})
 var pointSliceType = reflect.TypeOf([]point{})
 var circleType = reflect.TypeOf(circle{})
+var hsvType = reflect.TypeOf(colorHsv{})
 
 var functions map[string]functionDecl
 
@@ -38,7 +39,7 @@ func initFunctions() {
 			body:   invokeRgb,
 			params: []reflect.Type{numberType, numberType, numberType},
 		},
-		"srgb": {
+		"rgb01": {
 			body:   invokeSrgb,
 			params: []reflect.Type{numberType, numberType, numberType},
 		},
@@ -46,7 +47,7 @@ func initFunctions() {
 			body:   invokeRgba,
 			params: []reflect.Type{numberType, numberType, numberType, numberType},
 		},
-		"srgba": {
+		"rgba01": {
 			body:   invokeSrgba,
 			params: []reflect.Type{numberType, numberType, numberType, numberType},
 		},
@@ -54,7 +55,7 @@ func initFunctions() {
 			body:   invokeGrey,
 			params: []reflect.Type{numberType},
 		},
-		"sgrey": {
+		"grey01": {
 			body:   invokeSgrey,
 			params: []reflect.Type{numberType},
 		},
@@ -277,6 +278,18 @@ func initFunctions() {
 		"outline_circle": {
 			body:   invokeOutlineCircle,
 			params: []reflect.Type{circleType},
+		},
+		"hsv": {
+			body:   invokeHsv,
+			params: []reflect.Type{numberType, numberType, numberType},
+		},
+		"rgb2hsv": {
+			body:   invokeRgb2Hsv,
+			params: []reflect.Type{colorType},
+		},
+		"hsv2rgb": {
+			body:   invokeHsv2Rgb,
+			params: []reflect.Type{hsvType},
 		},
 	}
 }
@@ -893,4 +906,96 @@ func invokeOutlineCircle(ir *interpreter, args []value) (value, error) {
 		prevPt = pt
 	}
 	return list{lines}, nil
+}
+
+func invokeRgb2Hsv(ir *interpreter, args []value) (value, error) {
+	rgb := args[0].(Color)
+	r := rgb.ScR()
+	g := rgb.ScG()
+	b := rgb.ScB()
+
+	max := Number(math.Max(float64(r), math.Max(float64(g), float64(b))))
+	min := Number(math.Min(float64(r), math.Min(float64(g), float64(b))))
+
+	var hue Number
+
+	if max == min {
+		hue = 0
+	} else if max == r && g >= b {
+		hue = 60.0*(g-b)/(max-min) + 0.0
+	} else if max == r && g < b {
+		hue = 60.0*(g-b)/(max-min) + 360.0
+	} else if max == g {
+		hue = 60.0*(b-r)/(max-min) + 120.0
+	} else if max == b {
+		hue = 60.0*(r-g)/(max-min) + 240.0
+	} else {
+		hue = 0.0
+	}
+
+	var s Number
+	if max == 0.0 {
+		s = 0.0
+	} else {
+		s = 1.0 - min/max
+	}
+
+	v := max
+
+	return colorHsv{hue, s, v}, nil
+}
+
+func invokeHsv2Rgb(ir *interpreter, args []value) (value, error) {
+	hsv := args[0].(colorHsv).clamp()
+	h := hsv.h
+	s := hsv.s
+	v := hsv.v
+
+	hi := int(h) / 60 % 6
+	f := h/60.0 - Number(hi)
+
+	r := Number(0.0)
+	g := Number(0.0)
+	b := Number(0.0)
+
+	p := v * (1.0 - s)
+	q := v * (1.0 - f*s)
+	t := v * (1.0 - (1.0-f)*s)
+
+	switch hi {
+	case 0:
+		r = v
+		g = t
+		b = p
+	case 1:
+		r = q
+		g = v
+		b = p
+	case 2:
+		r = p
+		g = v
+		b = t
+	case 3:
+		r = p
+		g = q
+		b = v
+	case 4:
+		r = t
+		g = p
+		b = v
+	case 5:
+		r = v
+		g = p
+		b = q
+	}
+
+	return NewSrgba(r, g, b, 1.0), nil
+}
+
+func invokeHsv(ir *interpreter, args []value) (value, error) {
+	return colorHsv{
+		h: args[0].(Number),
+		s: args[1].(Number),
+		v: args[2].(Number),
+	}, nil
 }
