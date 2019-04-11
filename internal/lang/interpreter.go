@@ -679,14 +679,25 @@ func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []va
 }
 
 func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, error) {
-	f, ok := functions[name]
+	fs, ok := functions[name]
 	if !ok {
 		return nil, fmt.Errorf("unkown function '%s'", name)
 	}
-	if err := validateArguments(arguments, f.params); err != nil {
-		return nil, fmt.Errorf("function '%s': %s", name, err)
+	var err error
+	for _, f := range fs {
+		if err = validateArguments(arguments, f.params); err == nil {
+			return f.body(ir, arguments)
+		}
 	}
-	return f.body(ir, arguments)
+
+	buffer := strings.Builder{}
+	for i, f := range fs {
+		if i > 0 {
+			buffer.WriteString("\n")
+		}
+		buffer.WriteString(signature(name, f))
+	}
+	return nil, fmt.Errorf("no fitting overload for function '%s': %s. possible overloads:\n%s", name, err, buffer.String())
 }
 
 func validateArguments(arguments []value, params []reflect.Type) error {

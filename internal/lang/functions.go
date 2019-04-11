@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"reflect"
 	"sort"
+	"strings"
 )
 
 type functionDecl struct {
@@ -28,270 +29,384 @@ var pointSliceType = reflect.TypeOf([]point{})
 var circleType = reflect.TypeOf(circle{})
 var hsvType = reflect.TypeOf(colorHsv{})
 
-var functions map[string]functionDecl
+var functions map[string][]functionDecl
 
 func initFunctions() {
 	if functions != nil {
 		return
 	}
-	functions = map[string]functionDecl{
+	functions = map[string][]functionDecl{
 		"rgb": {
-			body:   invokeRgb,
-			params: []reflect.Type{numberType, numberType, numberType},
+			{
+				body:   invokeRgb,
+				params: []reflect.Type{numberType, numberType, numberType},
+			},
+			{
+				body:   invokeHsv2Rgb,
+				params: []reflect.Type{hsvType},
+			},
 		},
 		"rgb01": {
-			body:   invokeSrgb,
-			params: []reflect.Type{numberType, numberType, numberType},
+			{
+				body:   invokeSrgb,
+				params: []reflect.Type{numberType, numberType, numberType},
+			},
 		},
 		"rgba": {
-			body:   invokeRgba,
-			params: []reflect.Type{numberType, numberType, numberType, numberType},
+			{
+				body:   invokeRgba,
+				params: []reflect.Type{numberType, numberType, numberType, numberType},
+			},
 		},
 		"rgba01": {
-			body:   invokeSrgba,
-			params: []reflect.Type{numberType, numberType, numberType, numberType},
+			{
+				body:   invokeSrgba,
+				params: []reflect.Type{numberType, numberType, numberType, numberType},
+			},
 		},
 		"grey": {
-			body:   invokeGrey,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeGrey,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"grey01": {
-			body:   invokeSgrey,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeSgrey,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"rect": {
-			body:   invokeRect,
-			params: []reflect.Type{numberType, numberType, numberType, numberType},
+			{
+				body:   invokeRect,
+				params: []reflect.Type{numberType, numberType, numberType, numberType},
+			},
 		},
 		"convolute": {
-			body:   invokeConvolute,
-			params: []reflect.Type{pointType, kernelType},
+			{
+				body:   invokeConvolute,
+				params: []reflect.Type{pointType, kernelType},
+			},
 		},
 		"blt": {
-			body:   invokeBlt,
-			params: []reflect.Type{rectType},
+			{
+				body:   invokeBlt,
+				params: []reflect.Type{rectType},
+			},
 		},
 		"flip": {
-			body:   invokeFlip,
-			params: []reflect.Type{},
+			{
+				body:   invokeFlip,
+				params: []reflect.Type{},
+			},
 		},
 		"recall": {
-			body:   invokeRecall,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeRecall,
+				params: []reflect.Type{numberType},
+			},
 		},
-		"sort_kernel": {
-			body:   invokeSortKernel,
-			params: []reflect.Type{kernelType},
+		"sort": {
+			{
+				body:   invokeSortKernel,
+				params: []reflect.Type{kernelType},
+			},
+			{
+				body:   invokeSortList,
+				params: []reflect.Type{listType},
+			},
 		},
-		"sort_list": {
-			body:   invokeSortList,
-			params: []reflect.Type{listType},
+		"fetchRed": {
+			{
+				body:   invokeFetchRed,
+				params: []reflect.Type{pointType, kernelType},
+			},
 		},
-		"fetch_red": {
-			body:   invokeFetchRed,
-			params: []reflect.Type{pointType, kernelType},
+		"fetchGreen": {
+			{
+				body:   invokeFetchGreen,
+				params: []reflect.Type{pointType, kernelType},
+			},
 		},
-		"fetch_green": {
-			body:   invokeFetchGreen,
-			params: []reflect.Type{pointType, kernelType},
+		"fetchBlue": {
+			{
+				body:   invokeFetchBlue,
+				params: []reflect.Type{pointType, kernelType},
+			},
 		},
-		"fetch_blue": {
-			body:   invokeFetchBlue,
-			params: []reflect.Type{pointType, kernelType},
-		},
-		"fetch_alpha": {
-			body:   invokeFetchAlpha,
-			params: []reflect.Type{pointType, kernelType},
+		"fetchAlpha": {
+			{
+				body:   invokeFetchAlpha,
+				params: []reflect.Type{pointType, kernelType},
+			},
 		},
 		"sin": {
-			body:   invokeSin,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeSin,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"cos": {
-			body:   invokeCos,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeCos,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"tan": {
-			body:   invokeTan,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeTan,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"asin": {
-			body:   invokeAsin,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeAsin,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"acos": {
-			body:   invokeAcos,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeAcos,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"atan": {
-			body:   invokeAtan,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeAtan,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"atan2": {
-			body:   invokeAtan2,
-			params: []reflect.Type{numberType, numberType},
+			{
+				body:   invokeAtan2,
+				params: []reflect.Type{numberType, numberType},
+			},
 		},
 		"sqrt": {
-			body:   invokeSqrt,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeSqrt,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"pow": {
-			body:   invokePow,
-			params: []reflect.Type{numberType, numberType},
+			{
+				body:   invokePow,
+				params: []reflect.Type{numberType, numberType},
+			},
 		},
 		"abs": {
-			body:   invokeAbs,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeAbs,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"round": {
-			body:   invokeRound,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeRound,
+				params: []reflect.Type{numberType},
+			},
+		},
+		"floor": {
+			{
+				body:   invokeFloor,
+				params: []reflect.Type{numberType},
+			},
+		},
+		"ceil": {
+			{
+				body:   invokeCeil,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"hypot": {
-			body:   invokeHypot,
-			params: []reflect.Type{numberType, numberType},
-		},
-		"hypot_rgb": {
-			body:   invokeHypotRgb,
-			params: []reflect.Type{colorType, colorType},
-		},
-		"hypot_point": {
-			body:   invokeHypotPoint,
-			params: []reflect.Type{pointType},
+			{
+				body:   invokeHypot,
+				params: []reflect.Type{numberType, numberType},
+			},
+			{
+				body:   invokeHypotRgb,
+				params: []reflect.Type{colorType, colorType},
+			},
+			{
+				body:   invokeHypotPoint,
+				params: []reflect.Type{pointType},
+			},
 		},
 		"random": {
-			body:   invokeRandom,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeRandom,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"min": {
-			body:   invokeMin,
-			params: []reflect.Type{numberSliceType},
-		},
-		"min_kernel": {
-			body:   invokeMinKernel,
-			params: []reflect.Type{kernelType},
-		},
-		"min_list": {
-			body:   invokeMinList,
-			params: []reflect.Type{listType},
+			{
+				body:   invokeMin,
+				params: []reflect.Type{numberSliceType},
+			},
+			{
+				body:   invokeMinKernel,
+				params: []reflect.Type{kernelType},
+			},
+			{
+				body:   invokeMinList,
+				params: []reflect.Type{listType},
+			},
 		},
 		"max": {
-			body:   invokeMax,
-			params: []reflect.Type{numberSliceType},
-		},
-		"max_kernel": {
-			body:   invokeMaxKernel,
-			params: []reflect.Type{kernelType},
-		},
-		"max_list": {
-			body:   invokeMaxList,
-			params: []reflect.Type{listType},
+			{
+				body:   invokeMax,
+				params: []reflect.Type{numberSliceType},
+			},
+			{
+				body:   invokeMaxKernel,
+				params: []reflect.Type{kernelType},
+			},
+			{
+				body:   invokeMaxList,
+				params: []reflect.Type{listType},
+			},
 		},
 		"list": {
-			body:   invokeList,
-			params: []reflect.Type{numberType, numberType},
-		},
-		"list_fn": {
-			body:   invokeListFn,
-			params: []reflect.Type{numberType, functionType},
+			{
+				body:   invokeList,
+				params: []reflect.Type{numberType, numberType},
+			},
+			{
+				body:   invokeListFn,
+				params: []reflect.Type{numberType, functionType},
+			},
 		},
 		"kernel": {
-			body:   invokeKernel,
-			params: []reflect.Type{numberType, numberType, numberType},
-		},
-		"kernel_fn": {
-			body:   invokeKernelFn,
-			params: []reflect.Type{numberType, numberType, functionType},
+			{
+				body:   invokeKernel,
+				params: []reflect.Type{numberType, numberType, numberType},
+			},
+			{
+				body:   invokeKernelFn,
+				params: []reflect.Type{numberType, numberType, functionType},
+			},
 		},
 		"gauss": {
-			body:   invokeGauss,
-			params: []reflect.Type{numberType},
+			{
+				body:   invokeGauss,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"resize": {
-			body:   invokeResize,
-			params: []reflect.Type{numberType, numberType},
+			{
+				body:   invokeResize,
+				params: []reflect.Type{numberType, numberType},
+			},
 		},
 		"line": {
-			body:   invokeLine,
-			params: []reflect.Type{pointType, pointType},
+			{
+				body:   invokeLine,
+				params: []reflect.Type{pointType, pointType},
+			},
 		},
 		"polygon": {
-			body:   invokePolygon,
-			params: []reflect.Type{pointSliceType},
-		},
-		"polygon_list": {
-			body:   invokePolygonList,
-			params: []reflect.Type{listType},
+			{
+				body:   invokePolygon,
+				params: []reflect.Type{pointSliceType},
+			},
+			{
+				body:   invokePolygonList,
+				params: []reflect.Type{listType},
+			},
 		},
 		"circle": {
-			body:   invokeCircle,
-			params: []reflect.Type{pointType, numberType},
+			{
+				body:   invokeCircle,
+				params: []reflect.Type{pointType, numberType},
+			},
 		},
 		"intersect": {
-			body:   invokeIntersect,
-			params: []reflect.Type{lineType, lineType},
+			{
+				body:   invokeIntersect,
+				params: []reflect.Type{lineType, lineType},
+			},
 		},
-		"translate_line": {
-			body:   invokeTranslateLine,
-			params: []reflect.Type{lineType, pointType},
-		},
-		"translate_rect": {
-			body:   invokeTranslateRect,
-			params: []reflect.Type{rectType, pointType},
-		},
-		"translate_polygon": {
-			body:   invokeTranslatePolygon,
-			params: []reflect.Type{polygonType, pointType},
-		},
-		"translate_circle": {
-			body:   invokeTranslateCircle,
-			params: []reflect.Type{circleType, pointType},
+		"translate": {
+			{
+				body:   invokeTranslateLine,
+				params: []reflect.Type{lineType, pointType},
+			},
+			{
+				body:   invokeTranslateRect,
+				params: []reflect.Type{rectType, pointType},
+			},
+			{
+				body:   invokeTranslatePolygon,
+				params: []reflect.Type{polygonType, pointType},
+			},
+			{
+				body:   invokeTranslateCircle,
+				params: []reflect.Type{circleType, pointType},
+			},
 		},
 		"clamp": {
-			body:   invokeClamp,
-			params: []reflect.Type{numberType, numberType, numberType},
-		},
-		"clamp_rgb": {
-			body:   invokeClampRgb,
-			params: []reflect.Type{colorType},
+			{
+				body:   invokeClamp,
+				params: []reflect.Type{numberType, numberType, numberType},
+			},
+			{
+				body:   invokeClampRgb,
+				params: []reflect.Type{colorType},
+			},
 		},
 		"compose": {
-			body:   invokeCompose,
-			params: []reflect.Type{colorType, colorType},
+			{
+				body:   invokeCompose,
+				params: []reflect.Type{colorType, colorType},
+			},
 		},
-		"sum_list": {
-			body:   invokeSumList,
-			params: []reflect.Type{listType},
+		"sum": {
+			{
+				body:   invokeSumList,
+				params: []reflect.Type{listType},
+			},
+			{
+				body:   invokeSumKernel,
+				params: []reflect.Type{kernelType},
+			},
 		},
-		"sum_kernel": {
-			body:   invokeSumKernel,
-			params: []reflect.Type{kernelType},
-		},
-		"outline_rect": {
-			body:   invokeOutlineRect,
-			params: []reflect.Type{rectType},
-		},
-		"outline_polygon": {
-			body:   invokeOutlinePolygon,
-			params: []reflect.Type{polygonType},
-		},
-		"outline_circle": {
-			body:   invokeOutlineCircle,
-			params: []reflect.Type{circleType},
+		"outline": {
+			{
+				body:   invokeOutlineRect,
+				params: []reflect.Type{rectType},
+			},
+			{
+				body:   invokeOutlinePolygon,
+				params: []reflect.Type{polygonType},
+			},
+			{
+				body:   invokeOutlineCircle,
+				params: []reflect.Type{circleType},
+			},
 		},
 		"hsv": {
-			body:   invokeHsv,
-			params: []reflect.Type{numberType, numberType, numberType},
-		},
-		"rgb2hsv": {
-			body:   invokeRgb2Hsv,
-			params: []reflect.Type{colorType},
-		},
-		"hsv2rgb": {
-			body:   invokeHsv2Rgb,
-			params: []reflect.Type{hsvType},
+			{
+				body:   invokeHsv,
+				params: []reflect.Type{numberType, numberType, numberType},
+			},
+			{
+				body:   invokeRgb2Hsv,
+				params: []reflect.Type{colorType},
+			},
 		},
 	}
+}
+
+func signature(name string, f functionDecl) string {
+	paramTypeNames := make([]string, len(f.params))
+	for i, param := range f.params {
+		if param.Kind() == reflect.Slice {
+			paramTypeNames[i] = param.Elem().Name() + "..."
+		} else {
+			paramTypeNames[i] = param.Name()
+		}
+	}
+	return fmt.Sprintf("fn %s(%s)", name, strings.Join(paramTypeNames, ", "))
 }
 
 func invokeRgb(ir *interpreter, args []value) (value, error) {
@@ -445,6 +560,14 @@ func invokeAbs(ir *interpreter, args []value) (value, error) {
 
 func invokeRound(ir *interpreter, args []value) (value, error) {
 	return Number(math.Round(float64(args[0].(Number)))), nil
+}
+
+func invokeFloor(ir *interpreter, args []value) (value, error) {
+	return Number(math.Floor(float64(args[0].(Number)))), nil
+}
+
+func invokeCeil(ir *interpreter, args []value) (value, error) {
+	return Number(math.Ceil(float64(args[0].(Number)))), nil
 }
 
 func invokeHypot(ir *interpreter, args []value) (value, error) {

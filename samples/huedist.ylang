@@ -1,0 +1,18 @@
+
+Distr := kernel(360, 1, 0)
+maxCount := 0
+
+for p in Bounds {
+    h := @p.hsv().hue
+    i := floor(h)
+    count := Distr[i] + 1
+    Distr[i] = count
+    maxCount = max(count, maxCount)
+}
+
+outBounds := resize(360, 100)
+for p in outBounds { @p = Black }
+for x in 0 .. outBounds.w {
+    y := Distr[x] / maxCount * outBounds.h
+    for p in line(x;outBounds.h - y, x;outBounds.h) { @p = hsv2rgb(hsv(x, 1, 1)) }
+}

@@ -1,7 +1,37 @@
 
-log(rgb2hsv(#ff0000), rgb2hsv(#00ff00), rgb2hsv(#0000ff))
-log(rgb2hsv(#800000), rgb2hsv(#008000), rgb2hsv(#000080))
-log(rgb2hsv(#807070), rgb2hsv(#708070), rgb2hsv(#707080))
+blt(Bounds)
+
+cir := circle(400;200, 150)
+for l in outline(cir) {
+    for p in l { @p = #ff0000 }
+}
+
+rc := rect(100, 100, 120, 60)
+for l in outline(rc) {
+    for p in l { @p = #00ff00 }
+}
+
+poly := polygon(500;100, 600;120, 650;150, 550;300)
+for l in outline(poly) {
+    for p in l { @p = #0000ff }
+}
+
+l := [1,2,3]
+log(l, " ", sum(l))
+log([], " ", sum([]))
+
+k := |1 2 3 4|
+log(k, " ", sum(k))
+
+log(hsv(rgb(255, 255, 0)))
+log(sort([44, 2, 23, 94, 5943]))
+hypot(1)
+min("asd")
+log(max("asd"))
+list()
+kernel(12)
+translate(1)
+polygon("abc")
 
 return nil
 
@@ -20,27 +50,6 @@ return nil
 
 ///////////////////////////////////////////////////////////////////////////////
 
-blt(Bounds)
-
-cir := circle(400;200, 150)
-for l in outline_circle(cir) {
-    for p in l { @p = #ff0000 }
-}
-
-rc := rect(100, 100, 120, 60)
-for l in outline_rect(rc) {
-    for p in l { @p = #00ff00 }
-}
-
-poly := polygon(500;100, 600;120, 650;150, 550;300)
-for l in outline_polygon(poly) {
-    for p in l { @p = #0000ff }
-}
-
-return nil
-
-///////////////////////////////////////////////////////////////////////////////
-
 circleA := circle(400;200, 150)
 
 for p in circleA {
@@ -51,12 +60,12 @@ flip()
 
 alphaKernel := kernel(7, 7, 1)
 Gauss := gauss(3)
-origSum := sum_kernel(alphaKernel)
+origSum := sum(alphaKernel)
 
 for p in circleA {
-    mask := fetch_alpha(p, alphaKernel)
-    if min_kernel(mask) != max_kernel(mask) {
-        alpha := sum_kernel(mask) / origSum
+    mask := fetchAlpha(p, alphaKernel)
+    if min(mask) != max(mask) {
+        alpha := sum(mask) / origSum
         px := convolute(p, Gauss)
         @p = rgba(px.r, px.g, px.b, alpha)
     } else {
@@ -69,11 +78,11 @@ return nil
 ///////////////////////////////////////////////////////////////////////////////
 
 l := [1,2,3]
-log(l, " ", sum_list(l))
-log([], " ", sum_list([]))
+log(l, " ", sum(l))
+log([], " ", sum([]))
 
 k := |1 2 3 4|
-log(k, " ", sum_kernel(k))
+log(k, " ", sum(k))
 
 return nil
 
@@ -167,8 +176,8 @@ log("k: ", k)
 maxWeight := 0
 for p in Bounds {
     if @p.r > 0 {
-        neighbours := fetch_red(p, k)
-        maximum := max_kernel(neighbours)
+        neighbours := fetchRed(p, k)
+        maximum := max(neighbours)
         @p = @p.r == maximum ? grey(@p.r) : Black
         if @p.r == maximum {
             log("neighbours: ", neighbours)
