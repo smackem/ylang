@@ -9,27 +9,13 @@ import (
 
 type point image.Point
 
-func (p point) equals(other value) (value, error) {
+func (p point) compare(other value) (value, error) {
 	if r, ok := other.(point); ok {
-		return boolean(p == r), nil
+		if p == r {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (p point) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: point > %s not supported", reflect.TypeOf(other))
-}
-
-func (p point) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: point >= %s not supported", reflect.TypeOf(other))
-}
-
-func (p point) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: point < %s not supported", reflect.TypeOf(other))
-}
-
-func (p point) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: point <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (p point) add(other value) (value, error) {

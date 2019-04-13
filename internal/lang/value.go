@@ -6,11 +6,7 @@ import (
 )
 
 type value interface {
-	equals(other value) (value, error)
-	greaterThan(other value) (value, error)
-	greaterThanOrEqual(other value) (value, error)
-	lessThan(other value) (value, error)
-	lessThanOrEqual(other value) (value, error)
+	compare(other value) (value, error)
 	add(other value) (value, error)
 	sub(other value) (value, error)
 	mul(other value) (value, error)
@@ -108,10 +104,11 @@ type valueSlice []value
 
 func (s valueSlice) Len() int { return len(s) }
 func (s valueSlice) Less(i int, j int) bool {
-	result, err := s[i].lessThan(s[j])
-	if err != nil {
+	cmp, _ := s[i].compare(s[j])
+	if cmp == nil {
 		return false
 	}
-	return bool(result.(boolean))
+	n, ok := cmp.(Number)
+	return ok && n < 0
 }
 func (s valueSlice) Swap(i int, j int) { s[i], s[j] = s[j], s[i] }

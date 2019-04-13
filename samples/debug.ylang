@@ -1,3 +1,23 @@
+ls := [
+    {
+        name: "x",
+        age: 20,
+    },
+    {
+        name: "k",
+        age: 30,
+    },
+    {
+        name: "a",
+        age: 100,
+    },
+]
+log(sort(ls, fn(a, b) -> compare(a.name, b.name)))
+log(sort(ls, fn(a, b) -> compare(a.age, b.age)))
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
 
 blt(Bounds)
 

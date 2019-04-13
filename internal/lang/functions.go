@@ -28,6 +28,7 @@ var numberSliceType = reflect.TypeOf([]Number{})
 var pointSliceType = reflect.TypeOf([]point{})
 var circleType = reflect.TypeOf(circle{})
 var hsvType = reflect.TypeOf(colorHsv{})
+var valueType = reflect.TypeOf((*value)(nil)).Elem()
 
 var functions map[string][]functionDecl
 
@@ -114,6 +115,10 @@ func initFunctions() {
 			{
 				body:   invokeSortList,
 				params: []reflect.Type{listType},
+			},
+			{
+				body:   invokeSortListFn,
+				params: []reflect.Type{listType, functionType},
 			},
 		},
 		"fetchRed": {
@@ -394,6 +399,12 @@ func initFunctions() {
 				params: []reflect.Type{colorType},
 			},
 		},
+		"compare": {
+			{
+				body:   invokeCompare,
+				params: []reflect.Type{valueType, valueType},
+			},
+		},
 	}
 }
 
@@ -483,6 +494,27 @@ func invokeSortList(ir *interpreter, args []value) (value, error) {
 	result := listVal
 	result.elements = append([]value(nil), result.elements...) // clone elements
 	sort.Sort(valueSlice(result.elements))
+	return result, nil
+}
+
+func invokeSortListFn(ir *interpreter, args []value) (value, error) {
+	listVal := args[0].(list)
+	fn := args[1].(function)
+
+	fnArgs := make([]value, 2)
+	result := listVal
+	result.elements = append([]value(nil), result.elements...) // clone elements
+
+	sort.Slice(result.elements, func(i, j int) bool {
+		fnArgs[0] = result.elements[i]
+		fnArgs[1] = result.elements[j]
+		retVal, err := ir.invokeFunctionExpr("<sort_fn>", fn, fnArgs)
+		if err != nil {
+			return false
+		}
+		retNum, ok := retVal.(Number)
+		return ok && retNum < 0
+	})
 	return result, nil
 }
 
@@ -625,11 +657,11 @@ func invokeMaxList(it *interpreter, args []value) (value, error) {
 	}
 	var max value = MinNumber
 	for _, v := range listVal.elements {
-		isGt, err := v.greaterThan(max)
+		cmp, err := v.compare(max)
 		if err != nil {
 			return nil, err
 		}
-		if isGt.(boolean) {
+		if n, ok := cmp.(Number); ok && n > 0 {
 			max = v
 		}
 	}
@@ -668,11 +700,11 @@ func invokeMinList(it *interpreter, args []value) (value, error) {
 	}
 	var min value = MaxNumber
 	for _, v := range listVal.elements {
-		isLess, err := v.lessThan(min)
+		cmp, err := v.compare(min)
 		if err != nil {
 			return nil, err
 		}
-		if isLess.(boolean) {
+		if n, ok := cmp.(Number); ok && n < 0 {
 			min = v
 		}
 	}
@@ -696,7 +728,7 @@ func invokeListFn(it *interpreter, args []value) (value, error) {
 	fnArgs := make([]value, 1)
 	for i := range values {
 		fnArgs[0] = Number(i)
-		retVal, err := it.invokeFunctionExpr("<anon_fn>", fn, fnArgs)
+		retVal, err := it.invokeFunctionExpr("<list_fn>", fn, fnArgs)
 		if err != nil {
 			return nil, err
 		}
@@ -730,7 +762,7 @@ func invokeKernelFn(ir *interpreter, args []value) (value, error) {
 		for x := 0; x < width; x++ {
 			fnArgs[0] = Number(x)
 			fnArgs[1] = Number(y)
-			retVal, err := ir.invokeFunctionExpr("<anon_fn>", fn, fnArgs)
+			retVal, err := ir.invokeFunctionExpr("<kernel_fn>", fn, fnArgs)
 			if err != nil {
 				return nil, err
 			}
@@ -1121,4 +1153,8 @@ func invokeHsv(ir *interpreter, args []value) (value, error) {
 		s: args[1].(Number),
 		v: args[2].(Number),
 	}, nil
+}
+
+func invokeCompare(ir *interpreter, args []value) (value, error) {
+	return args[0].compare(args[1])
 }

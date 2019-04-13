@@ -7,27 +7,19 @@ import (
 
 type boolean bool
 
-func (b boolean) equals(other value) (value, error) {
+func (b boolean) compare(other value) (value, error) {
 	if r, ok := other.(boolean); ok {
-		return boolean(b == r), nil
+		if b && !r {
+			return Number(1), nil
+		}
+		if b == r {
+			return Number(0), nil
+		}
+		if !b && r {
+			return Number(-1), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (b boolean) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: bool > %s not supported", reflect.TypeOf(other))
-}
-
-func (b boolean) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: bool >= %s not supported", reflect.TypeOf(other))
-}
-
-func (b boolean) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: bool < %s not supported", reflect.TypeOf(other))
-}
-
-func (b boolean) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: bool <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (b boolean) add(other value) (value, error) {

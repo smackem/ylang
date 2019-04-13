@@ -19,24 +19,8 @@ func (h hashMap) sortedKeys() []value {
 
 // implement value
 
-func (h hashMap) equals(other value) (value, error) {
+func (h hashMap) compare(other value) (value, error) {
 	return falseVal, nil
-}
-
-func (h hashMap) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap > %s not supported", reflect.TypeOf(other))
-}
-
-func (h hashMap) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap >= %s not supported", reflect.TypeOf(other))
-}
-
-func (h hashMap) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap < %s not supported", reflect.TypeOf(other))
-}
-
-func (h hashMap) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap <= %s not supported", reflect.TypeOf(other))
 }
 
 func (h hashMap) add(other value) (value, error) {

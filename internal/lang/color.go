@@ -76,27 +76,13 @@ func (c Color) ScA() Number {
 
 // Implement value
 
-func (c Color) equals(other value) (value, error) {
+func (c Color) compare(other value) (value, error) {
 	if r, ok := other.(Color); ok {
-		return boolean(c == r), nil
+		if c == r {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (c Color) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: color > %s not supported", reflect.TypeOf(other))
-}
-
-func (c Color) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: color >= %s not supported", reflect.TypeOf(other))
-}
-
-func (c Color) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: color <= %s not supported", reflect.TypeOf(other))
-}
-
-func (c Color) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: color <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (c Color) add(other value) (value, error) {

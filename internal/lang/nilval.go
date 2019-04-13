@@ -7,9 +7,11 @@ import (
 
 type nilval struct{}
 
-func (n nilval) equals(other value) (value, error) {
-	_, ok := other.(nilval)
-	return boolean(ok), nil
+func (n nilval) compare(other value) (value, error) {
+	if _, ok := other.(nilval); ok {
+		return Number(0), nil
+	}
+	return nil, nil
 }
 
 func (n nilval) greaterThan(other value) (value, error) {

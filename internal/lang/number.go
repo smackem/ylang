@@ -15,39 +15,11 @@ const (
 	MaxNumber Number = Number(math.MaxInt64)
 )
 
-func (n Number) equals(other value) (value, error) {
+func (n Number) compare(other value) (value, error) {
 	if r, ok := other.(Number); ok {
-		return boolean(n == r), nil
+		return n - r, nil
 	}
-	return falseVal, nil
-}
-
-func (n Number) greaterThan(other value) (value, error) {
-	if r, ok := other.(Number); ok {
-		return boolean(n > r), nil
-	}
-	return nil, fmt.Errorf("type mismatch: expected number > number, found number > %s", reflect.TypeOf(other))
-}
-
-func (n Number) greaterThanOrEqual(other value) (value, error) {
-	if r, ok := other.(Number); ok {
-		return boolean(n >= r), nil
-	}
-	return nil, fmt.Errorf("type mismatch: expected number >= number, found number >= %s", reflect.TypeOf(other))
-}
-
-func (n Number) lessThan(other value) (value, error) {
-	if r, ok := other.(Number); ok {
-		return boolean(n < r), nil
-	}
-	return nil, fmt.Errorf("type mismatch: expected number < number, found number < %s", reflect.TypeOf(other))
-}
-
-func (n Number) lessThanOrEqual(other value) (value, error) {
-	if r, ok := other.(Number); ok {
-		return boolean(n <= r), nil
-	}
-	return nil, fmt.Errorf("type mismatch: expected number <= number, found number <= %s", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (n Number) add(other value) (value, error) {
@@ -93,7 +65,7 @@ func (n Number) div(other value) (value, error) {
 	case point:
 		return point{int(n/Number(r.X) + 0.5), int(n/Number(r.Y) + 0.5)}, nil
 	case Color:
-		return NewSrgba(n/r.ScR(), n/r.ScG(), n/r.ScB(), r.ScA()), nil
+		return NewRgba(n/r.R, n/r.G, n/r.B, r.A), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number / number, found number / %s", reflect.TypeOf(other))
 }

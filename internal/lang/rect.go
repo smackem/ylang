@@ -8,27 +8,13 @@ import (
 
 type rect image.Rectangle
 
-func (rc rect) equals(other value) (value, error) {
+func (rc rect) compare(other value) (value, error) {
 	if r, ok := other.(rect); ok {
-		return boolean(rc == r), nil
+		if rc == r {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (rc rect) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: rect > %s not supported", reflect.TypeOf(other))
-}
-
-func (rc rect) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: rect >= %s not supported", reflect.TypeOf(other))
-}
-
-func (rc rect) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: rect < %s not supported", reflect.TypeOf(other))
-}
-
-func (rc rect) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: rect <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (rc rect) add(other value) (value, error) {

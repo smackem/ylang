@@ -11,27 +11,13 @@ type kernel struct {
 	values []Number
 }
 
-func (k kernel) equals(other value) (value, error) {
+func (k kernel) compare(other value) (value, error) {
 	if r, ok := other.(kernel); ok {
-		return boolean(reflect.DeepEqual(k, r)), nil
+		if reflect.DeepEqual(k, r) {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (k kernel) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: kernel > %s not supported", reflect.TypeOf(other))
-}
-
-func (k kernel) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: kernel >= %s not supported", reflect.TypeOf(other))
-}
-
-func (k kernel) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: kernel < %s not supported", reflect.TypeOf(other))
-}
-
-func (k kernel) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: kernel <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (k kernel) add(other value) (value, error) {

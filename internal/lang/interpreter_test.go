@@ -73,12 +73,12 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "scolors",
-			src: `c1 := srgb(1,2,3)
-				  c2 := srgba(1,2,3,4)
-				  scr := c1.scr
-				  scg := c1.scg
-				  scb := c1.scb
-				  sca := c1.sca`,
+			src: `c1 := rgb01(1,2,3)
+				  c2 := rgba01(1,2,3,4)
+				  scr := c1.r01
+				  scg := c1.g01
+				  scb := c1.b01
+				  sca := c1.a01`,
 			want: scope{
 				"c1":  NewSrgba(1, 2, 3, 1),
 				"c2":  NewSrgba(1, 2, 3, 4),
@@ -150,7 +150,7 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "sort_kernel",
-			src:  "k := sort_kernel(|4 1 3 2|)",
+			src:  "k := sort(|4 1 3 2|)",
 			want: scope{
 				"k": kernel{
 					width:  2,
@@ -161,8 +161,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "min_max",
-			src: `min := min_kernel(|4 1 3 2|)
-			      max := max_kernel(|4 1 3 2|)`,
+			src: `min := min(|4 1 3 2|)
+			      max := max(|4 1 3 2|)`,
 			want: scope{
 				"min": Number(1),
 				"max": Number(4),
@@ -451,6 +451,38 @@ func Test_interpret(t *testing.T) {
 				"y": Number(1),
 			},
 		},
+		{
+			name: "compare_func",
+			src: `a := compare(10, 10)
+				  b := compare(10, 11)`,
+			want: scope{
+				"a": Number(0),
+				"b": Number(-1),
+			},
+		},
+		{
+			name: "sort_list_fn",
+			src: `ls1 := [150;10, 12;102, 200;23, 1;404]
+				  ls2 := sort(ls1, fn(a, b) -> compare(a.x, b.x))`,
+			want: scope{
+				"ls1": list{
+					elements: []value{
+						point{150, 10},
+						point{12, 102},
+						point{200, 23},
+						point{1, 404},
+					},
+				},
+				"ls2": list{
+					elements: []value{
+						point{1, 404},
+						point{12, 102},
+						point{150, 10},
+						point{200, 23},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -496,6 +528,14 @@ func Test_validateArguments(t *testing.T) {
 			args: args{
 				arguments: []value{Number(1), Number(2)},
 				params:    []reflect.Type{numberType, numberType},
+			},
+			wantErr: false,
+		},
+		{
+			name: "two_numbers_any_ok",
+			args: args{
+				arguments: []value{Number(1), Number(2)},
+				params:    []reflect.Type{numberType, valueType},
 			},
 			wantErr: false,
 		},
@@ -592,6 +632,58 @@ func Test_validateArguments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := validateArguments(tt.args.arguments, tt.args.params); (err != nil) != tt.wantErr {
 				t.Errorf("validateArguments() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_hasMatchingType(t *testing.T) {
+	type args struct {
+		v   value
+		typ reflect.Type
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "number_any",
+			args: args{
+				v:   Number(1),
+				typ: valueType,
+			},
+			want: true,
+		},
+		{
+			name: "point_any",
+			args: args{
+				v:   point{},
+				typ: valueType,
+			},
+			want: true,
+		},
+		{
+			name: "number_number",
+			args: args{
+				v:   Number(1),
+				typ: numberType,
+			},
+			want: true,
+		},
+		{
+			name: "number_point",
+			args: args{
+				v:   Number(1),
+				typ: pointType,
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := hasMatchingType(tt.args.v, tt.args.typ); got != tt.want {
+				t.Errorf("hasMatchingType() = %v, want %v", got, tt.want)
 			}
 		})
 	}

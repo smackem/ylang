@@ -38,27 +38,13 @@ func (hsv colorHsv) clamp() colorHsv {
 	return colorHsv{h, s, v}
 }
 
-func (hsv colorHsv) equals(other value) (value, error) {
+func (hsv colorHsv) compare(other value) (value, error) {
 	if r, ok := other.(colorHsv); ok {
-		return boolean(hsv == r), nil
+		if hsv == r {
+			return Number(0), nil
+		}
 	}
 	return falseVal, nil
-}
-
-func (hsv colorHsv) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hsv > %s not supported", reflect.TypeOf(other))
-}
-
-func (hsv colorHsv) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hsv >= %s not supported", reflect.TypeOf(other))
-}
-
-func (hsv colorHsv) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hsv < %s not supported", reflect.TypeOf(other))
-}
-
-func (hsv colorHsv) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: hsv <= %s not supported", reflect.TypeOf(other))
 }
 
 func (hsv colorHsv) add(other value) (value, error) {

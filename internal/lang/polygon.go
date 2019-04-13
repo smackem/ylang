@@ -13,35 +13,19 @@ type polygon struct {
 	vertices []point
 }
 
-func (p polygon) equals(other value) (value, error) {
+func (p polygon) compare(other value) (value, error) {
 	if r, ok := other.(polygon); ok {
 		if len(r.vertices) != len(p.vertices) {
-			return falseVal, nil
+			return Number(1), nil
 		}
 		for i, v := range p.vertices {
 			if v != r.vertices[i] {
-				return falseVal, nil
+				return Number(1), nil
 			}
 		}
-		return boolean(true), nil
+		return Number(0), nil
 	}
-	return falseVal, nil
-}
-
-func (p polygon) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon > %s not supported", reflect.TypeOf(other))
-}
-
-func (p polygon) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon >= %s not supported", reflect.TypeOf(other))
-}
-
-func (p polygon) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon < %s not supported", reflect.TypeOf(other))
-}
-
-func (p polygon) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (p polygon) add(other value) (value, error) {

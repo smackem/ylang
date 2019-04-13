@@ -11,27 +11,13 @@ type line struct {
 	point2 point
 }
 
-func (l line) equals(other value) (value, error) {
+func (l line) compare(other value) (value, error) {
 	if r, ok := other.(line); ok {
-		return boolean(l == r), nil
+		if l == r {
+			return Number(0), nil
+		}
 	}
 	return falseVal, nil
-}
-
-func (l line) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: line > %s not supported", reflect.TypeOf(other))
-}
-
-func (l line) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: line >= %s not supported", reflect.TypeOf(other))
-}
-
-func (l line) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: line < %s not supported", reflect.TypeOf(other))
-}
-
-func (l line) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: line <= %s not supported", reflect.TypeOf(other))
 }
 
 func (l line) add(other value) (value, error) {

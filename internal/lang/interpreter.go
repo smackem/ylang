@@ -417,36 +417,62 @@ func (ir *interpreter) visitExprInner(expr expression) (value, error) {
 
 	case eqExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			return left.equals(right)
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return falseVal, nil
+			}
+			n, ok := cmp.(Number)
+			return boolean(ok && n == 0), nil
 		})
 
 	case neqExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			result, err := left.equals(right)
-			if err != nil {
-				return nil, err
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return boolean(true), nil
 			}
-			return result.not()
+			n, ok := cmp.(Number)
+			return boolean(!ok || n != 0), nil
 		})
 
 	case gtExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			return left.greaterThan(right)
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return falseVal, nil
+			}
+			n, ok := cmp.(Number)
+			return boolean(ok && n > 0), nil
 		})
 
 	case geExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			return left.greaterThanOrEqual(right)
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return falseVal, nil
+			}
+			n, ok := cmp.(Number)
+			return boolean(ok && n >= 0), nil
 		})
 
 	case ltExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			return left.lessThan(right)
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return falseVal, nil
+			}
+			n, ok := cmp.(Number)
+			return boolean(ok && n < 0), nil
 		})
 
 	case leExpr:
 		return ir.visitBinaryExpr(e.left, e.right, func(left value, right value) (value, error) {
-			return left.lessThanOrEqual(right)
+			cmp, _ := left.compare(right)
+			if cmp == nil {
+				return falseVal, nil
+			}
+			n, ok := cmp.(Number)
+			return boolean(ok && n <= 0), nil
 		})
 
 	case concatExpr:
@@ -714,7 +740,7 @@ func validateArguments(arguments []value, params []reflect.Type) error {
 			return fmt.Errorf("wrong number of arguments: expected %d, got %d", paramsCount, argsCount)
 		}
 		for i := paramsCount - 1; i < argsCount; i++ {
-			if reflect.TypeOf(arguments[i]) != lastParam.Elem() {
+			if !hasMatchingType(arguments[i], lastParam.Elem()) {
 				return fmt.Errorf("argument type mismatch at argument %d: expected %s, got %s", i, lastParam.Elem().Name(), reflect.TypeOf(arguments[i]).Name())
 			}
 		}
@@ -722,12 +748,11 @@ func validateArguments(arguments []value, params []reflect.Type) error {
 	}
 
 	for i := 0; i < discreteArgsCount; i++ {
-		argType := reflect.TypeOf(arguments[i])
-		if argType == params[i] {
+		if hasMatchingType(arguments[i], params[i]) {
 			// direct match
 			continue
 		}
-		if i == discreteArgsCount-1 && params[i].Kind() == reflect.Slice && argType == params[i].Elem() {
+		if i == discreteArgsCount-1 && params[i].Kind() == reflect.Slice && hasMatchingType(arguments[i], params[i].Elem()) {
 			// trailing slice with one arg
 			continue
 		}
@@ -735,4 +760,8 @@ func validateArguments(arguments []value, params []reflect.Type) error {
 	}
 
 	return nil
+}
+
+func hasMatchingType(v value, typ reflect.Type) bool {
+	return typ == valueType || reflect.TypeOf(v) == typ
 }

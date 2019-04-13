@@ -11,27 +11,13 @@ type circle struct {
 	radius Number
 }
 
-func (c circle) equals(other value) (value, error) {
+func (c circle) compare(other value) (value, error) {
 	if r, ok := other.(circle); ok {
-		return boolean(c == r), nil
+		if c == r {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (c circle) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: circle > %s not supported", reflect.TypeOf(other))
-}
-
-func (c circle) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: circle >= %s not supported", reflect.TypeOf(other))
-}
-
-func (c circle) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: circle < %s not supported", reflect.TypeOf(other))
-}
-
-func (c circle) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: circle <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (c circle) add(other value) (value, error) {

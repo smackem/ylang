@@ -12,24 +12,8 @@ type function struct {
 	closure        []scope
 }
 
-func (f function) equals(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: function == %s not supported", reflect.TypeOf(other))
-}
-
-func (f function) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: function > %s not supported", reflect.TypeOf(other))
-}
-
-func (f function) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: function >= %s not supported", reflect.TypeOf(other))
-}
-
-func (f function) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: function < %s not supported", reflect.TypeOf(other))
-}
-
-func (f function) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: function <= %s not supported", reflect.TypeOf(other))
+func (f function) compare(other value) (value, error) {
+	return nil, nil
 }
 
 func (f function) add(other value) (value, error) {

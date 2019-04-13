@@ -9,27 +9,13 @@ type list struct {
 	elements []value
 }
 
-func (l list) equals(other value) (value, error) {
+func (l list) compare(other value) (value, error) {
 	if r, ok := other.(list); ok {
-		return boolean(reflect.DeepEqual(l, r)), nil
+		if reflect.DeepEqual(l, r) {
+			return Number(0), nil
+		}
 	}
-	return falseVal, nil
-}
-
-func (l list) greaterThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: list > %s not supported", reflect.TypeOf(other))
-}
-
-func (l list) greaterThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: list >= %s not supported", reflect.TypeOf(other))
-}
-
-func (l list) lessThan(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: list < %s not supported", reflect.TypeOf(other))
-}
-
-func (l list) lessThanOrEqual(other value) (value, error) {
-	return nil, fmt.Errorf("type mismatch: list <= %s not supported", reflect.TypeOf(other))
+	return nil, nil
 }
 
 func (l list) add(other value) (value, error) {
