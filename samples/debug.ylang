@@ -1,3 +1,34 @@
+blt(Bounds)
+
+cir := circle(400;200, 150)
+for l in outline(cir) {
+    plot(l, #ff0000)
+}
+
+rc := rect(100, 100, 120, 60)
+for l in outline(rc) {
+    plot(l, #00ff00)
+}
+
+poly := polygon(500;100, 600;120, 650;150, 550;300)
+for l in outline(poly) {
+    plot(l, #0000ff)
+}
+
+l := [1,2,3]
+log(l, " ", sum(l))
+log([], " ", sum([]))
+
+k := |1 2 3 4|
+log(k, " ", sum(k))
+
+log(hsv(rgb(255, 255, 0)))
+log(sort([44, 2, 23, 94, 5943]))
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
+
 ls := [
     {
         name: "x",
@@ -14,44 +45,6 @@ ls := [
 ]
 log(sort(ls, fn(a, b) -> compare(a.name, b.name)))
 log(sort(ls, fn(a, b) -> compare(a.age, b.age)))
-
-return nil
-
-///////////////////////////////////////////////////////////////////////////////
-
-blt(Bounds)
-
-cir := circle(400;200, 150)
-for l in outline(cir) {
-    for p in l { @p = #ff0000 }
-}
-
-rc := rect(100, 100, 120, 60)
-for l in outline(rc) {
-    for p in l { @p = #00ff00 }
-}
-
-poly := polygon(500;100, 600;120, 650;150, 550;300)
-for l in outline(poly) {
-    for p in l { @p = #0000ff }
-}
-
-l := [1,2,3]
-log(l, " ", sum(l))
-log([], " ", sum([]))
-
-k := |1 2 3 4|
-log(k, " ", sum(k))
-
-log(hsv(rgb(255, 255, 0)))
-log(sort([44, 2, 23, 94, 5943]))
-hypot(1)
-min("asd")
-log(max("asd"))
-list()
-kernel(12)
-translate(1)
-polygon("abc")
 
 return nil
 
@@ -247,5 +240,5 @@ for l in lines {
         lineToDraw = line(x1;0, x2;Bounds.h)
     }
     log(lineToDraw)
-    for p in lineToDraw { @p = color }
+    plot(lineToDraw, color)
 }

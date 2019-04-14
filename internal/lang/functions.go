@@ -405,6 +405,12 @@ func initFunctions() {
 				params: []reflect.Type{valueType, valueType},
 			},
 		},
+		"plot": {
+			{
+				body:   invokePlot,
+				params: []reflect.Type{valueType, colorType},
+			},
+		},
 	}
 }
 
@@ -1157,4 +1163,20 @@ func invokeHsv(ir *interpreter, args []value) (value, error) {
 
 func invokeCompare(ir *interpreter, args []value) (value, error) {
 	return args[0].compare(args[1])
+}
+
+func invokePlot(ir *interpreter, args []value) (value, error) {
+	iterable := args[0]
+	color := args[1].(Color)
+
+	iterable.iterate(func(v value) error {
+		pt, ok := v.(point)
+		if !ok {
+			return fmt.Errorf("type mismatch: expected point, but found %s", reflect.TypeOf(v))
+		}
+		ir.bitmap.SetPixel(pt.X, pt.Y, color)
+		return nil
+	})
+
+	return nil, nil
 }
