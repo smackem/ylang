@@ -1,3 +1,21 @@
+
+blt(Bounds)
+
+for i in 0 .. 500 {
+    radius := random(10, 40)
+    x := random(radius, Bounds.w - radius)
+    y := random(radius, Bounds.h - radius)
+    hue := random(0, 360)
+    color := rgba(hsv(hue, 1, 1), 64)
+    for p in circle(x;y, radius) {
+        @p = compose(@p, color)
+    }
+}
+
+return nil
+
+///////////////////////////////////////////////////////////////////////////////
+
 blt(Bounds)
 
 cir := circle(400;200, 150)

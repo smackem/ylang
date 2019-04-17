@@ -17,26 +17,20 @@ Gauss := |0 1 0
           0 1 0|
 BlurLine := fn(line) {
     for dy in -3 .. 4 {
-        for p in translateLine(line, 0;dy) {
+        for p in translate(line, 0;dy) {
             @p = convolute(p, Gauss)
         }
-    }
-}
-
-DrawLine := fn(line, color) {
-    for p in line {
-        @p = color
     }
 }
 
 prevPt := nil
 for pt in poly.vertices {
     if prevPt != nil {
-        DrawLine(line(prevPt, pt), #ffffff)
+        plot(line(prevPt, pt), #ffffff)
     }
     prevPt = pt
 }
-DrawLine(line(prevPt, poly.vertices[0]), #ffffff)
+plot(line(prevPt, poly.vertices[0]), #ffffff)
 commit(polyBounds)
 
 prevPt = nil

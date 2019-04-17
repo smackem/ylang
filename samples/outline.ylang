@@ -12,7 +12,7 @@ MakeGauss := fn(radius) {
 
 Gauss := MakeGauss(10)
 
-Poly := translate_polygon(
+Poly := translate(
     polygon(100;100, 300;110, 200;400),
     150;0)
 
@@ -22,7 +22,7 @@ Outline := fn(thickness, func) {
         dx := abs(sin(angle))
         dy := abs(cos(angle))
         for delta in 0 .. thickness {
-            for p in translate_line(l, dx*delta - thickness/2; dy*delta - thickness/2) {
+            for p in translate(l, dx*delta - thickness/2; dy*delta - thickness/2) {
                 @p = func(p)
             }
         }
@@ -44,7 +44,7 @@ roberts1 := | 1  0
 roberts2 := | 0  1
              -1  0|
 for p in Poly {
-    mag := hypot_rgb(convolute(p, roberts1), convolute(p, roberts2))
+    mag := hypot(convolute(p, roberts1), convolute(p, roberts2))
     @p = rgb(mag.r, mag.g, mag.b)
 }
 flip()

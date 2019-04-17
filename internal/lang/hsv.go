@@ -12,6 +12,40 @@ type colorHsv struct {
 	v Number
 }
 
+func hsvFromRgb(rgb Color) colorHsv {
+	r := rgb.ScR()
+	g := rgb.ScG()
+	b := rgb.ScB()
+
+	max := Number(math.Max(float64(r), math.Max(float64(g), float64(b))))
+	min := Number(math.Min(float64(r), math.Min(float64(g), float64(b))))
+
+	var hue Number
+
+	if max == min {
+		hue = 0
+	} else if max == r && g >= b {
+		hue = 60.0*(g-b)/(max-min) + 0.0
+	} else if max == r && g < b {
+		hue = 60.0*(g-b)/(max-min) + 360.0
+	} else if max == g {
+		hue = 60.0*(b-r)/(max-min) + 120.0
+	} else if max == b {
+		hue = 60.0*(r-g)/(max-min) + 240.0
+	} else {
+		hue = 0.0
+	}
+
+	var s Number
+	if max == 0.0 {
+		s = 0.0
+	} else {
+		s = 1.0 - min/max
+	}
+
+	return colorHsv{hue, s, max}
+}
+
 func (hsv colorHsv) clamp() colorHsv {
 	h := hsv.h
 	s := hsv.s
@@ -36,6 +70,53 @@ func (hsv colorHsv) clamp() colorHsv {
 	}
 
 	return colorHsv{h, s, v}
+}
+
+func (hsv colorHsv) rgb() Color {
+	hsv = hsv.clamp()
+	h := hsv.h
+	s := hsv.s
+	v := hsv.v
+
+	hi := int(h) / 60 % 6
+	f := h/60.0 - Number(hi)
+
+	r := Number(0.0)
+	g := Number(0.0)
+	b := Number(0.0)
+
+	p := v * (1.0 - s)
+	q := v * (1.0 - f*s)
+	t := v * (1.0 - (1.0-f)*s)
+
+	switch hi {
+	case 0:
+		r = v
+		g = t
+		b = p
+	case 1:
+		r = q
+		g = v
+		b = p
+	case 2:
+		r = p
+		g = v
+		b = t
+	case 3:
+		r = p
+		g = q
+		b = v
+	case 4:
+		r = t
+		g = p
+		b = v
+	case 5:
+		r = v
+		g = p
+		b = q
+	}
+
+	return NewSrgba(r, g, b, 1.0)
 }
 
 func (hsv colorHsv) compare(other value) (value, error) {

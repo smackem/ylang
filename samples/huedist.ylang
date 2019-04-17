@@ -3,7 +3,7 @@ Distr := kernel(360, 1, 0)
 maxCount := 0
 
 for p in Bounds {
-    h := @p.hsv().hue
+    h := hsv(@p).hue
     i := floor(h)
     count := Distr[i] + 1
     Distr[i] = count
@@ -11,8 +11,10 @@ for p in Bounds {
 }
 
 outBounds := resize(360, 100)
-for p in outBounds { @p = Black }
+plot(outBounds, Black)
 for x in 0 .. outBounds.w {
     y := Distr[x] / maxCount * outBounds.h
-    for p in line(x;outBounds.h - y, x;outBounds.h) { @p = hsv2rgb(hsv(x, 1, 1)) }
+    for p in line(x;outBounds.h - y, x;outBounds.h) {
+        @p = rgb(hsv(x, 1, 1))
+    }
 }

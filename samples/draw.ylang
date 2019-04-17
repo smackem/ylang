@@ -1,33 +1,11 @@
-PlotLine := fn(p1, p2) {
-    for p in line(p1, p2) {
-        @p = #0000FF
-    }
-}
-
-PlotLine_old := fn(p1, p2) {
-    dist := p2 - p1
-    steps := abs(dist.x) > abs(dist.y) ? abs(dist.x) : abs(dist.y)
-    dx := dist.x / steps
-    dy := dist.y / steps
-
-    x := p1.x
-    y := p1.y
-
-    for i in 0 .. steps {
-        @(x;y) = #88FF00
-        x = x + dx
-        y = y + dy
-    }
-}
+PlotLine := fn(p1, p2) -> plot(line(p1, p2), #0000FF)
 
 Radius := 200
 OutBounds := resize(Radius*2, Radius*2)
 Center := Radius;Radius
 Inner := Radius/10
 
-for p in OutBounds {
-    @p = Black
-}
+plot(OutBounds, Black)
 
 for angle in 0 .. 15 .. 360 {
     radians := angle * Deg2Rad

@@ -61,7 +61,7 @@ DetectEdges := fn() {
         } else if angle < 157.5 {
             k = Q45
         }
-        area := map_r(pos, k)
+        area := fetchRed(pos, k)
         if max(area) != area[4] {
             mag = 0
         }
@@ -81,7 +81,7 @@ Hysteresis := fn() {
         } else if val < 5 {
             val = 0
         } else {
-            neighbours := map_r(pos, Neighbours)
+            neighbours := fetchRed(pos, Neighbours)
             if max(neighbours) > 10 {
                 val = 255
             } else {

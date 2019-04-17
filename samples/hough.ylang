@@ -3,14 +3,8 @@
 log("Initialize...")
 
 MaxTheta := 180 // degrees
-Sin := kernel_fn(MaxTheta, 1, fn(angle, _) -> sin(angle * Deg2Rad))
-Cos := kernel_fn(MaxTheta, 1, fn(angle, _) -> cos(angle * Deg2Rad))
-
-Plot := fn(figure, color) {
-    for p in figure {
-        @p = color
-    }
-}
+Sin := kernel(MaxTheta, 1, fn(x, y) -> sin(x * Deg2Rad))
+Cos := kernel(MaxTheta, 1, fn(x, y) -> cos(x * Deg2Rad))
 
 ///////////////////////////////////////////////////////////////////////////////
 log("Greyscale, Smoothen...")
@@ -66,15 +60,15 @@ log("Find Maxima, Visualize...")
 
 outBounds := resize(Acc.w, Acc.h)
 for p in outBounds {
-    @p = grey(Acc[p.x;p.y])
+    @p = grey(Acc[p])
 }
 flip()
 
 k := kernel(11, 11, 1)
 maxWeight := 0
 for p in Bounds {
-    neighbours := fetch_red(p, k)
-    maximum := max_kernel(neighbours)
+    neighbours := fetchRed(p, k)
+    maximum := max(neighbours)
     @p = @p.r == maximum ? grey(@p.r) : Black
     maxWeight = max(maxWeight, maximum)
 }
@@ -93,7 +87,7 @@ for p in Bounds {
 log(houghLines)
 
 for l in houghLines {
-    Plot(circle(l.rho;l.theta, 2), #ff0000)
+    plot(circle(l.rho;l.theta, 2), #ff0000)
 }
 
 return nil
@@ -125,5 +119,5 @@ for l in houghLines {
         lineToDraw = line(x1;0, x2;Bounds.h)
     }
     log(lineToDraw)
-    Plot(lineToDraw, color)
+    plot(lineToDraw, color)
 }

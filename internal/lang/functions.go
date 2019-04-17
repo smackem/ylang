@@ -58,6 +58,14 @@ func initFunctions() {
 				body:   invokeRgba,
 				params: []reflect.Type{numberType, numberType, numberType, numberType},
 			},
+			{
+				body:   invokeRgb2Rgba,
+				params: []reflect.Type{colorType, numberType},
+			},
+			{
+				body:   invokeHsv2Rgba,
+				params: []reflect.Type{hsvType, numberType},
+			},
 		},
 		"rgba01": {
 			{
@@ -240,7 +248,7 @@ func initFunctions() {
 		"random": {
 			{
 				body:   invokeRandom,
-				params: []reflect.Type{numberType},
+				params: []reflect.Type{numberType, numberType},
 			},
 		},
 		"min": {
@@ -438,6 +446,19 @@ func invokeRgba(ir *interpreter, args []value) (value, error) {
 	return NewRgba(args[0].(Number), args[1].(Number), args[2].(Number), args[3].(Number)), nil
 }
 
+func invokeRgb2Rgba(ir *interpreter, args []value) (value, error) {
+	rgb := args[0].(Color)
+	a := args[1].(Number)
+	return NewRgba(rgb.R, rgb.G, rgb.B, a), nil
+}
+
+func invokeHsv2Rgba(ir *interpreter, args []value) (value, error) {
+	hsv := args[0].(colorHsv)
+	rgb := hsv.rgb()
+	a := args[1].(Number)
+	return NewRgba(rgb.R, rgb.G, rgb.B, a), nil
+}
+
 func invokeSrgba(ir *interpreter, args []value) (value, error) {
 	return NewSrgba(args[0].(Number), args[1].(Number), args[2].(Number), args[3].(Number)), nil
 }
@@ -628,7 +649,12 @@ func invokeHypotPoint(ir *interpreter, args []value) (value, error) {
 }
 
 func invokeRandom(ir *interpreter, args []value) (value, error) {
-	return Number(rand.Intn(int(args[0].(Number)))), nil
+	min := args[0].(Number)
+	max := args[1].(Number)
+	if min < 0 || max-min <= 0 {
+		return nil, fmt.Errorf("invalid range [%g - %g] for random", min, max)
+	}
+	return Number(int(min) + rand.Intn(int(max-min))), nil
 }
 
 func invokeMax(it *interpreter, args []value) (value, error) {
@@ -1071,86 +1097,12 @@ func invokeOutlineCircle(ir *interpreter, args []value) (value, error) {
 
 func invokeRgb2Hsv(ir *interpreter, args []value) (value, error) {
 	rgb := args[0].(Color)
-	r := rgb.ScR()
-	g := rgb.ScG()
-	b := rgb.ScB()
-
-	max := Number(math.Max(float64(r), math.Max(float64(g), float64(b))))
-	min := Number(math.Min(float64(r), math.Min(float64(g), float64(b))))
-
-	var hue Number
-
-	if max == min {
-		hue = 0
-	} else if max == r && g >= b {
-		hue = 60.0*(g-b)/(max-min) + 0.0
-	} else if max == r && g < b {
-		hue = 60.0*(g-b)/(max-min) + 360.0
-	} else if max == g {
-		hue = 60.0*(b-r)/(max-min) + 120.0
-	} else if max == b {
-		hue = 60.0*(r-g)/(max-min) + 240.0
-	} else {
-		hue = 0.0
-	}
-
-	var s Number
-	if max == 0.0 {
-		s = 0.0
-	} else {
-		s = 1.0 - min/max
-	}
-
-	v := max
-
-	return colorHsv{hue, s, v}, nil
+	return hsvFromRgb(rgb), nil
 }
 
 func invokeHsv2Rgb(ir *interpreter, args []value) (value, error) {
-	hsv := args[0].(colorHsv).clamp()
-	h := hsv.h
-	s := hsv.s
-	v := hsv.v
-
-	hi := int(h) / 60 % 6
-	f := h/60.0 - Number(hi)
-
-	r := Number(0.0)
-	g := Number(0.0)
-	b := Number(0.0)
-
-	p := v * (1.0 - s)
-	q := v * (1.0 - f*s)
-	t := v * (1.0 - (1.0-f)*s)
-
-	switch hi {
-	case 0:
-		r = v
-		g = t
-		b = p
-	case 1:
-		r = q
-		g = v
-		b = p
-	case 2:
-		r = p
-		g = v
-		b = t
-	case 3:
-		r = p
-		g = q
-		b = v
-	case 4:
-		r = t
-		g = p
-		b = v
-	case 5:
-		r = v
-		g = p
-		b = q
-	}
-
-	return NewSrgba(r, g, b, 1.0), nil
+	hsv := args[0].(colorHsv)
+	return hsv.rgb(), nil
 }
 
 func invokeHsv(ir *interpreter, args []value) (value, error) {
@@ -1169,7 +1121,7 @@ func invokePlot(ir *interpreter, args []value) (value, error) {
 	iterable := args[0]
 	color := args[1].(Color)
 
-	iterable.iterate(func(v value) error {
+	err := iterable.iterate(func(v value) error {
 		pt, ok := v.(point)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected point, but found %s", reflect.TypeOf(v))
@@ -1178,5 +1130,5 @@ func invokePlot(ir *interpreter, args []value) (value, error) {
 		return nil
 	})
 
-	return nil, nil
+	return nil, err
 }

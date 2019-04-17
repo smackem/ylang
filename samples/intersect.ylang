@@ -28,32 +28,16 @@ IntersectVertical := fn(p1, p2, x) {
     return x; (x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x) + p1.y
 }
 
-DrawLine := fn(line, color) {
-    for p in line {
-        @p = color
-    }
-}
-
 DrawDot := fn(p, color) {
-    rc := rect(p.x - 2, p.y - 2, 5, 5)
-    for pp in rect(p.x - 2, p.y - 2, 5, 5) {
-        if pp.x == rc.left and pp.y == rc.top
-        or pp.x == rc.left and pp.y == rc.bottom-1
-        or pp.x == rc.right-1 and pp.y == rc.top
-        or pp.x == rc.right-1 and pp.y == rc.bottom-1 {
-            // do nothing to round corners
-        } else {
-            @pp = color
-        }
-    }
+    plot(circle(p, 2), color)
 }
 
 DrawAndIntersect := fn(line1, color1, line2, color2) {
     if color1 != nil {
-        DrawLine(line1, color1)
+        plot(line1, color1)
     }
     if color2 != nil {
-        DrawLine(line2, color2)
+        plot(line2, color2)
     }
     intersection := intersect(line1, line2)
     if intersection != nil {
@@ -64,10 +48,7 @@ DrawAndIntersect := fn(line1, color1, line2, color2) {
 
 Intersections := fn() {
     OutBounds := resize(800, 600)
-
-    for p in OutBounds {
-        @p = Black
-    }
+    plot(p, Black)
 
     whiteLine := line(0;0, 100;100)
     greenLine := line(0;100, 100;0)
