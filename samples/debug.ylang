@@ -1,12 +1,16 @@
 
+log (1==0 or 2==2 or 3==4)
+
+log (1 | $)
+return nil
+
 blt(Bounds)
 
 for i in 0 .. 500 {
     radius := random(10, 40)
     x := random(radius, Bounds.w - radius)
     y := random(radius, Bounds.h - radius)
-    hue := random(0, 360)
-    color := rgba(hsv(hue, 1, 1), 64)
+    color := random(0, 360) | hsv($, 1, 1) | rgba($, 64)
     for p in circle(x;y, radius) {
         @p = compose(@p, color)
     }
@@ -40,7 +44,7 @@ log([], " ", sum([]))
 k := |1 2 3 4|
 log(k, " ", sum(k))
 
-log(hsv(rgb(255, 255, 0)))
+log(rgb(255, 255, 0) | hsv($))
 log(sort([44, 2, 23, 94, 5943]))
 
 return nil
@@ -134,7 +138,7 @@ Gauss := gauss(7)
 
 for p in Bounds {
     blurred := convolute(p, Gauss)
-    @p = grey(blurred.i)
+    @p = rgb(blurred.i)
 }
 
 SourceImage := flip()
@@ -185,7 +189,7 @@ for p in Bounds {
             weight := Acc[accX;accY] + 1
             Acc[accX;accY] = weight
         }
-        @p = grey(mag)
+        @p = rgb(mag)
     } else {
         @p = Black
     }
@@ -198,7 +202,7 @@ log("Find Maxima, Visualize...")
 
 outBounds := resize(Acc.w, Acc.h)
 for p in outBounds {
-    @p = grey(Acc[p.x;p.y])
+    @p = rgb(Acc[p])
 }
 flip()
 
@@ -209,7 +213,7 @@ for p in Bounds {
     if @p.r > 0 {
         neighbours := fetchRed(p, k)
         maximum := max(neighbours)
-        @p = @p.r == maximum ? grey(@p.r) : Black
+        @p = @p.r == maximum ? rgb(@p.r) : Black
         if @p.r == maximum {
             log("neighbours: ", neighbours)
         }

@@ -2,8 +2,8 @@ Program:
     | StatementList EOF
 
 StatementList:
-    | Statement EOL StatementList
-    | Statement EOL
+    | Statement StatementList
+    | Statement
 
 Statement:
     | IdentStatement
@@ -38,9 +38,12 @@ WhileStatement:
     | WHILE Expr LBRACE StatementList RBRACE
 
 Expr:
-    | Expr QMARK Expr COLON Expr
-    | Expr OR AndExpr
-    | AndExpr
+    | OrExpr QMARK OrExpr COLON Expr
+    | OrExpr PIPE Expr
+    | OrExpr
+
+OrExpr:
+    | AndEpr OR OrExpr
 
 AndExpr:
     | AndExpr AND Cond
@@ -62,12 +65,12 @@ Tuple:
     | Term SEMICOLON Term
 
 Term:
-    | Term PLUS Molecule
-    | Term MINUS Molecule
-    | Term STAR Molecule
-    | Term SLASH Molecule
-    | Term PERCENT Molecule
-    | Term IN Molecule
+    | Molecule PLUS Term
+    | Molecule MINUS Term
+    | Molecule STAR Term
+    | Molecule SLASH Term
+    | Molecule PERCENT Term
+    | Molecule IN Term
     | Molecule
 
 Molecule:

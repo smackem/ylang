@@ -1,0 +1,41 @@
+
+// Luftballons
+
+blt(Bounds)
+
+for i in 0 .. 300 {
+    radius := random(10, 40)
+    hue := random(0, 360)
+    color := rgba(hsv(hue, 1, 1), 128)
+    x := random(radius, Bounds.w - radius)
+    y := random(radius, Bounds.h - radius)
+    for p in circle(x;y, radius) {
+        @p = compose(@p, color)
+    }
+}
+
+return nil
+
+// Kariert
+dx := 360 / Bounds.w
+angle := 0
+
+for x in 0 .. Bounds.w {
+    color1 := x % 80 >= 40 ? #8080ff : #ffff00
+    for y in 0 .. Bounds.h {
+        color2 := color1 + (y % 80 >= 40 ? #800000 : rgb(0, -128, 0))
+        @(x;y) = @(x;y).i01 * color2
+    }
+    angle = angle + dx
+}
+
+return nil
+
+// Regenbogenfarben
+for x in 0 .. Bounds.w {
+    color := rgb(hsv(angle, 1, 1))
+    for y in 0 .. Bounds.h {
+        @(x;y) = @(x;y).i01 * color
+    }
+    angle = angle + dx
+}

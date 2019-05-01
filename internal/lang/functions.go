@@ -46,11 +46,19 @@ func initFunctions() {
 				body:   invokeHsv2Rgb,
 				params: []reflect.Type{hsvType},
 			},
+			{
+				body:   invokeGrey,
+				params: []reflect.Type{numberType},
+			},
 		},
 		"rgb01": {
 			{
 				body:   invokeSrgb,
 				params: []reflect.Type{numberType, numberType, numberType},
+			},
+			{
+				body:   invokeSgrey,
+				params: []reflect.Type{numberType},
 			},
 		},
 		"rgba": {
@@ -71,18 +79,6 @@ func initFunctions() {
 			{
 				body:   invokeSrgba,
 				params: []reflect.Type{numberType, numberType, numberType, numberType},
-			},
-		},
-		"grey": {
-			{
-				body:   invokeGrey,
-				params: []reflect.Type{numberType},
-			},
-		},
-		"grey01": {
-			{
-				body:   invokeSgrey,
-				params: []reflect.Type{numberType},
 			},
 		},
 		"rect": {

@@ -101,7 +101,7 @@ func Test_color(t *testing.T) {
 			},
 		},
 		{
-			name: "mul",
+			name: "div",
 			src: `c1 := rgb01(1, 1, 1) / rgb(127.5, 127.5, 127.5)
 				  c2 := rgb(20, 40, 80) / 4
 				  c3 := 60 / rgb(2, 4, 6)`,

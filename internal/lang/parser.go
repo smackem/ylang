@@ -379,15 +379,19 @@ func (p *parser) parseOrExpr() (expression, error) {
 		return nil, err
 	}
 
-	if p.current().Type == ttOr {
-		p.next()
-		right, err := p.parseOrExpr()
-		if err != nil {
-			return nil, err
+	for {
+		switch p.current().Type {
+		case ttOr:
+			p.next()
+			right, err := p.parseAndExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = orExpr{left, right}
+		default:
+			return left, nil
 		}
-		return orExpr{left, right}, nil
 	}
-	return left, nil
 }
 
 func (p *parser) parseAndExpr() (expression, error) {
@@ -396,15 +400,19 @@ func (p *parser) parseAndExpr() (expression, error) {
 		return nil, err
 	}
 
-	if p.current().Type == ttAnd {
-		p.next()
-		right, err := p.parseAndExpr()
-		if err != nil {
-			return nil, err
+	for {
+		switch p.current().Type {
+		case ttAnd:
+			p.next()
+			right, err := p.parseCondExpr()
+			if err != nil {
+				return nil, err
+			}
+			left = andExpr{left, right}
+		default:
+			return left, nil
 		}
-		return andExpr{left, right}, nil
 	}
-	return left, nil
 }
 
 func (p *parser) parseCondExpr() (expression, error) {
@@ -645,6 +653,8 @@ func (p *parser) parseAtom() (expression, error) {
 		return falseVal, nil
 	case ttNil:
 		return nilval{}, nil
+	case ttDollar:
+		return identExpr(tok.Lexeme), nil
 	case ttColor:
 		return tok.parseColor(), nil
 	case ttPipe:
@@ -677,8 +687,8 @@ func (p *parser) parseAtAtom() (expression, error) {
 	}
 	return atExpr{inner}, nil
 }
-
 func (p *parser) parseIdentAtom(ident string) (expression, error) {
+
 	if p.current().Type == ttLParen {
 		p.next()
 		return p.parseInvocationAtom(ident)

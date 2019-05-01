@@ -13,7 +13,7 @@ Gauss := gauss(7)
 
 for p in Bounds {
     blurred := convolute(p, Gauss)
-    @p = grey(blurred.i)
+    @p = rgb(blurred.i)
 }
 
 SourceImage := flip()
@@ -32,7 +32,7 @@ for p in Bounds {
     gx := convolute(p, SobelX).r
     gy := convolute(p, SobelY).r
     mag := hypot(gx, gy)
-    @p = mag > 200 ? grey(mag) : Black
+    @p = mag > 200 ? rgb(mag) : Black
 }
 
 flip()
@@ -60,7 +60,7 @@ log("Find Maxima, Visualize...")
 
 outBounds := resize(Acc.w, Acc.h)
 for p in outBounds {
-    @p = grey(Acc[p])
+    @p = rgb(Acc[p])
 }
 flip()
 
@@ -69,7 +69,7 @@ maxWeight := 0
 for p in Bounds {
     neighbours := fetchRed(p, k)
     maximum := max(neighbours)
-    @p = @p.r == maximum ? grey(@p.r) : Black
+    @p = @p.r == maximum ? rgb(@p.r) : Black
     maxWeight = max(maxWeight, maximum)
 }
 flip()
@@ -87,7 +87,7 @@ for p in Bounds {
 log(houghLines)
 
 for l in houghLines {
-    plot(circle(l.rho;l.theta, 2), #ff0000)
+    circle(l.rho;l.theta, 2) | plot($, #ff0000)
 }
 
 return nil
