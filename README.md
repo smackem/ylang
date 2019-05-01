@@ -10,7 +10,7 @@ ylang must be able to implement these algorithms:
 * Color distribution
 
 ## Roadmap
-* Web interface with CodeMirror as editor
+* Web interface with monaco as editor
 * Drawing language for creation of graphical images
-* Compile to intermediate language
-* Use WASM?
+* Compile to intermediate language -> ByteCode
+* Use WASM? JavaScript first :)
