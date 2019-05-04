@@ -483,6 +483,13 @@ func Test_interpret(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "pipeline",
+			src:  `a := 1 | $ + 1 | $ + 2`,
+			want: scope{
+				"a": Number(4),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

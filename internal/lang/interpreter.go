@@ -104,6 +104,10 @@ func (ir *interpreter) newIdent(ident string, val value) error {
 	return nil
 }
 
+func (ir *interpreter) removeIdent(ident string) {
+	delete(ir.idents[len(ir.idents)-1], ident)
+}
+
 func (ir *interpreter) assignIdent(ident string, val value) error {
 	last := len(ir.idents) - 1
 	for i := range ir.idents {
@@ -668,6 +672,20 @@ func (ir *interpreter) visitExprInner(expr expression) (value, error) {
 			l.elements[i] = val
 		}
 		return l, nil
+
+	case pipelineExpr:
+		left, err := ir.visitExpr(e.left)
+		if err != nil {
+			return nil, err
+		}
+		pipelineValueIdent := tokenTypeNames[ttDollar]
+		ir.newIdent(pipelineValueIdent, left)
+		right, err := ir.visitExpr(e.right)
+		if err != nil {
+			return nil, err
+		}
+		ir.removeIdent(pipelineValueIdent)
+		return right, nil
 	}
 
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))

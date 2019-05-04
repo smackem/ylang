@@ -109,6 +109,7 @@ type binaryExpr struct {
 	right expression
 }
 
+type pipelineExpr binaryExpr
 type orExpr binaryExpr
 type andExpr binaryExpr
 type eqExpr binaryExpr

@@ -124,6 +124,37 @@ func Test_lex(t *testing.T) {
 			},
 		},
 		{
+			name: "pipeline",
+			src:  "1 | $ + 2",
+			want: []token{
+				token{
+					Type:       ttNumber,
+					Lexeme:     "1",
+					LineNumber: 1,
+				},
+				token{
+					Type:       ttPipe,
+					Lexeme:     "|",
+					LineNumber: 1,
+				},
+				token{
+					Type:       ttDollar,
+					Lexeme:     "$",
+					LineNumber: 1,
+				},
+				token{
+					Type:       ttPlus,
+					Lexeme:     "+",
+					LineNumber: 1,
+				},
+				token{
+					Type:       ttNumber,
+					Lexeme:     "2",
+					LineNumber: 1,
+				},
+			},
+		},
+		{
 			name: "for",
 			src:  "for pos in IMAGE {\n    @pos = -@pos\n}",
 			want: []token{

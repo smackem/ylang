@@ -292,7 +292,7 @@ var matchers = []matcher{
 	makeMatcher(`}`, func(string) tokenType { return ttRBrace }),
 	makeMatcher(`\?`, func(string) tokenType { return ttQMark }),
 	makeMatcher(`\|`, func(string) tokenType { return ttPipe }),
-	makeMatcher(`$`, func(string) tokenType { return ttDollar }),
+	makeMatcher(`\$`, func(string) tokenType { return ttDollar }),
 	makeMatcher(`#[0-9a-fA-F]{6}(\:[0-9a-fA-F]{2})?`, func(string) tokenType { return ttColor }),
 	makeMatcher(`".*?"`, func(string) tokenType { return ttString }),
 	makeMatcher(`[0-9]+(\.[0-9]+)?\b`, func(string) tokenType { return ttNumber }),

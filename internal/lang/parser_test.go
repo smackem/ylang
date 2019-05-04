@@ -626,6 +626,35 @@ func Test_parse_ast(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "pipeline",
+			src:  "log(1 | $+1 | $+2 | $+3)",
+			want: []statement{
+				logStmt{
+					args: []expression{
+						pipelineExpr{
+							left: Number(1),
+							right: pipelineExpr{
+								left: addExpr{
+									left:  identExpr("$"),
+									right: Number(1),
+								},
+								right: pipelineExpr{
+									left: addExpr{
+										left:  identExpr("$"),
+										right: Number(2),
+									},
+									right: addExpr{
+										left:  identExpr("$"),
+										right: Number(3),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

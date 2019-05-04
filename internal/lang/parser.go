@@ -349,14 +349,14 @@ func (p *parser) parseReturn() (statement, error) {
 }
 
 func (p *parser) parseExpr() (expression, error) {
-	cond, err := p.parseOrExpr()
+	cond, err := p.parsePipelineExpr()
 	if err != nil {
 		return nil, err
 	}
 
 	if p.current().Type == ttQMark {
 		p.next()
-		trueResult, err := p.parseOrExpr()
+		trueResult, err := p.parsePipelineExpr()
 		if err != nil {
 			return nil, err
 		}
@@ -371,6 +371,24 @@ func (p *parser) parseExpr() (expression, error) {
 	}
 
 	return cond, nil
+}
+
+func (p *parser) parsePipelineExpr() (expression, error) {
+	left, err := p.parseOrExpr()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.current().Type == ttPipe {
+		p.next()
+		right, err := p.parsePipelineExpr()
+		if err != nil {
+			return nil, err
+		}
+		return pipelineExpr{left, right}, nil
+	}
+
+	return left, nil
 }
 
 func (p *parser) parseOrExpr() (expression, error) {
