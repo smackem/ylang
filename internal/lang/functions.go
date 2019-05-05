@@ -246,6 +246,10 @@ func initFunctions() {
 				body:   invokeRandom,
 				params: []reflect.Type{numberType, numberType},
 			},
+			{
+				body:   invokeRandom01,
+				params: []reflect.Type{},
+			},
 		},
 		"min": {
 			{
@@ -651,6 +655,10 @@ func invokeRandom(ir *interpreter, args []value) (value, error) {
 		return nil, fmt.Errorf("invalid range [%g - %g] for random", min, max)
 	}
 	return Number(int(min) + rand.Intn(int(max-min))), nil
+}
+
+func invokeRandom01(ir *interpreter, args []value) (value, error) {
+	return Number(rand.Float32()), nil
 }
 
 func invokeMax(it *interpreter, args []value) (value, error) {

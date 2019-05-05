@@ -485,9 +485,9 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "pipeline",
-			src:  `a := 1 | $ + 1 | $ + 2`,
+			src:  `a := 1 | $ + 1 | $ + 2 | $ + 3 | "a" + $`,
 			want: scope{
-				"a": Number(4),
+				"a": str("a7"),
 			},
 		},
 	}

@@ -1,7 +1,8 @@
+sorted := [10, 2, 5, 1, 4] | sort($)
+log (sorted)
 
 for p in Bounds {
-    hue := (1 - @p.i01) * 360
-    @p = rgb(hsv(hue, 1, 1))
+    @p = @p.i01 | 1 - $ | $ * 360 | hsv($, 1, 1) | rgb($)
 }
 
 return nil
@@ -14,10 +15,12 @@ for i in 0 .. 500 {
     radius := random(10, 40)
     x := random(radius, Bounds.w - radius)
     y := random(radius, Bounds.h - radius)
-    //color := random(0, 360) | hsv($, 1, 1) | rgba($, 64)
-    color := rgba(hsv(random(0, 360), 1, 1), 64)
+    color := random(0, 360) | hsv($, 1, random()) | rgba($, 96)
     for p in circle(x;y, radius) {
         @p = compose(@p, color)
+    }
+    if i % 50 == 0 {
+        flip()
     }
 }
 

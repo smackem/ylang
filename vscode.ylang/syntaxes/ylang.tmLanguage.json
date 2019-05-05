@@ -226,7 +226,7 @@
 					"name": "keyword.operator.arithmetic.bitwise.ylang"
 				},
 				{
-					"match": "@|(\\.\\.)",
+					"match": "@|\\$|(\\.\\.)",
 					"name": "keyword.operator.expression.ylang"
 				}
 			]

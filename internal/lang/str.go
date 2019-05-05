@@ -17,7 +17,7 @@ func (s str) compare(other value) (value, error) {
 }
 
 func (s str) add(other value) (value, error) {
-	return str(fmt.Sprintf("%s%s", s, other)), nil
+	return str(fmt.Sprintf("%s%s", s, other.printStr())), nil
 }
 
 func (s str) sub(other value) (value, error) {
