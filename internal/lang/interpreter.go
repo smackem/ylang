@@ -692,11 +692,18 @@ func (ir *interpreter) visitExprInner(expr expression) (value, error) {
 }
 
 func (ir *interpreter) invokeFunc(name string, arguments []value) (value, error) {
-	val, ok := ir.findIdent(name)
-	if ok {
-		return ir.invokeFunctionExpr(name, val, arguments)
+	val, ok, err := ir.invokeBuiltinFunction(name, arguments)
+	if err != nil {
+		return nil, err
 	}
-	return ir.invokeBuiltinFunction(name, arguments)
+	if ok {
+		return val, nil
+	}
+	fval, ok := ir.findIdent(name)
+	if !ok {
+		return nil, fmt.Errorf("unknown identifier '%s'", name)
+	}
+	return ir.invokeFunctionExpr(name, fval, arguments)
 }
 
 func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []value) (value, error) {
@@ -722,15 +729,16 @@ func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []va
 	return ir.getReturnValue(), nil
 }
 
-func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, error) {
+func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, bool, error) {
 	fs, ok := functions[name]
 	if !ok {
-		return nil, fmt.Errorf("unkown function '%s'", name)
+		return nil, false, fmt.Errorf("unkown function '%s'", name)
 	}
 	var err error
 	for _, f := range fs {
 		if err = validateArguments(arguments, f.params); err == nil {
-			return f.body(ir, arguments)
+			val, err := f.body(ir, arguments)
+			return val, true, err
 		}
 	}
 
@@ -741,7 +749,7 @@ func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (va
 		}
 		buffer.WriteString(signature(name, f))
 	}
-	return nil, fmt.Errorf("no fitting overload for function '%s': %s. possible overloads:\n%s", name, err, buffer.String())
+	return nil, false, fmt.Errorf("no fitting overload for function '%s': %s. possible overloads:\n%s", name, err, buffer.String())
 }
 
 func validateArguments(arguments []value, params []reflect.Type) error {

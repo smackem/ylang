@@ -1,3 +1,9 @@
+
+for pos in Bounds {
+    @pos = rgb(@pos.i)
+}
+flip()
+
 SobelX := |-1  0  1
            -2  0  2
            -1  0  1|
@@ -5,25 +11,22 @@ SobelY := | 1  2  1
             0  0  0
            -1 -2 -1|
 
-for pos in Bounds {
-    @pos = grey(@pos.i)
+for p in Bounds {
+    gx := convolute(p, SobelX).r
+    gy := convolute(p, SobelY).r
+    mag := hypot(gx, gy)
+    angle := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg + 90
+    color := round(angle * 2) | hsv($, 1, 1) | rgb($)
+    @p = color * mag/255
 }
 flip()
 
-for pos in Bounds {
-    gx := convolute(pos, SobelX).r
-    gy := convolute(pos, SobelY).r
-    mag := hypot(gx, gy)
-    color := nil
-    angle := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg + 90
-    if angle >= 157.5 or angle < 22.5 {
-        color = #ff0000 // 0 - red
-    } else if angle < 67.5 {
-        color = #00ff00 // 45 - green
-    } else if angle < 112.5 {
-        color = #0000ff // 90 - blue
-    } else if angle < 157.5 {
-        color = #ffff00 // 135 - yellow
-    }
-    @pos = color * mag/255
+Median := kernel(5, 5, 1)
+Center := 2;2
+
+for p in Bounds {
+    r := fetchRed(p, Median) | sort($)[Center]
+    g := fetchGreen(p, Median) | sort($)[Center]
+    b := fetchBlue(p, Median) | sort($)[Center]
+    @p = rgb(r, g, b)
 }

@@ -1,8 +1,18 @@
+
+hsv := hsv(180, 0.5, 0.5)
+log(hsv(20, 0.5, 1))
+
 sorted := [10, 2, 5, 1, 4] | sort($)
-log (sorted)
+log(sorted)
+
+k := [50, 20, 30] | kernel(3, 1, fn(x, y) -> $[x]) | sort($)
+log(k)
+
+k := [5, 2, 1] | |($[0]) ($[1]) ($[2]) 10| | sort($)
+log(k)
 
 for p in Bounds {
-    @p = @p.i01 | 1 - $ | $ * 360 | hsv($, 1, 1) | rgb($)
+    @p = @p.i01 | (1 - $) * 360 | hsv($, 1, 1) | rgb($)
 }
 
 return nil
