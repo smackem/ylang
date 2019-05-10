@@ -1,8 +1,14 @@
+Median := kernel(5, 5, 1)
+Center := 2;2
 
-for pos in Bounds {
-    @pos = rgb(@pos.i)
+for p in Bounds {
+    r := fetchRed(p, Median) | sort($)[Center]
+    g := fetchGreen(p, Median) | sort($)[Center]
+    b := fetchBlue(p, Median) | sort($)[Center]
+    @p = rgb(r, g, b)
 }
-flip()
+
+flip() // swap target and source image, committing all changes
 
 SobelX := |-1  0  1
            -2  0  2
@@ -12,21 +18,10 @@ SobelY := | 1  2  1
            -1 -2 -1|
 
 for p in Bounds {
-    gx := convolute(p, SobelX).r
-    gy := convolute(p, SobelY).r
+    gx := convolute(p, SobelX).i
+    gy := convolute(p, SobelY).i
     mag := hypot(gx, gy)
     angle := gx == 0 ? 0 : atan(gy / gx) * Rad2Deg + 90
-    color := round(angle * 2) | hsv($, 1, 1) | rgb($)
-    @p = color * mag/255
-}
-flip()
-
-Median := kernel(5, 5, 1)
-Center := 2;2
-
-for p in Bounds {
-    r := fetchRed(p, Median) | sort($)[Center]
-    g := fetchGreen(p, Median) | sort($)[Center]
-    b := fetchBlue(p, Median) | sort($)[Center]
-    @p = rgb(r, g, b)
+    mag = mag / 255
+    @p = round(angle * 2) | hsv($, mag, mag) | rgb($)
 }
