@@ -153,25 +153,25 @@ func (c Color) at(bitmap BitmapContext) (value, error) {
 
 func (c Color) property(ident string) (value, error) {
 	switch ident {
-	case "r":
+	case "r", "red":
 		return c.R, nil
-	case "g":
+	case "g", "green":
 		return c.G, nil
-	case "b":
+	case "b", "blue":
 		return c.B, nil
-	case "a":
+	case "a", "alpha":
 		return c.A, nil
-	case "r01":
+	case "r01", "red01":
 		return Number(c.ScR()), nil
-	case "g01":
+	case "g01", "green01":
 		return Number(c.ScG()), nil
-	case "b01":
+	case "b01", "blue01":
 		return Number(c.ScB()), nil
-	case "a01":
+	case "a01", "alpha01":
 		return Number(c.ScA()), nil
-	case "i":
+	case "i", "intensity":
 		return c.Intensity(), nil
-	case "i01":
+	case "i01", "intensity01":
 		return c.ScIntensity(), nil
 	}
 	return baseProperty(c, ident)
