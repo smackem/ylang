@@ -1,5 +1,5 @@
 for p in Bounds {
-    @p = rgb(@p.i)
+    @p = -@p
 }
 
 return nil

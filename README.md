@@ -27,16 +27,16 @@ This is the original image:
 ```
 for point in Bounds {
     color := @point
-    @point = rgb(color.i)
+    @point = -color
 }
 ```
 This is a complete ylang script. It iterates over all points contained in the rectangle `Bounds`, where `Bounds` is a constant that holds the dimensions of the input image.
 
 `color := @point` assigns the color at point `point` to the new variable `color`.
 
-`@point = rgb(color.i)` creates an rgb color with all three channels set to the intensity of the read color, then sets the pixel at position `point` to this color.
+`@point = -color` creates an rgb color with all three channels inverted, then sets the pixel at position `point` to this color.
 
-![greyscale](https://raw.githubusercontent.com/smackem/ylang/master/doc/greyscale.png "Image")
+![invert](https://raw.githubusercontent.com/smackem/ylang/master/doc/invert.png "Image")
 
 ### Monochrome
 
@@ -49,6 +49,8 @@ for p in Bounds {
 The single statement that is executed for each pixel in the source image is `@p = @p.i01 * #4080ff`.
 
 It takes the color at point p, calculates the intensity (normalized to 0 .. 1) and multiplies the color `#4080ff` with the intensity. The result of this multiplication is a color with all color channels (r, g, b) multiplied by the intensity value.
+
+Note that using white (`#ffffff`) instead of `#4080ff` yields a greyscale image.
 
 ![monochrome](https://raw.githubusercontent.com/smackem/ylang/master/doc/monochrome.png "Image")
 
@@ -159,7 +161,7 @@ This sample first applies the median filter to the source image, then applies th
 
 ylang is a dynamic script language featuring built-in types like points, kernels and colors - all of which are needed for image processing.
 
-ylang's syntax is inspired by Go, Javascript, Bash and F#.
+ylang's syntax is inspired by Go, JavaScript and Bash.
 
 ### Basics - Primitive Types
 
@@ -314,15 +316,14 @@ mag := p.mag // magnitude of the point interpreted as a vector
 
 ### Kernel
 
-Kernels can be cresated as literals:
+Kernels can be created as literals:
 ```
 k := |0 1 0
       1 2 1
       0 1 0|
 ```
 
-... or by using the `kernel` function:
-
+Kernel literals need to be quadratic: width and height must be equal. To create non-quadratic kernels, use the `kernel` function:
 ```
 k := kernel(3, 3, 1) // 3x3 with all elements set to 1
 k := kernel(4, 2, fn(x, y) -> x + y)
@@ -347,19 +348,89 @@ height := k.height // = 3
 count := k.count // = 6 -- number of elements
 ```
 
+Kernels can be iterated over:
+```
+maximum := 0
+for n in |1 5 3 4| {
+    maximum = max(maximum, n)
+}
+// maximum is 5
+```
+
+Note that getting the maximum value of a kernel can be expressed much easier:
+`max(|1 5 3 5|) // = 5`.
+
 ### Rectangle
-`rect(100, 100, 20, 50)`
+
+Create rectangles by passing x, y, width and height to the function `rect`:
+```
+rectangle := rect(100, 100, 20, 50)
+```
+
+Rectangles have these properties:
+```
+x := rectangle.x // or rectangle.left
+y := rectangle.y // or rectangle.top
+w := rectangle.width // or rectangle.w
+h := rectangle.height // or rectangle.h
+r := rectangle.right
+b := rectangle.bottom
+```
+
+Like all geometrical shape types in ylang, rectangles can be iterated over. The iteration yields all points within the bounds of the shape.
+The most common rectangle constant is `Bounds`, which contains the bounds of the input image.
 
 ### Line
-`line(100;100, 200;250)`
+
+Create lines y passing the two endpoints of the line to the function `line`:
+```
+ln := line(100;100, 200;250)
+```
+
+Lines have these properties:
+```
+p1 := ln.p1 // or ln.point1
+p2 := ln.p2 // or ln.point2
+dx := ln.dx // the difference between x1 and x2
+dy := ln.dy // the difference between y1 and y2
+len := ln.len // the length of the line (distance between p1 and p2)
+```
+
+Like all geometrical shape types in ylang, lines can be iterated over. The iteration yields all points on the line.
 
 ### Polygon
-`polygon(100;100, 300;200, 150;300)`
+
+Create polygons by passing either an arbitrary number of points or a list of points to the function `polygon`:
+```
+poly := polygon(100;100, 300;200, 150;300)
+poly2 := polygon([100;100, 300;200, 150;300])
+```
+The last point does not have to be the same as the first, polygons are automatically closed.
+
+Polygons have these properties:
+```
+bounds := poly.bounds // the bounding rectangle around the polygon
+vertices := poly.vertices // the list of vertices (corner points) that make up the polygon
+```
+
+Like all geometrical shape types in ylang, polygons can be iterated over. The iteration yields all points within the shape.
 
 ### Circle
-`circle(100;100, 50)`
 
-You can iterate over geometrical shapes.
+Create circles by passing the center point and the radius to the function `center`:
+```
+circ := circle(100;100, 50)
+```
+
+Circles have these properties:
+```
+center := circ.center
+radius := circ.radius
+bounds := circ.bounds
+```
+
+You can iterate over circles like over all geometrical shapes.
+
 Plotting a red circle:
 ```
 for p in circle(100;100, 50) {
@@ -367,9 +438,54 @@ for p in circle(100;100, 50) {
 }
 ```
 
+This can also be achieved more easily with function `plot`:
+```
+plot(circle(100;100, 50), #ff0000)
+```
+
 ### Working with images
 
-* ...
+A ylang script is always executed against two images: a source image and a target image. All read operations are executed against the source image, all write operations against the target image.
+
+Reading and writing single pixels can both be achieved with the `@` operator:
+```
+@(0;0) = @(100;100) // copy the source pixel at 100;100 to 0;0 in the target image
+```
+
+This loop copies the source image to the target image:
+```
+for p in Bounds {
+    @p = @p
+}
+```
+
+The `blt` function is a much faster way to do this:
+```
+blt(Bounds)
+```
+
+A ylang script can only write to one target image at a time. To apply multiple operations that build upon each other (e.g. blur, then edge detect), use the `flip` function:
+```
+Gauss := // LPF kernel...
+Laplace := // HPF kernel...
+for p in Bounds {
+    @p = convolute(p, Gauss)
+}
+flip()
+for p in Bounds {
+    @p = convolute(p, Laplace)
+}
+```
+
+To recall a flipped source image, use the `recall` function:
+```
+// mutate target image...
+OriginalImage := flip()
+// mutate flipped image...
+recall(OriginalImage)
+// now, the source image is restored to the initial source image
+// do more things...
+```
 
 ### Math Functions
 
