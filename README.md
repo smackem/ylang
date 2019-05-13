@@ -48,7 +48,7 @@ for p in Bounds {
 
 The single statement that is executed for each pixel in the source image is `@p = @p.i01 * #4080ff`.
 
-`@p` takes the color at point p, calculates the intensity (normalized to 0 .. 1) and multiplies the color `#4080ff` with the intensity. The result of this multiplication is a color with all color channels (r, g, b) multiplied by the intensity value.
+It takes the color at point p, calculates the intensity (normalized to 0 .. 1) and multiplies the color `#4080ff` with the intensity. The result of this multiplication is a color with all color channels (r, g, b) multiplied by the intensity value.
 
 ![monochrome](https://raw.githubusercontent.com/smackem/ylang/master/doc/monochrome.png "Image")
 
@@ -61,7 +61,7 @@ for p in Bounds {
 ```
 
 Like bash, powershell or F#, ylang supports pipelining.
-`n := 1 | $ + 5 | $ * 2` reads like "takes the value 1, add 5, multiply with 2 and finally store the result in the newly declared variable n.
+`n := 1 | $ + 5 | $ * 2` reads like "take the value 1, add 5, multiply with 2 and finally store the result in the newly declared variable n.
 
 The statement is equivalent to `n := (1 + 5) * 2`.
 
@@ -159,16 +159,13 @@ This sample first applies the median filter to the source image, then applies th
 
 ylang is a dynamic script language featuring built-in types like points, kernels and colors - all of which are needed for image processing.
 
-ylang's syntax is inspired by Go, javascript, bash and F#.
+ylang's syntax is inspired by Go, Javascript, Bash and F#.
 
 ### Basics - Primitive Types
 
-* Number
-  All numbers in ylang are in 32 bit floating point. The basic mathematical operations are supported on numbers. Constants can be written as `123` or `51.25`.
-* Boolean
-  Booleans have either the value `true` or `false`. All comparison operators like `==` or `<` return a boolean value.
-* String
-  Strings are usually only used as hash map keys or for logging. String constants are written like this: `"Hello, worlds!"`.
+* All numbers in ylang are in 32 bit floating point format. The basic mathematical operations are supported on numbers. Constants can be written as `123` or `51.25`.
+* Booleans have either the value `true` or `false`. All comparison operators like `==` or `<` return a boolean value.
+* Strings are usually only used as hash map keys or for logging. String constants are written like this: `"Hello, world!"`.
 
 ### Basics - Variables and Constants
 
@@ -180,15 +177,15 @@ ylang's syntax is inspired by Go, javascript, bash and F#.
 * Variables can be mutated with the `=` operator:
   ```
   num := 1
-  log(num)
+  log(num) // prints 1
   num = 2
-  log(num)
+  log(num) // prints 2
   ```
   Because of the dynamic type system, variables can also change type:
   ```
-  v := 100 // number
+  v := 100 // initially a number
   log(v)
-  v := "hello" // string
+  v = "hello" // now a string
   log(v)
   ```
 * Identifiers that start with a capital letter can be assigned only once:
