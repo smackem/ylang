@@ -22,7 +22,7 @@ This is the original image:
 
 ![original](https://raw.githubusercontent.com/smackem/ylang/master/doc/fish.jpg "Original")
 
-### Greyscale
+### Invert
 
 ```
 for point in Bounds {
