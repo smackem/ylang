@@ -195,6 +195,14 @@ ylang's syntax is inspired by Go, JavaScript and Bash.
   Ratio := 0.5
   Ratio = 1 // compilation error - Ratio is constant
   ```
+* The following built-in constants are available:
+  * `Black` - the color black #000000
+  * `White` - the color white #ffffff
+  * `Transparent` - transparent white #ffffff:00
+  * `Pi` - the mathematical constant pi in 32 bit resolution
+  * `Rad2Deg` - the factor to convert radians into degrees
+  * `Deg2Rad` - the factor to convert degrees to radians
+  * `Bounds` - a rectangle containing the bounds of the input image
 
 ### Basics - Control Flow
 
@@ -487,19 +495,105 @@ recall(OriginalImage)
 // do more things...
 ```
 
+To resize the output image, use the `resize` function:
+```
+outBounds := resize(Bounds.width * 2, Bounds.height * 2)
+```
+
 ### Math Functions
 
-* ...
+The following basic math functions on numbers are available:
+* sin(angle)
+* cos(angle)
+* tan(angle)
+* asin(n)
+* acos(n)
+* atan(n)
+* atan2(dy, dx)
+* sqrt(n)
+* pow(base, exponent)
+* abs(n)
+* round(n)
+* floor(n)
+* ceil(n)
+* hypot(x, y)
+* random(lower, upper)
+* min(n...)
+* max(n...)
+
+All trigonometric functions work with angles in radians. Use the constants `Deg2Rad` and `Rad2Deg` to convert between degrees and radians.
+See the functions documentation for details.
+
 
 ### Alpha Channel
 
-* ...
+The alpha channel does not take part in color arithmetics: `#ffffff:ff / 2` equals `#808080:ff`. All operations to manipulate the alpha channel must be executed explicitly:
+```
+old := #ff0080:ff
+new := rgba(old, old.alpha / 2)
+```
+
+The alpha channel is also ignored by convolution. The color returned by the `convolute` function has the alpha value of the center pixel.
+To convolute the alpha channel, use the `fetchAlpha` function:
+```
+k := |-1 0
+       0 1|
+alpha := fetchAlpha(p, k) | sum($)
+```
+or for kernels with a non-zero sum:
+```
+k := |0 1 0
+      1 2 1
+      0 1 0|
+alpha := fetchAlpha(p, k) | sum($) / sum(k)
+```
+
+ylang features the function `compose` for alpha composition:
+```
+grey := compose(#000000, #ffffff:80) // paint half-opaque white on black - the result is #808080
+```
 
 ### Lists
 
-* ...
+Lists in ylang can be written like this:
+```
+ls := [1, 2, 3]
+```
+or with the `list` function:
+```
+ls := list(100, 0) // a list of 100 zeroes
+```
 
-### Objects
+You can append to lists with the `::` operator:
+```
+ls := [1, 2, 3] :: 4
+ls = ls :: 5
+// ls is now [1, 2, 3, 4, 5]
+```
+
+Thanks to ylang's dynamic nature, you can mix types in lists:
+```
+ls := [1, "B", 100;200] // list containing a number, a string and a point
+```
+
+To retrieve individual values from a list, use the index operator with a numeric index value:
+```
+ls := [1, 2, 3]
+first := ls[0] // = 1
+second := ls[1] // = 2
+third := ls[2] // = 3
+last := ls[-1] // = 3
+```
+
+You can also retrieve sub-lists (slices) from lists:
+```
+ls := [1, 2, 3, 4, 5]
+firstTwo := ls[0 .. 1] // = [1, 2]
+lastTwo := ls[-2 .. -1] // = [4, 5]
+tail := ls[1 .. -1] // = [2, 3, 4, 5]
+```
+
+### Hash Maps and Objects
 
 * ...
 
