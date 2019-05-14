@@ -460,6 +460,8 @@ Reading and writing single pixels can both be achieved with the `@` operator:
 @(0;0) = @(100;100) // copy the source pixel at 100;100 to 0;0 in the target image
 ```
 
+Initially, the target image has the same dimensions as the input image and all pixels are transparent black (`#000000:00`).
+
 This loop copies the source image to the target image:
 ```
 for p in Bounds {
@@ -591,6 +593,13 @@ ls := [1, 2, 3, 4, 5]
 firstTwo := ls[0 .. 1] // = [1, 2]
 lastTwo := ls[-2 .. -1] // = [4, 5]
 tail := ls[1 .. -1] // = [2, 3, 4, 5]
+```
+
+You can iterate over lists:
+```
+for elem in [1, 2, 3] {
+    ...
+}
 ```
 
 ### Hash Maps and Objects
