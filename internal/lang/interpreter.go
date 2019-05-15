@@ -732,7 +732,7 @@ func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []va
 func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, bool, error) {
 	fs, ok := functions[name]
 	if !ok {
-		return nil, false, fmt.Errorf("unkown function '%s'", name)
+		return nil, false, nil
 	}
 	var err error
 	for _, f := range fs {

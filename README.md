@@ -141,8 +141,9 @@ SobelY := | 1  2  1
 // iterate over the image:
 // apply the sobel operator in both directions and calculate the gradient's magnitude.
 // hypot is the same as writing sqrt(gx*gx + gy*gy).
-// then calculate the gradient's angle, normalize the magnitude to 0..1 and the angle
-// to 0..360 and write the resulting hsv color to the target image.
+// then calculate the gradient's angle, add 90 deg to get the edge's angle,
+// normalize the magnitude to 0..1 and the angle to 0..360 and write the resulting
+// hsv color to the target image.
 for p in Bounds {
     gx := convolute(p, SobelX).i
     gy := convolute(p, SobelY).i
@@ -602,13 +603,63 @@ for elem in [1, 2, 3] {
 }
 ```
 
-### Hash Maps and Objects
+### Hash Maps and Object Syntax
 
-* ...
+Like in JavaScript, ylang uses hash maps as objects. Create object literals like so:
+```
+pixel := {
+    point: 100;200,
+    color: #ff00ff,
+}
+```
+
+To create hashmap the "traditional" way, use this syntax:
+```
+pixel := {}
+pixel["point"] = 100;200
+pixel["color"] = #ff00ff
+```
+
+Either way, the object properties can be accessed like this:
+```
+pt := pixel.point
+```
+or like this:
+```
+pt := pixel["point"]
+```
 
 ### Functions and Lambdas
 
-* ...
+ylang supports functions as first-class objects, using the keyword `fn`:
+
+```
+pow2 := fn(n) {
+    return n * n
+}
+
+result := pow2(10) // = 100
+```
+
+You can also define functions with lambda syntax, if the function body only consists returning a single expression:
+```
+pow2 := fn(n) -> n * n
+```
+
+You can pass functions as arguments of functions:
+```
+filter := fn(ls, predicate) {
+    result := []
+    for elem in ls {
+        if predicate(elem) {
+            result = result :: elem
+        }
+    }
+    return result
+}
+numbers := [1, 2, 3, 4]
+evenNumbers := filter(numbers, fn(n) -> n % 2 == 0) // [2, 4]
+```
 
 ## Roadmap
 

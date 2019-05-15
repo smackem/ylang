@@ -1,5 +1,22 @@
-log(compose(Black, #ffffff:80))
-return nil
+filter := fn(ls, predicate) {
+    result := []
+    for elem in ls {
+        if predicate(elem) {
+            result = result :: elem
+        }
+    }
+    return result
+}
+numbers := [1, 2, 3, 4]
+evenNumbers := filter(numbers, fn(n) -> n % 2 == 0) // [2, 4]
+log(evenNumbers)
+createPredicate := fn(divisor) {
+    div := divisor
+    return fn(n) -> n % div == 0
+}
+numbers := [1, 2, 3, 4]
+disibleBy3 := filter(numbers, createPredicate(3)) // [3]
+log(divisibleBy3)
 
 ///////////////////////////////////////////////////////////////////////////////
 
