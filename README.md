@@ -42,7 +42,7 @@ This is a complete ylang script. It iterates over all points contained in the re
 
 ```
 for p in Bounds {
-    @p = @p.i01 * #4080ff
+    @p = @p.intensity01 * #4080ff
 }
 ```
 
@@ -299,7 +299,7 @@ g01 := color.green01 // or color.g01 -- g01 is 0.5
 b01 := color.blue01 // or color.b01 -- b01 is 0.25
 a01 := color.alpha01 // or color.a01 -- a01 is 0.125
 i := color.intensity // or color.i -- the intensity (brightness) of the color
-i01 := color.intensity // or color.i01 -- the intensity normalized to 0..1
+i01 := color.intensity01 // or color.i01 -- the intensity normalized to 0..1
 ```
 
 The color type supports basic arithmetic operations, which are applied per channel:
