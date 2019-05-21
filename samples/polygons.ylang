@@ -1,5 +1,5 @@
-poly := polygon(200;300, 410;280, 620;310, 400;150, 545;110)
-polyBounds := poly.bounds
+//poly := polygon(200;300, 410;280, 620;310, 400;150, 545;110)
+poly := polygon(0;0, Bounds.width;0, Bounds.width;Bounds.height, 0;Bounds.height)
 roberts1 := | 1  0
               0 -1|
 roberts2 := | 0  1
@@ -7,14 +7,11 @@ roberts2 := | 0  1
 for p in poly {
     r1 := convolute(p, roberts1)
     r2 := convolute(p, roberts2)
-    r := r1*r1*255 + r2*r2*255
-    @p = rgb(sqrt(r.r), sqrt(r.g), sqrt(r.b))
+    @p = hypot(r1, r2)
 }
-commit(polyBounds)
+flip()
 
-Gauss := |0 1 0
-          1 2 1
-          0 1 0|
+Gauss := gauss(2)
 BlurLine := fn(line) {
     for dy in -3 .. 4 {
         for p in translate(line, 0;dy) {
@@ -31,7 +28,7 @@ for pt in poly.vertices {
     prevPt = pt
 }
 plot(line(prevPt, poly.vertices[0]), #ffffff)
-commit(polyBounds)
+flip()
 
 prevPt = nil
 for pt in poly.vertices {

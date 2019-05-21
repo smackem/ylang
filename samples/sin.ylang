@@ -1,14 +1,12 @@
 OutBounds := resize(360, 100)
 PlotVLine := fn(x, color) {
-    for y in 0 .. OutBounds.height {
-        @(x;y) = color
-    }
+    plot(line(x;0, x;Outbounds.height))
 }
 
 for x in 0 .. OutBounds.width {
     rad := x * Deg2Rad
     s := sin(rad)
     c := cos(rad)
-    color := -srgb(max(s, 0), abs(min(s, 0)), abs(c))
+    color := -rgb01(max(s, 0), abs(min(s, 0)), abs(c))
     PlotVLine(x, color)
 }

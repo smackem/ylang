@@ -1,5 +1,7 @@
 package lang
 
+import "image"
+
 // package initialization
 func init() {
 	initFunctions()
@@ -45,4 +47,6 @@ type BitmapContext interface {
 	ResizeTarget(width, height int)
 	Flip() int // return imageID for Recall()
 	Recall(imageID int) error
+	SetClipRect(rect image.Rectangle)
+	ClipRect() image.Rectangle
 }

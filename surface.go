@@ -18,6 +18,7 @@ type surface struct {
 	source        *ymage
 	target        *ymage
 	sourceHistory []*ymage
+	clipRect      image.Rectangle
 }
 
 type ymage struct {
@@ -48,9 +49,13 @@ func (surf *surface) GetPixel(x int, y int) lang.Color {
 }
 
 func (surf *surface) SetPixel(x int, y int, col lang.Color) {
-	if y >= 0 && y < surf.target.height && x >= 0 && x < surf.target.width {
-		surf.target.pixels[y*surf.target.width+x] = col
+	if surf.clipRect.Empty() == false {
+		pt := image.Point{x, y}
+		if pt.In(surf.clipRect) == false {
+			return
+		}
 	}
+	surf.target.pixels[y*surf.target.width+x] = col
 }
 
 func (surf *surface) SourceWidth() int {
@@ -142,14 +147,23 @@ func (surf *surface) MapAlpha(x, y, radius, width int, kernel []lang.Number) []l
 }
 
 func (surf *surface) Blt(x, y, width, height int) {
-	if width == surf.SourceWidth() && height == surf.SourceHeight() && surf.target.width == surf.source.width && surf.source.height == surf.target.height {
-		copy(surf.target.pixels, surf.source.pixels)
-	} else {
-		for iy := y; iy < height; iy++ {
-			for ix := x; ix < width; ix++ {
-				index := iy*surf.target.width + ix
-				surf.target.pixels[index] = surf.source.pixels[index]
-			}
+	bltRect := image.Rect(x, y, width, height)
+	srcRect := image.Rect(0, 0, surf.source.width, surf.source.height)
+	trgRect := image.Rect(0, 0, surf.target.width, surf.target.height)
+
+	if bltRect == srcRect && trgRect == srcRect {
+		if surf.clipRect.Empty() || surf.clipRect == bltRect {
+			copy(surf.target.pixels, surf.source.pixels)
+			return
+		}
+	}
+
+	rect := bltRect.Intersect(srcRect).Intersect(trgRect).Intersect(surf.clipRect)
+
+	for iy := rect.Min.Y; iy < rect.Max.Y; iy++ {
+		for ix := rect.Min.X; ix < rect.Max.X; ix++ {
+			index := iy*surf.target.width + ix
+			surf.target.pixels[index] = surf.source.pixels[index]
 		}
 	}
 }
@@ -160,6 +174,7 @@ func (surf *surface) ResizeTarget(width, height int) {
 		height: height,
 		pixels: make([]lang.Color, width*height),
 	}
+	surf.clipRect = image.Rectangle{}
 }
 
 func (surf *surface) Flip() int {
@@ -171,6 +186,7 @@ func (surf *surface) Flip() int {
 		height: surf.source.height,
 		pixels: append([]lang.Color(nil), surf.source.pixels...),
 	}
+	surf.clipRect = image.Rectangle{}
 	return oldSourceID
 }
 
@@ -180,6 +196,14 @@ func (surf *surface) Recall(imageID int) error {
 	}
 	surf.source = surf.sourceHistory[imageID]
 	return nil
+}
+
+func (surf *surface) ClipRect() image.Rectangle {
+	return surf.clipRect
+}
+
+func (surf *surface) SetClipRect(rect image.Rectangle) {
+	surf.clipRect = rect
 }
 
 func loadImage(reader io.Reader) (*ymage, error) {
