@@ -1,22 +1,71 @@
-filter := fn(ls, predicate) {
-    result := []
-    for elem in ls {
-        if predicate(elem) {
-            result = result :: elem
+for p in Bounds {
+    @p = @p.i > 127 ? White : Black
+}
+
+flip()
+
+MorphL := |0 0 1 0 0
+           0 1 1 1 0
+           1 1 1 1 1
+           0 1 1 1 0
+           0 0 1 0 0|
+Morph := |1 1 1
+          1 1 1
+          1 1 1|
+
+HasZero := fn(mask, k) {
+    for i in 0 .. mask.count {
+        if mask[i] != 0 and k[i] == 0 {
+            return true
         }
     }
-    return result
+    return false
 }
-numbers := [1, 2, 3, 4]
-evenNumbers := filter(numbers, fn(n) -> n % 2 == 0) // [2, 4]
-log(evenNumbers)
-createPredicate := fn(divisor) {
-    div := divisor
-    return fn(n) -> n % div == 0
+
+HasOne := fn(mask, k) {
+    for i in 0 .. mask.count {
+        if mask[i] != 0 and k[i] != 0 {
+            return true
+        }
+    }
+    return false
 }
-numbers := [1, 2, 3, 4]
-disibleBy3 := filter(numbers, createPredicate(3)) // [3]
-log(divisibleBy3)
+
+Erode := fn(shape) {
+    for p in shape {
+        k := fetchRed(p, Morph)
+        @p = HasZero(Morph, k) ? Black : White
+    }
+}
+
+Dilate := fn(shape) {
+    for p in shape {
+        k := fetchRed(p, Morph)
+        @p = HasOne(Morph, k) ? White : Black
+    }
+}
+
+Open := fn(shape) {
+    Erode(shape)
+    flip()
+    Dilate(shape)
+}
+
+Close := fn(shape) {
+    Dilate(shape)
+    flip()
+    Erode(shape)
+}
+
+
+for i in 0 .. 5 {
+    Erode(rect(0, 0, Bounds.w, Bounds.h))
+    flip()
+    Close(Bounds)
+    flip()
+}
+
+return nil
 
 ///////////////////////////////////////////////////////////////////////////////
 
