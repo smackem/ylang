@@ -192,7 +192,7 @@ func (surf *surface) Flip() int {
 
 func (surf *surface) Recall(imageID int) error {
 	if imageID >= len(surf.sourceHistory) {
-		return fmt.Errorf("Unknown context %d - cannot recall", imageID)
+		return fmt.Errorf("unknown context %d - cannot recall", imageID)
 	}
 	surf.source = surf.sourceHistory[imageID]
 	return nil

@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/smackem/ylang/internal/program"
 	"net/http"
 	"os"
 	"path"
 
 	"github.com/google/uuid"
 	"github.com/smackem/ylang/internal/goobar"
-	"github.com/smackem/ylang/internal/lang"
 )
 
 func initHTTP() error {
@@ -43,12 +43,12 @@ func postRender(x *goobar.Exchange) goobar.Responder {
 		return goobar.Error(500, fmt.Sprintf("error decoding '%s'", uri))
 	}
 
-	prog, err := lang.Compile(string(source))
+	prog, err := program.Compile(string(source))
 	if err != nil {
 		return goobar.Error(500, fmt.Sprintf("compilation error: %s", err.Error()))
 	}
 
-	err = prog.Execute(surf)
+	err = program.Execute(prog, surf)
 	if err != nil {
 		return goobar.Error(500, fmt.Sprintf("execution error: %s", err.Error()))
 	}

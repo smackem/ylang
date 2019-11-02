@@ -3,13 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/smackem/ylang/internal/program"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/smackem/ylang/internal/lang"
 )
 
 const (
@@ -57,13 +56,13 @@ func main() {
 		log.Fatalf("error loading source code from '%s': %s", *sourceCodePath, err.Error())
 	}
 
-	prog, err := lang.Compile(string(src))
+	prog, err := program.Compile(string(src))
 	if err != nil {
 		log.Fatalf("compilation error: %s", err.Error())
 	}
 
 	start := time.Now()
-	err = prog.Execute(surf)
+	err = program.Execute(prog, surf)
 	if err != nil {
 		log.Fatalf("execution error: %s", err.Error())
 	}

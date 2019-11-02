@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="" />
+    <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/interpreter/color.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/interpreter/number.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/interpreter/util.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/interpreter/value.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/parser/ast.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/program/compiler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/res/pub/script/ylang.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/ast.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/boolean.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/boolean_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/circle.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/circle_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/color.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/color_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/function.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/function.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/hashmap.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/hashmap_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/hsv.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hsv.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/interpreter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/kernel.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/kernel.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/lang.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lang/lang.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/lexer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lexer/lexer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/lexer_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lexer/lexer_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/line.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/line.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/list.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/nilval.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/nilval.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/number.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/number_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/parser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/parser/parser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/parser_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/parser/parser_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/point.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/point.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/polygon.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/polygon.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/rect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/rect.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/str.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/str.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/value.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/lang/value_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,66 +66,13 @@
     <expand />
     <select />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/http.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="29" column="1" selection-start-line="29" selection-start-column="1" selection-end-line="29" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="29" column="18" selection-start-line="29" selection-start-column="18" selection-end-line="29" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/internal/lang/lang.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/internal/lang/parser.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-              <folding>
-                <element signature="e#14#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/internal/lang/interpreter.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2006">
-              <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/internal/lang/ast.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" selection-start-line="10" selection-end-line="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
@@ -92,38 +83,26 @@
       </map>
     </option>
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/internal/lang/interpreter.go" />
-        <option value="$PROJECT_DIR$/internal/lang/ast.go" />
-        <option value="$PROJECT_DIR$/internal/lang/lang.go" />
-        <option value="$PROJECT_DIR$/internal/lang/parser.go" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="87" />
-    <option name="y" value="27" />
-    <option name="width" value="1193" />
-    <option name="height" value="733" />
-  </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane" />
-    </panes>
+  <component name="ProjectId" id="1ScPFynXfIatyZgHvn7wZmdFV8M" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="last_opened_file_path" value="$APPLICATION_HOME_DIR$/bin" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/interpreter" />
+      <recent name="$PROJECT_DIR$/internal/parser" />
+      <recent name="$PROJECT_DIR$/internal/compiler" />
+      <recent name="$PROJECT_DIR$/internal/lexer" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -137,7 +116,27 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.BUILD github.com/smackem/ylang">
+    <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+      <module name="ylang" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <package value="github.com/smackem/ylang" />
+      <directory value="$PROJECT_DIR$/" />
+      <option name="run" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RUN github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+      <module name="ylang" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <parameters value="-image res/pub/_A03.png -code res/sample.ylang -out out.png" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/" />
+      <package value="github.com/smackem/ylang" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -148,68 +147,28 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go test ylang" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
+      <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
-      <parameters value="-image res/pub/_A03.png -code res/sample.ylang -out out.png" />
-      <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
       <package value="github.com/smackem/ylang" />
       <directory value="$PROJECT_DIR$/" />
-      <option name="run" value="false" />
+      <filePath value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
+      <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
+      <item itemvalue="Go Test.go test ylang" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/smackem/ylang" />
+        <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
+        <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Messages" order="0" />
-      <window_info anchor="bottom" id="Docker" order="1" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="5" />
-      <window_info anchor="bottom" id="Find" order="6" />
-      <window_info anchor="bottom" id="Run" order="7" weight="0.33126935" />
-      <window_info anchor="bottom" id="Debug" order="8" weight="0.31888545" />
-      <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="11" />
-      <window_info anchor="bottom" id="Version Control" order="12" weight="0.5294118" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="right" content_ui="combo" id="Project" order="3" visible="true" weight="0.26492536" />
-      <window_info anchor="right" id="Database" order="4" weight="0.32990575" />
-    </layout>
-    <layout-to-restore>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="1" />
-      <window_info anchor="bottom" id="Terminal" order="2" />
-      <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Find" order="5" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.2972136" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Project" order="3" visible="true" weight="0.24935733" />
-      <window_info anchor="right" id="Version Control" order="4" weight="0.32990575" />
-      <window_info anchor="right" id="Database" order="5" weight="0.32990575" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -230,20 +189,7 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
-              <option name="COLUMN_ORDER">
-                <list>
-                  <option value="0" />
-                  <option value="1" />
-                  <option value="2" />
-                  <option value="3" />
-                </list>
-              </option>
+              <option name="COLUMN_ORDER" />
             </State>
           </value>
         </entry>
@@ -263,61 +209,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file:///usr/local/go/src/runtime/panic.go" />
-    <entry file="file:///usr/local/go/src/runtime/map.go" />
-    <entry file="file://$PROJECT_DIR$/http.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="29" column="1" selection-start-line="29" selection-start-column="1" selection-end-line="29" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="29" column="18" selection-start-line="29" selection-start-column="18" selection-end-line="29" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/internal/lang/lang.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/internal/lang/interpreter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2006">
-          <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/internal/lang/ast.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/sample.ylang">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="81" column="39" selection-start-line="81" selection-start-column="39" selection-end-line="81" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/internal/lang/parser.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-          <folding>
-            <element signature="e#14#50#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>
