@@ -6,10 +6,10 @@ import (
 )
 
 type list struct {
-	elements []value
+	elements []Value
 }
 
-func (l list) compare(other value) (value, error) {
+func (l list) compare(other Value) (Value, error) {
 	if r, ok := other.(list); ok {
 		if reflect.DeepEqual(l, r) {
 			return number(0), nil
@@ -18,43 +18,43 @@ func (l list) compare(other value) (value, error) {
 	return nil, nil
 }
 
-func (l list) add(other value) (value, error) {
+func (l list) add(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list + %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) sub(other value) (value, error) {
+func (l list) sub(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list - %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) mul(other value) (value, error) {
+func (l list) mul(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list * %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) div(other value) (value, error) {
+func (l list) div(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list / %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) mod(other value) (value, error) {
+func (l list) mod(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list %% %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) in(other value) (value, error) {
+func (l list) in(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: list in %s not supported", reflect.TypeOf(other))
 }
 
-func (l list) neg() (value, error) {
+func (l list) neg() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: -list not supported")
 }
 
-func (l list) not() (value, error) {
+func (l list) not() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not list' not supported")
 }
 
-func (l list) at(bitmap BitmapContext) (value, error) {
+func (l list) at(bitmap BitmapContext) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: @list not supported")
 }
 
-func (l list) property(ident string) (value, error) {
+func (l list) property(ident string) (Value, error) {
 	switch ident {
 	case "count":
 		return number(len(l.elements)), nil
@@ -66,7 +66,7 @@ func (l list) printStr() string {
 	return fmt.Sprintf("list(count: %d)", len(l.elements))
 }
 
-func (l list) iterate(visit func(value) error) error {
+func (l list) iterate(visit func(Value) error) error {
 	for _, v := range l.elements {
 		if err := visit(v); err != nil {
 			return err
@@ -75,7 +75,7 @@ func (l list) iterate(visit func(value) error) error {
 	return nil
 }
 
-func (l list) index(index value) (value, error) {
+func (l list) index(index Value) (Value, error) {
 	i, ok := index.(number)
 	if !ok {
 		return nil, fmt.Errorf("type mismatch: expected list[number] but found list[%s]", reflect.TypeOf(index))
@@ -83,7 +83,7 @@ func (l list) index(index value) (value, error) {
 	return l.elements[indexAt(i, len(l.elements))], nil
 }
 
-func (l list) indexRange(lower, upper value) (value, error) {
+func (l list) indexRange(lower, upper Value) (Value, error) {
 	lowern, ok := lower.(number)
 	if !ok {
 		return nil, fmt.Errorf("type mismatch: kernel[%s..upper] not supported", reflect.TypeOf(lower))
@@ -99,7 +99,7 @@ func (l list) indexRange(lower, upper value) (value, error) {
 	}, nil
 }
 
-func (l list) indexAssign(index value, val value) error {
+func (l list) indexAssign(index Value, val Value) error {
 	i, ok := index.(number)
 	if !ok {
 		return fmt.Errorf("type mismatch: expected list[number] but found list[%s]", reflect.TypeOf(index))
@@ -112,7 +112,7 @@ func (l list) runtimeTypeName() string {
 	return "list"
 }
 
-func (l list) concat(val value) (value, error) {
+func (l list) concat(val Value) (Value, error) {
 	if r, ok := val.(list); ok {
 		return list{
 			elements: append(l.elements, r.elements...),

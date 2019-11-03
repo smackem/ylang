@@ -12,7 +12,7 @@ import (
 )
 
 type functionDecl struct {
-	body   func(ir *interpreter, values []value) (value, error)
+	body   func(ir *interpreter, values []Value) (Value, error)
 	params []reflect.Type
 }
 
@@ -29,7 +29,7 @@ var numberSliceType = reflect.TypeOf([]number{})
 var pointSliceType = reflect.TypeOf([]point{})
 var circleType = reflect.TypeOf(circle{})
 var hsvType = reflect.TypeOf(colorHsv{})
-var valueType = reflect.TypeOf((*value)(nil)).Elem()
+var valueType = reflect.TypeOf((*Value)(nil)).Elem()
 
 var functions map[string][]functionDecl
 
@@ -435,21 +435,21 @@ func signature(name string, f functionDecl) string {
 	return fmt.Sprintf("fn %s(%s)", name, strings.Join(paramTypeNames, ", "))
 }
 
-func invokeRgb(ir *interpreter, args []value) (value, error) {
+func invokeRgb(ir *interpreter, args []Value) (Value, error) {
 	return color(lang.NewRgba(
 		lang.Number(args[0].(number)),
 		lang.Number(args[1].(number)),
 		lang.Number(args[2].(number)), 255)), nil
 }
 
-func invokeSrgb(ir *interpreter, args []value) (value, error) {
+func invokeSrgb(ir *interpreter, args []Value) (Value, error) {
 	return color(lang.NewSrgba(
 		lang.Number(args[0].(number)),
 		lang.Number(args[1].(number)),
 		lang.Number(args[2].(number)), 1.0)), nil
 }
 
-func invokeRgba(ir *interpreter, args []value) (value, error) {
+func invokeRgba(ir *interpreter, args []Value) (Value, error) {
 	return color(lang.NewRgba(
 		lang.Number(args[0].(number)),
 		lang.Number(args[1].(number)),
@@ -457,20 +457,20 @@ func invokeRgba(ir *interpreter, args []value) (value, error) {
 		lang.Number(args[3].(number)))), nil
 }
 
-func invokeRgb2Rgba(ir *interpreter, args []value) (value, error) {
+func invokeRgb2Rgba(ir *interpreter, args []Value) (Value, error) {
 	rgb := args[0].(color)
 	a := args[1].(number)
 	return color(lang.NewRgba(rgb.R, rgb.G, rgb.B, lang.Number(a))), nil
 }
 
-func invokeHsv2Rgba(ir *interpreter, args []value) (value, error) {
+func invokeHsv2Rgba(ir *interpreter, args []Value) (Value, error) {
 	hsv := args[0].(colorHsv)
 	rgb := hsv.rgb()
 	a := args[1].(number)
 	return color(lang.NewRgba(rgb.R, rgb.G, rgb.B, lang.Number(a))), nil
 }
 
-func invokeSrgba(ir *interpreter, args []value) (value, error) {
+func invokeSrgba(ir *interpreter, args []Value) (Value, error) {
 	return color(lang.NewSrgba(
 		lang.Number(args[0].(number)),
 		lang.Number(args[1].(number)),
@@ -478,17 +478,17 @@ func invokeSrgba(ir *interpreter, args []value) (value, error) {
 		lang.Number(args[3].(number)))), nil
 }
 
-func invokeGrey(ir *interpreter, args []value) (value, error) {
+func invokeGrey(ir *interpreter, args []Value) (Value, error) {
 	v := lang.Number(args[0].(number))
 	return color(lang.NewRgba(v, v, v, 255)), nil
 }
 
-func invokeSgrey(ir *interpreter, args []value) (value, error) {
+func invokeSgrey(ir *interpreter, args []Value) (Value, error) {
 	v := lang.Number(args[0].(number))
 	return color(lang.NewSrgba(v, v, v, 1.0)), nil
 }
 
-func invokeRect(ir *interpreter, args []value) (value, error) {
+func invokeRect(ir *interpreter, args []Value) (Value, error) {
 	x, y := int(args[0].(number)), int(args[1].(number))
 	return rect{
 		Min: image.Point{x, y},
@@ -496,25 +496,25 @@ func invokeRect(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeConvolute(ir *interpreter, args []value) (value, error) {
+func invokeConvolute(ir *interpreter, args []Value) (Value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	return color(ir.bitmap.Convolute(posVal.X, posVal.Y, kernelVal.width, kernelVal.height, kernelVal.values)), nil
 }
 
-func invokeBlt(ir *interpreter, args []value) (value, error) {
+func invokeBlt(ir *interpreter, args []Value) (Value, error) {
 	rect := args[0].(rect)
 	ir.bitmap.Blt(rect.Min.X, rect.Min.Y, rect.Max.X-rect.Min.X, rect.Max.Y-rect.Min.Y)
 	return nil, nil
 }
 
-func invokeFlip(ir *interpreter, args []value) (value, error) {
+func invokeFlip(ir *interpreter, args []Value) (Value, error) {
 	imageID := ir.bitmap.Flip()
 	ir.assignBounds(false)
 	return number(imageID), nil
 }
 
-func invokeRecall(ir *interpreter, args []value) (value, error) {
+func invokeRecall(ir *interpreter, args []Value) (Value, error) {
 	imageID := args[0].(number)
 	if err := ir.bitmap.Recall(int(imageID)); err != nil {
 		return nil, err
@@ -523,7 +523,7 @@ func invokeRecall(ir *interpreter, args []value) (value, error) {
 	return nil, nil
 }
 
-func invokeSortKernel(ir *interpreter, args []value) (value, error) {
+func invokeSortKernel(ir *interpreter, args []Value) (Value, error) {
 	kernelVal := args[0].(kernel)
 	numbers := convertLangNumbersToNumbers(kernelVal.values)
 	sort.Sort(numberSlice(numbers))
@@ -532,21 +532,21 @@ func invokeSortKernel(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeSortList(ir *interpreter, args []value) (value, error) {
+func invokeSortList(ir *interpreter, args []Value) (Value, error) {
 	listVal := args[0].(list)
 	result := listVal
-	result.elements = append([]value(nil), result.elements...) // clone elements
+	result.elements = append([]Value(nil), result.elements...) // clone elements
 	sort.Sort(valueSlice(result.elements))
 	return result, nil
 }
 
-func invokeSortListFn(ir *interpreter, args []value) (value, error) {
+func invokeSortListFn(ir *interpreter, args []Value) (Value, error) {
 	listVal := args[0].(list)
 	fn := args[1].(function)
 
-	fnArgs := make([]value, 2)
+	fnArgs := make([]Value, 2)
 	result := listVal
-	result.elements = append([]value(nil), result.elements...) // clone elements
+	result.elements = append([]Value(nil), result.elements...) // clone elements
 
 	sort.Slice(result.elements, func(i, j int) bool {
 		fnArgs[0] = result.elements[i]
@@ -561,7 +561,7 @@ func invokeSortListFn(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchRed(ir *interpreter, args []value) (value, error) {
+func invokeFetchRed(ir *interpreter, args []Value) (Value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -569,7 +569,7 @@ func invokeFetchRed(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchGreen(ir *interpreter, args []value) (value, error) {
+func invokeFetchGreen(ir *interpreter, args []Value) (Value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -577,7 +577,7 @@ func invokeFetchGreen(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchBlue(ir *interpreter, args []value) (value, error) {
+func invokeFetchBlue(ir *interpreter, args []Value) (Value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -585,7 +585,7 @@ func invokeFetchBlue(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeFetchAlpha(ir *interpreter, args []value) (value, error) {
+func invokeFetchAlpha(ir *interpreter, args []Value) (Value, error) {
 	posVal := args[0].(point)
 	kernelVal := args[1].(kernel)
 	result := kernelVal
@@ -593,63 +593,63 @@ func invokeFetchAlpha(ir *interpreter, args []value) (value, error) {
 	return result, nil
 }
 
-func invokeSin(ir *interpreter, args []value) (value, error) {
+func invokeSin(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Sin(float64(args[0].(number)))), nil
 }
 
-func invokeCos(ir *interpreter, args []value) (value, error) {
+func invokeCos(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Cos(float64(args[0].(number)))), nil
 }
 
-func invokeTan(ir *interpreter, args []value) (value, error) {
+func invokeTan(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Tan(float64(args[0].(number)))), nil
 }
 
-func invokeAsin(ir *interpreter, args []value) (value, error) {
+func invokeAsin(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Asin(float64(args[0].(number)))), nil
 }
 
-func invokeAcos(ir *interpreter, args []value) (value, error) {
+func invokeAcos(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Acos(float64(args[0].(number)))), nil
 }
 
-func invokeAtan(ir *interpreter, args []value) (value, error) {
+func invokeAtan(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Atan(float64(args[0].(number)))), nil
 }
 
-func invokeAtan2(ir *interpreter, args []value) (value, error) {
+func invokeAtan2(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Atan2(float64(args[0].(number)), float64(args[1].(number)))), nil
 }
 
-func invokeSqrt(ir *interpreter, args []value) (value, error) {
+func invokeSqrt(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Sqrt(float64(args[0].(number)))), nil
 }
 
-func invokePow(ir *interpreter, args []value) (value, error) {
+func invokePow(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Pow(float64(args[0].(number)), float64(args[1].(number)))), nil
 }
 
-func invokeAbs(ir *interpreter, args []value) (value, error) {
+func invokeAbs(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Abs(float64(args[0].(number)))), nil
 }
 
-func invokeRound(ir *interpreter, args []value) (value, error) {
+func invokeRound(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Round(float64(args[0].(number)))), nil
 }
 
-func invokeFloor(ir *interpreter, args []value) (value, error) {
+func invokeFloor(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Floor(float64(args[0].(number)))), nil
 }
 
-func invokeCeil(ir *interpreter, args []value) (value, error) {
+func invokeCeil(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Ceil(float64(args[0].(number)))), nil
 }
 
-func invokeHypot(ir *interpreter, args []value) (value, error) {
+func invokeHypot(ir *interpreter, args []Value) (Value, error) {
 	return number(math.Hypot(float64(args[0].(number)), float64(args[1].(number)))), nil
 }
 
-func invokeHypotRgb(ir *interpreter, args []value) (value, error) {
+func invokeHypotRgb(ir *interpreter, args []Value) (Value, error) {
 	a, b := args[0].(color), args[1].(color)
 	return color{
 		R: lang.Number(math.Hypot(float64(a.R), float64(b.R))),
@@ -659,12 +659,12 @@ func invokeHypotRgb(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeHypotPoint(ir *interpreter, args []value) (value, error) {
+func invokeHypotPoint(ir *interpreter, args []Value) (Value, error) {
 	p := args[0].(point)
 	return number(math.Hypot(float64(p.X), float64(p.Y))), nil
 }
 
-func invokeRandom(ir *interpreter, args []value) (value, error) {
+func invokeRandom(ir *interpreter, args []Value) (Value, error) {
 	min := args[0].(number)
 	max := args[1].(number)
 	if min < 0 || max-min <= 0 {
@@ -673,11 +673,11 @@ func invokeRandom(ir *interpreter, args []value) (value, error) {
 	return number(int(min) + rand.Intn(int(max-min))), nil
 }
 
-func invokeRandom01(ir *interpreter, args []value) (value, error) {
+func invokeRandom01(ir *interpreter, args []Value) (Value, error) {
 	return number(rand.Float32()), nil
 }
 
-func invokeMax(it *interpreter, args []value) (value, error) {
+func invokeMax(it *interpreter, args []Value) (Value, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("min() arguments must not be empty")
 	}
@@ -691,7 +691,7 @@ func invokeMax(it *interpreter, args []value) (value, error) {
 	return max, nil
 }
 
-func invokeMaxKernel(it *interpreter, args []value) (value, error) {
+func invokeMaxKernel(it *interpreter, args []Value) (Value, error) {
 	kernelVal := args[0].(kernel)
 	max := number(lang.MinNumber)
 	for _, n := range kernelVal.values {
@@ -703,12 +703,12 @@ func invokeMaxKernel(it *interpreter, args []value) (value, error) {
 	return max, nil
 }
 
-func invokeMaxList(it *interpreter, args []value) (value, error) {
+func invokeMaxList(it *interpreter, args []Value) (Value, error) {
 	listVal := args[0].(list)
 	if len(listVal.elements) == 0 {
 		return nil, fmt.Errorf("max() arguments must not be empty")
 	}
-	var max value = number(lang.MinNumber)
+	var max Value = number(lang.MinNumber)
 	for _, v := range listVal.elements {
 		cmp, err := v.compare(max)
 		if err != nil {
@@ -721,7 +721,7 @@ func invokeMaxList(it *interpreter, args []value) (value, error) {
 	return max, nil
 }
 
-func invokeMin(it *interpreter, args []value) (value, error) {
+func invokeMin(it *interpreter, args []Value) (Value, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("min() arguments must not be empty")
 	}
@@ -735,7 +735,7 @@ func invokeMin(it *interpreter, args []value) (value, error) {
 	return min, nil
 }
 
-func invokeMinKernel(it *interpreter, args []value) (value, error) {
+func invokeMinKernel(it *interpreter, args []Value) (Value, error) {
 	kernelVal := args[0].(kernel)
 	min := number(lang.MaxNumber)
 	for _, n := range kernelVal.values {
@@ -747,12 +747,12 @@ func invokeMinKernel(it *interpreter, args []value) (value, error) {
 	return number(min), nil
 }
 
-func invokeMinList(it *interpreter, args []value) (value, error) {
+func invokeMinList(it *interpreter, args []Value) (Value, error) {
 	listVal := args[0].(list)
 	if len(listVal.elements) == 0 {
 		return nil, fmt.Errorf("min() arguments must not be empty")
 	}
-	var min value = number(lang.MaxNumber)
+	var min Value = number(lang.MaxNumber)
 	for _, v := range listVal.elements {
 		cmp, err := v.compare(min)
 		if err != nil {
@@ -765,21 +765,21 @@ func invokeMinList(it *interpreter, args []value) (value, error) {
 	return min, nil
 }
 
-func invokeList(it *interpreter, args []value) (value, error) {
+func invokeList(it *interpreter, args []Value) (Value, error) {
 	count := args[0].(number)
 	val := args[1].(number)
-	values := make([]value, int(count))
+	values := make([]Value, int(count))
 	for i := range values {
 		values[i] = val
 	}
 	return list{elements: values}, nil
 }
 
-func invokeListFn(it *interpreter, args []value) (value, error) {
+func invokeListFn(it *interpreter, args []Value) (Value, error) {
 	count := args[0].(number)
 	fn := args[1].(function)
-	values := make([]value, int(count))
-	fnArgs := make([]value, 1)
+	values := make([]Value, int(count))
+	fnArgs := make([]Value, 1)
 	for i := range values {
 		fnArgs[0] = number(i)
 		retVal, err := it.invokeFunctionExpr("<list_fn>", fn, fnArgs)
@@ -791,7 +791,7 @@ func invokeListFn(it *interpreter, args []value) (value, error) {
 	return list{elements: values}, nil
 }
 
-func invokeKernel(ir *interpreter, args []value) (value, error) {
+func invokeKernel(ir *interpreter, args []Value) (Value, error) {
 	width := args[0].(number)
 	height := args[1].(number)
 	val := args[2].(number)
@@ -804,12 +804,12 @@ func invokeKernel(ir *interpreter, args []value) (value, error) {
 	return kernel{width: int(width), height: int(height), values: convertNumbersToLangNumbers(values)}, nil
 }
 
-func invokeKernelFn(ir *interpreter, args []value) (value, error) {
+func invokeKernelFn(ir *interpreter, args []Value) (Value, error) {
 	width := int(args[0].(number))
 	height := int(args[1].(number))
 	fn := args[2].(function)
 	values := make([]number, width*height)
-	fnArgs := make([]value, 2)
+	fnArgs := make([]Value, 2)
 
 	i := 0
 	for y := 0; y < height; y++ {
@@ -832,7 +832,7 @@ func invokeKernelFn(ir *interpreter, args []value) (value, error) {
 	return kernel{width: int(width), height: int(height), values: convertNumbersToLangNumbers(values)}, nil
 }
 
-func invokeGauss(ir *interpreter, args []value) (value, error) {
+func invokeGauss(ir *interpreter, args []Value) (Value, error) {
 	radius := int(args[0].(number))
 	length := int(radius*2 + 1)
 
@@ -861,7 +861,7 @@ func invokeGauss(ir *interpreter, args []value) (value, error) {
 	return kernel{width: int(length), height: int(length), values: convertNumbersToLangNumbers(values)}, nil
 }
 
-func invokeResize(ir *interpreter, args []value) (value, error) {
+func invokeResize(ir *interpreter, args []Value) (Value, error) {
 	width := args[0].(number)
 	height := args[1].(number)
 
@@ -872,12 +872,12 @@ func invokeResize(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeLine(ir *interpreter, args []value) (value, error) {
+func invokeLine(ir *interpreter, args []Value) (Value, error) {
 	point1, point2 := args[0].(point), args[1].(point)
 	return line{point1, point2}, nil
 }
 
-func invokePolygon(ir *interpreter, args []value) (value, error) {
+func invokePolygon(ir *interpreter, args []Value) (Value, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("polygon must not be empty")
 	}
@@ -897,7 +897,7 @@ func invokePolygon(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokePolygonList(ir *interpreter, args []value) (value, error) {
+func invokePolygonList(ir *interpreter, args []Value) (Value, error) {
 	list := args[0].(list)
 
 	points := make([]point, len(list.elements))
@@ -919,7 +919,7 @@ func invokePolygonList(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeCircle(ir *interpreter, args []value) (value, error) {
+func invokeCircle(ir *interpreter, args []Value) (Value, error) {
 	center, radius := args[0].(point), args[1].(number)
 	return circle{
 		center: center,
@@ -927,7 +927,7 @@ func invokeCircle(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeIntersect(ir *interpreter, args []value) (value, error) {
+func invokeIntersect(ir *interpreter, args []Value) (Value, error) {
 	line1, line2 := args[0].(line), args[1].(line)
 	p1, p2 := line1.point1, line1.point2
 	p3, p4 := line2.point1, line2.point2
@@ -954,7 +954,7 @@ func invokeIntersect(ir *interpreter, args []value) (value, error) {
 	return point{int(x + 0.5), int(y + 0.5)}, nil
 }
 
-func intersectVertical(p1 point, p2 point, x int) value {
+func intersectVertical(p1 point, p2 point, x int) Value {
 	if p1.X == p2.X {
 		// line is parallel to y axis
 		return nil
@@ -965,7 +965,7 @@ func intersectVertical(p1 point, p2 point, x int) value {
 	}
 }
 
-func invokeTranslateLine(ir *interpreter, args []value) (value, error) {
+func invokeTranslateLine(ir *interpreter, args []Value) (Value, error) {
 	ln, pt := args[0].(line), args[1].(point)
 	return line{
 		point1: point{ln.point1.X + pt.X, ln.point1.Y + pt.Y},
@@ -973,12 +973,12 @@ func invokeTranslateLine(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeTranslateRect(ir *interpreter, args []value) (value, error) {
+func invokeTranslateRect(ir *interpreter, args []Value) (Value, error) {
 	rc, pt := args[0].(rect), args[1].(point)
 	return rect(image.Rectangle(rc).Add(image.Point(pt))), nil
 }
 
-func invokeTranslatePolygon(ir *interpreter, args []value) (value, error) {
+func invokeTranslatePolygon(ir *interpreter, args []Value) (Value, error) {
 	poly, pt := args[0].(polygon), args[1].(point)
 	newVertices := make([]point, len(poly.vertices))
 	for i, v := range poly.vertices {
@@ -987,7 +987,7 @@ func invokeTranslatePolygon(ir *interpreter, args []value) (value, error) {
 	return polygon{newVertices}, nil
 }
 
-func invokeTranslateCircle(ir *interpreter, args []value) (value, error) {
+func invokeTranslateCircle(ir *interpreter, args []Value) (Value, error) {
 	cir, pt := args[0].(circle), args[1].(point)
 	return circle{
 		center: point{
@@ -997,7 +997,7 @@ func invokeTranslateCircle(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeClamp(ir *interpreter, args []value) (value, error) {
+func invokeClamp(ir *interpreter, args []Value) (Value, error) {
 	n, min, max := args[0].(number), args[1].(number), args[2].(number)
 	if n < min {
 		n = min
@@ -1008,12 +1008,12 @@ func invokeClamp(ir *interpreter, args []value) (value, error) {
 	return n, nil
 }
 
-func invokeClampRgb(ir *interpreter, args []value) (value, error) {
+func invokeClampRgb(ir *interpreter, args []Value) (Value, error) {
 	col := args[0].(color)
 	return color(lang.Color(col).Clamp()), nil
 }
 
-func invokeCompose(ir *interpreter, args []value) (value, error) {
+func invokeCompose(ir *interpreter, args []Value) (Value, error) {
 	lower, upper := args[0].(color), args[1].(color)
 	lowerA, upperA := lang.Color(lower).ScA(), lang.Color(upper).ScA()
 	inverseUpperA := 1.0 - upperA
@@ -1026,9 +1026,9 @@ func invokeCompose(ir *interpreter, args []value) (value, error) {
 		255.0*a)), nil
 }
 
-func invokeSumList(ir *interpreter, args []value) (value, error) {
+func invokeSumList(ir *interpreter, args []Value) (Value, error) {
 	list := args[0].(list)
-	var sum value
+	var sum Value
 	var err error
 	for _, v := range list.elements {
 		if sum == nil {
@@ -1043,7 +1043,7 @@ func invokeSumList(ir *interpreter, args []value) (value, error) {
 	return sum, nil
 }
 
-func invokeSumKernel(ir *interpreter, args []value) (value, error) {
+func invokeSumKernel(ir *interpreter, args []Value) (Value, error) {
 	kernel := args[0].(kernel)
 	var sum number
 	for _, v := range kernel.values {
@@ -1052,9 +1052,9 @@ func invokeSumKernel(ir *interpreter, args []value) (value, error) {
 	return sum, nil
 }
 
-func invokeOutlineRect(ir *interpreter, args []value) (value, error) {
+func invokeOutlineRect(ir *interpreter, args []Value) (Value, error) {
 	rc := args[0].(rect)
-	lines := make([]value, 4)
+	lines := make([]Value, 4)
 	lines[0] = line{
 		point1: point(rc.Min),
 		point2: point{rc.Max.X, rc.Min.Y},
@@ -1074,9 +1074,9 @@ func invokeOutlineRect(ir *interpreter, args []value) (value, error) {
 	return list{lines}, nil
 }
 
-func invokeOutlinePolygon(ir *interpreter, args []value) (value, error) {
+func invokeOutlinePolygon(ir *interpreter, args []Value) (Value, error) {
 	poly := args[0].(polygon)
-	lines := make([]value, len(poly.vertices))
+	lines := make([]Value, len(poly.vertices))
 
 	for i, vertex := range poly.vertices {
 		inext := i + 1
@@ -1093,10 +1093,10 @@ func invokeOutlinePolygon(ir *interpreter, args []value) (value, error) {
 	return list{lines}, nil
 }
 
-func invokeOutlineCircle(ir *interpreter, args []value) (value, error) {
+func invokeOutlineCircle(ir *interpreter, args []Value) (Value, error) {
 	cir := args[0].(circle)
 	deg2rad := math.Pi / 180
-	var lines []value
+	var lines []Value
 	var prevPt point
 
 	for i := 0; i <= 360; i++ {
@@ -1117,17 +1117,17 @@ func invokeOutlineCircle(ir *interpreter, args []value) (value, error) {
 	return list{lines}, nil
 }
 
-func invokeRgb2Hsv(ir *interpreter, args []value) (value, error) {
+func invokeRgb2Hsv(ir *interpreter, args []Value) (Value, error) {
 	rgb := lang.Color(args[0].(color))
 	return hsvFromRgb(rgb), nil
 }
 
-func invokeHsv2Rgb(ir *interpreter, args []value) (value, error) {
+func invokeHsv2Rgb(ir *interpreter, args []Value) (Value, error) {
 	hsv := args[0].(colorHsv)
 	return color(hsv.rgb()), nil
 }
 
-func invokeHsv(ir *interpreter, args []value) (value, error) {
+func invokeHsv(ir *interpreter, args []Value) (Value, error) {
 	return colorHsv{
 		h: lang.Number(args[0].(number)),
 		s: lang.Number(args[1].(number)),
@@ -1135,15 +1135,15 @@ func invokeHsv(ir *interpreter, args []value) (value, error) {
 	}, nil
 }
 
-func invokeCompare(ir *interpreter, args []value) (value, error) {
+func invokeCompare(ir *interpreter, args []Value) (Value, error) {
 	return args[0].compare(args[1])
 }
 
-func invokePlot(ir *interpreter, args []value) (value, error) {
+func invokePlot(ir *interpreter, args []Value) (Value, error) {
 	iterable := args[0]
 	color := lang.Color(args[1].(color))
 
-	err := iterable.iterate(func(v value) error {
+	err := iterable.iterate(func(v Value) error {
 		pt, ok := v.(point)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected point, but found %s", reflect.TypeOf(v))

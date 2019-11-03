@@ -26,9 +26,9 @@ func Interpret(program parser.Program, bitmap BitmapContext) error {
 	return nil
 }
 
-type scope map[string]value
+type scope map[string]Value
 type functionScope struct {
-	retval value
+	retval Value
 }
 
 type interpreter struct {
@@ -88,14 +88,14 @@ func (ir *interpreter) popFunctionScope(scopeCount int) {
 	ir.idents = ir.idents[:scopeCount]
 }
 
-func (ir *interpreter) getReturnValue() value {
+func (ir *interpreter) getReturnValue() Value {
 	if len(ir.functionScopes) <= 0 {
 		return nil
 	}
 	return ir.functionScopes[len(ir.functionScopes)-1].retval
 }
 
-func (ir interpreter) findIdent(ident string) (value, bool) {
+func (ir interpreter) findIdent(ident string) (Value, bool) {
 	last := len(ir.idents) - 1
 	for i := range ir.idents {
 		scope := ir.idents[last-i]
@@ -107,7 +107,7 @@ func (ir interpreter) findIdent(ident string) (value, bool) {
 	return nil, false
 }
 
-func (ir *interpreter) newIdent(ident string, val value) error {
+func (ir *interpreter) newIdent(ident string, val Value) error {
 	ir.idents[len(ir.idents)-1][ident] = val
 	return nil
 }
@@ -116,7 +116,7 @@ func (ir *interpreter) removeIdent(ident string) {
 	delete(ir.idents[len(ir.idents)-1], ident)
 }
 
-func (ir *interpreter) assignIdent(ident string, val value) error {
+func (ir *interpreter) assignIdent(ident string, val Value) error {
 	last := len(ir.idents) - 1
 	for i := range ir.idents {
 		scope := ir.idents[last-i]
@@ -248,7 +248,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.Ident, nil)
-		return collVal.iterate(func(val value) error {
+		return collVal.iterate(func(val Value) error {
 			ir.assignIdent(s.Ident, val)
 			if err := ir.visitStmtList(s.Stmts); err != nil {
 				return err
@@ -342,9 +342,9 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 	return nil
 }
 
-type binaryExprVisitor func(left value, right value) (value, error)
+type binaryExprVisitor func(left Value, right Value) (Value, error)
 
-func (ir *interpreter) visitBinaryExpr(left parser.Expression, right parser.Expression, visitor binaryExprVisitor) (value, error) {
+func (ir *interpreter) visitBinaryExpr(left parser.Expression, right parser.Expression, visitor binaryExprVisitor) (Value, error) {
 	leftVal, err := ir.visitExpr(left)
 	if err != nil {
 		return nil, err
@@ -356,7 +356,7 @@ func (ir *interpreter) visitBinaryExpr(left parser.Expression, right parser.Expr
 	return visitor(leftVal, rightVal)
 }
 
-func (ir *interpreter) visitExpr(expr parser.Expression) (value, error) {
+func (ir *interpreter) visitExpr(expr parser.Expression) (Value, error) {
 	v, err := ir.visitExprInner(expr)
 	if err != nil {
 		return nil, err
@@ -367,7 +367,7 @@ func (ir *interpreter) visitExpr(expr parser.Expression) (value, error) {
 	return v, nil
 }
 
-func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
+func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 	switch e := expr.(type) {
 	case parser.TernaryExpr:
 		condVal, err := ir.visitExpr(e.Cond)
@@ -428,7 +428,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		return boolean(b), nil
 
 	case parser.EqExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.FalseVal), nil
@@ -438,7 +438,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.NeqExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.TrueVal), nil
@@ -448,7 +448,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.GtExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.FalseVal), nil
@@ -458,7 +458,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.GeExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.FalseVal), nil
@@ -468,7 +468,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.LtExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.FalseVal), nil
@@ -478,7 +478,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.LeExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			cmp, _ := left.compare(right)
 			if cmp == nil {
 				return boolean(lang.FalseVal), nil
@@ -488,37 +488,37 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		})
 
 	case parser.ConcatExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.concat(right)
 		})
 
 	case parser.AddExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.add(right)
 		})
 
 	case parser.SubExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.sub(right)
 		})
 
 	case parser.MulExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.mul(right)
 		})
 
 	case parser.DivExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.div(right)
 		})
 
 	case parser.ModExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.mod(right)
 		})
 
 	case parser.InExpr:
-		return ir.visitBinaryExpr(e.Left, e.Right, func(left value, right value) (value, error) {
+		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
 			return left.in(right)
 		})
 
@@ -537,7 +537,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		return leftVal.not()
 
 	case parser.PosExpr:
-		return ir.visitBinaryExpr(e.X, e.Y, func(xVal value, yVal value) (value, error) {
+		return ir.visitBinaryExpr(e.X, e.Y, func(xVal Value, yVal Value) (Value, error) {
 			x, ok := xVal.(number)
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: expected pos(Number, Number)")
@@ -616,7 +616,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 		return color(ir.bitmap.GetPixel(pos.X, pos.Y)), nil
 
 	case parser.InvokeExpr:
-		args := []value{}
+		args := []Value{}
 		for _, arg := range e.Args {
 			arg, err := ir.visitExpr(arg)
 			if err != nil {
@@ -670,7 +670,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 
 	case parser.ListExpr:
 		l := list{
-			elements: make([]value, len(e.Elements)),
+			elements: make([]Value, len(e.Elements)),
 		}
 		for i, elem := range e.Elements {
 			val, err := ir.visitExpr(elem)
@@ -699,7 +699,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (value, error) {
 	return nil, fmt.Errorf("unknown expression type %s", reflect.TypeOf(expr))
 }
 
-func (ir *interpreter) invokeFunc(name string, arguments []value) (value, error) {
+func (ir *interpreter) invokeFunc(name string, arguments []Value) (Value, error) {
 	val, ok, err := ir.invokeBuiltinFunction(name, arguments)
 	if err != nil {
 		return nil, err
@@ -714,7 +714,7 @@ func (ir *interpreter) invokeFunc(name string, arguments []value) (value, error)
 	return ir.invokeFunctionExpr(name, fval, arguments)
 }
 
-func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []value) (value, error) {
+func (ir *interpreter) invokeFunctionExpr(name string, val Value, arguments []Value) (Value, error) {
 	fn, ok := val.(function)
 	if !ok {
 		return nil, fmt.Errorf("%s is invoked like a function, but refers to a %s", name, reflect.TypeOf(val))
@@ -737,7 +737,7 @@ func (ir *interpreter) invokeFunctionExpr(name string, val value, arguments []va
 	return ir.getReturnValue(), nil
 }
 
-func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (value, bool, error) {
+func (ir *interpreter) invokeBuiltinFunction(name string, arguments []Value) (Value, bool, error) {
 	fs, ok := functions[name]
 	if !ok {
 		return nil, false, nil
@@ -760,7 +760,7 @@ func (ir *interpreter) invokeBuiltinFunction(name string, arguments []value) (va
 	return nil, false, fmt.Errorf("no fitting overload for function '%s': %s. possible overloads:\n%s", name, err, buffer.String())
 }
 
-func validateArguments(arguments []value, params []reflect.Type) error {
+func validateArguments(arguments []Value, params []reflect.Type) error {
 	argsCount := len(arguments)
 	paramsCount := len(params)
 	discreteArgsCount := argsCount
@@ -796,6 +796,6 @@ func validateArguments(arguments []value, params []reflect.Type) error {
 	return nil
 }
 
-func hasMatchingType(v value, typ reflect.Type) bool {
+func hasMatchingType(v Value, typ reflect.Type) bool {
 	return typ == valueType || reflect.TypeOf(v) == typ
 }

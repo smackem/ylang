@@ -6,8 +6,8 @@ import (
 
 func Test_hashMap_indexAssign(t *testing.T) {
 	type args struct {
-		key value
-		val value
+		key Value
+		val Value
 	}
 	tests := []struct {
 		name string

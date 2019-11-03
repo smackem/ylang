@@ -1,0 +1,55 @@
+syntax = "proto3";
+package emitter;
+
+enum OpCode {
+    NOP = 0;            // do nothing
+    PUSH = 1;           // push arg
+    POP = 2;            // pop 1
+    LOCAL = 3;          // reserve space at int_arg
+    LOAD = 4;           // load value at int_arg
+    STORE = 5;          // pop value, store at int_arg
+    STORE_AT = 6;       // pop value, pop index, pop recvr, recvr[index] = value
+    SET_PIXEL = 7;      // pop color, pop point, surface[point] = color
+    CALL = 8;           // call int_arg (?)
+    BR = 9;             // branch to int_arg
+    BR_FALSE = 10;      // pop value, branch to int_arg if value == false
+    LOG = 11;           // pop int_arg values and print to out
+    RET = 12;           // pop value and return from function
+    OR = 13;            // pop v2 and v1, push v1 or v2
+    AND = 14;           // pop v2 and v1, push v1 and v2
+    EQ = 15;            // pop v2 and v1, push v1 == v2
+    GT = 16;            // pop v2 and v1, push v1 > v2
+    GE = 17;            // pop v2 and v1, push v1 >= v2
+    LT = 18;            // pop v2 and v1, push v1 >= v2
+    LE = 19;            // pop v2 and v1, push v1 >= v2
+    CONCAT = 20;        // pop v2 and v1, push v1 :: v2
+    ADD = 21;           // pop v2 and v1, push v1 + v2
+    SUB = 22;           // pop v2 and v1, push v1 - v2
+    MUL = 23;           // pop v2 and v1, push v1 * v2
+    DIV = 24;           // pop v2 and v1, push v1 / v2
+    MOD = 25;           // pop v2 and v1, push v1 % v2
+    IN = 26;            // pop v2 and v1, push v1 in v2
+    NEG = 27;           // pop value, push -value
+    NOT = 28;           // pop value, push (not value)
+    MK_POINT = 29;      // pop v2 and v1, push point(v1, v2)
+    CALL_MEMBER = 30;   //
+    INDEX = 31;
+    INDEX_RANGE = 32;
+    GET_PIXEL = 33;
+    MK_KERNEL = 34;
+    MK_HASHMAP = 35;
+    MK_LIST = 36;
+}
+
+message Instruction {
+    OpCode opcode = 1;
+    oneof arg {
+        int32 integer = 2;
+        float float = 3;
+        string str = 4;
+    }
+}
+
+message Program {
+    repeated Instruction instructions = 1;
+}

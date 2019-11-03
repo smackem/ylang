@@ -9,13 +9,13 @@ import (
 
 func TestNumber_compare(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -59,13 +59,13 @@ func TestNumber_compare(t *testing.T) {
 
 func TestNumber_add(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -110,13 +110,13 @@ func TestNumber_add(t *testing.T) {
 
 func TestNumber_sub(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -149,13 +149,13 @@ func TestNumber_sub(t *testing.T) {
 
 func TestNumber_mul(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -188,13 +188,13 @@ func TestNumber_mul(t *testing.T) {
 
 func TestNumber_div(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -227,13 +227,13 @@ func TestNumber_div(t *testing.T) {
 
 func TestNumber_mod(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		n       number
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -268,7 +268,7 @@ func TestNumber_neg(t *testing.T) {
 	tests := []struct {
 		name    string
 		n       number
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -293,13 +293,13 @@ func TestNumber_neg(t *testing.T) {
 
 func TestString_add(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		s       str
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -325,13 +325,13 @@ func TestString_add(t *testing.T) {
 
 func TestPosition_add(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -370,13 +370,13 @@ func TestPosition_add(t *testing.T) {
 
 func TestPosition_sub(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -415,13 +415,13 @@ func TestPosition_sub(t *testing.T) {
 
 func TestPosition_mul(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -460,13 +460,13 @@ func TestPosition_mul(t *testing.T) {
 
 func TestPosition_div(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -505,13 +505,13 @@ func TestPosition_div(t *testing.T) {
 
 func TestPosition_mod(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -550,13 +550,13 @@ func TestPosition_mod(t *testing.T) {
 
 func TestPosition_in(t *testing.T) {
 	type args struct {
-		other value
+		other Value
 	}
 	tests := []struct {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -596,7 +596,7 @@ func TestPosition_neg(t *testing.T) {
 	tests := []struct {
 		name    string
 		p       point
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		{
@@ -628,7 +628,7 @@ func TestPosition_at(t *testing.T) {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		// TODO: add test cases.
@@ -655,7 +655,7 @@ func TestPosition_property(t *testing.T) {
 		name    string
 		p       point
 		args    args
-		want    value
+		want    Value
 		wantErr bool
 	}{
 		// TODO: add test cases.

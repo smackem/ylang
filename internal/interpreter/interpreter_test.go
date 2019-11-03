@@ -176,7 +176,7 @@ func Test_interpret(t *testing.T) {
 			src:  "l := list(4, 123)",
 			want: scope{
 				"l": list{
-					elements: []value{number(123), number(123), number(123), number(123)},
+					elements: []Value{number(123), number(123), number(123), number(123)},
 				},
 			},
 		},
@@ -238,7 +238,7 @@ func Test_interpret(t *testing.T) {
 			src:  "vs := polygon(0;0, 100;0, 100;100).vertices",
 			want: scope{
 				"vs": list{
-					elements: []value{
+					elements: []Value{
 						point{0, 0},
 						point{100, 0},
 						point{100, 100},
@@ -315,7 +315,7 @@ func Test_interpret(t *testing.T) {
 			src:  `l := [1, 2, 3]`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2), number(3)},
+					elements: []Value{number(1), number(2), number(3)},
 				},
 			},
 		},
@@ -324,7 +324,7 @@ func Test_interpret(t *testing.T) {
 			src:  `l := []`,
 			want: scope{
 				"l": list{
-					elements: []value{},
+					elements: []Value{},
 				},
 			},
 		},
@@ -334,7 +334,7 @@ func Test_interpret(t *testing.T) {
 				  v := l[0]`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2), number(3)},
+					elements: []Value{number(1), number(2), number(3)},
 				},
 				"v": number(1),
 			},
@@ -345,7 +345,7 @@ func Test_interpret(t *testing.T) {
 				  v := l[-1]`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2), number(3)},
+					elements: []Value{number(1), number(2), number(3)},
 				},
 				"v": number(3),
 			},
@@ -359,19 +359,19 @@ func Test_interpret(t *testing.T) {
 				  s4 := l[l.count-2 .. l.count-1]`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2), number(3), number(4)},
+					elements: []Value{number(1), number(2), number(3), number(4)},
 				},
 				"s1": list{
-					elements: []value{number(1), number(2), number(3)},
+					elements: []Value{number(1), number(2), number(3)},
 				},
 				"s2": list{
-					elements: []value{number(3), number(4)},
+					elements: []Value{number(3), number(4)},
 				},
 				"s3": list{
-					elements: []value{number(1)},
+					elements: []Value{number(1)},
 				},
 				"s4": list{
-					elements: []value{number(3), number(4)},
+					elements: []Value{number(3), number(4)},
 				},
 			},
 		},
@@ -381,7 +381,7 @@ func Test_interpret(t *testing.T) {
 				  l[0] = 1`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1)},
+					elements: []Value{number(1)},
 				},
 			},
 		},
@@ -391,7 +391,7 @@ func Test_interpret(t *testing.T) {
 				  l = l :: 1 :: 2`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2)},
+					elements: []Value{number(1), number(2)},
 				},
 			},
 		},
@@ -401,7 +401,7 @@ func Test_interpret(t *testing.T) {
 				  l = l :: [3, 4]`,
 			want: scope{
 				"l": list{
-					elements: []value{number(1), number(2), number(3), number(4)},
+					elements: []Value{number(1), number(2), number(3), number(4)},
 				},
 			},
 		},
@@ -469,7 +469,7 @@ func Test_interpret(t *testing.T) {
 				  ls2 := sort(ls1, fn(a, b) -> compare(a.x, b.x))`,
 			want: scope{
 				"ls1": list{
-					elements: []value{
+					elements: []Value{
 						point{150, 10},
 						point{12, 102},
 						point{200, 23},
@@ -477,7 +477,7 @@ func Test_interpret(t *testing.T) {
 					},
 				},
 				"ls2": list{
-					elements: []value{
+					elements: []Value{
 						point{1, 404},
 						point{12, 102},
 						point{150, 10},
@@ -521,7 +521,7 @@ func Test_validateArguments(t *testing.T) {
 	boolType := reflect.TypeOf(boolean(false))
 	numberSliceType := reflect.TypeOf([]number{})
 	type args struct {
-		arguments []value
+		arguments []Value
 		params    []reflect.Type
 	}
 	tests := []struct {
@@ -536,7 +536,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_ok",
 			args: args{
-				arguments: []value{number(1), number(2)},
+				arguments: []Value{number(1), number(2)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: false,
@@ -544,7 +544,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_any_ok",
 			args: args{
-				arguments: []value{number(1), number(2)},
+				arguments: []Value{number(1), number(2)},
 				params:    []reflect.Type{numberType, valueType},
 			},
 			wantErr: false,
@@ -552,7 +552,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_error_toofew",
 			args: args{
-				arguments: []value{number(1)},
+				arguments: []Value{number(1)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -560,7 +560,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_error_toomany",
 			args: args{
-				arguments: []value{number(1), number(2), number(3)},
+				arguments: []Value{number(1), number(2), number(3)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -568,7 +568,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "type_mismatch",
 			args: args{
-				arguments: []value{number(1), boolean(false)},
+				arguments: []Value{number(1), boolean(false)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -576,7 +576,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "mixed_types",
 			args: args{
-				arguments: []value{number(1), boolean(false)},
+				arguments: []Value{number(1), boolean(false)},
 				params:    []reflect.Type{numberType, boolType},
 			},
 			wantErr: false,
@@ -584,7 +584,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_ok",
 			args: args{
-				arguments: []value{number(1), number(2), number(3)},
+				arguments: []Value{number(1), number(2), number(3)},
 				params:    []reflect.Type{numberSliceType},
 			},
 			wantErr: false,
@@ -592,7 +592,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_empty_ok",
 			args: args{
-				arguments: []value{},
+				arguments: []Value{},
 				params:    []reflect.Type{numberSliceType},
 			},
 			wantErr: false,
@@ -600,7 +600,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_ok",
 			args: args{
-				arguments: []value{boolean(true), number(1), number(2)},
+				arguments: []Value{boolean(true), number(1), number(2)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -608,7 +608,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_single_ok",
 			args: args{
-				arguments: []value{boolean(true), number(1)},
+				arguments: []Value{boolean(true), number(1)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -616,7 +616,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_empty_ok",
 			args: args{
-				arguments: []value{boolean(true)},
+				arguments: []Value{boolean(true)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -624,7 +624,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_empty_error",
 			args: args{
-				arguments: []value{},
+				arguments: []Value{},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: true,
@@ -632,7 +632,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_type_mismatch",
 			args: args{
-				arguments: []value{boolean(true), number(1), number(2), boolean(false)},
+				arguments: []Value{boolean(true), number(1), number(2), boolean(false)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: true,
@@ -649,7 +649,7 @@ func Test_validateArguments(t *testing.T) {
 
 func Test_hasMatchingType(t *testing.T) {
 	type args struct {
-		v   value
+		v   Value
 		typ reflect.Type
 	}
 	tests := []struct {

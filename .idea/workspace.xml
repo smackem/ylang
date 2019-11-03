@@ -2,49 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/interpreter/color.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/interpreter/number.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/interpreter/util.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/interpreter/value.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/parser/ast.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/program/compiler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/pub/script/ylang.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/emitter/emitter.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/emitter/ylang.pb.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/emitter/ylang.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/ast.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/boolean.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/boolean_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/circle.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/circle_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/color.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/color_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/function.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/function.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/hashmap.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/hashmap_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/hsv.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hsv.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/interpreter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/kernel.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/kernel.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/lang.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lang/lang.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/lexer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lexer/lexer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/lexer_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lexer/lexer_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/line.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/line.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/list.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/nilval.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/nilval.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/number.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/number_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/parser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/parser/parser.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/parser_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/parser/parser_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/point.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/point.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/polygon.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/polygon.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/rect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/rect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/str.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/str.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/value.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lang/value_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ylang.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ylang.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/boolean.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/circle.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/color.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/function.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/function.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/hashmap.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/hsv.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hsv.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/kernel.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/kernel.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/line.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/line.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/list.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/nilval.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/nilval.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/number.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/point.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/point.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/polygon.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/polygon.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/rect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/rect.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/str.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/str.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/util.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/value.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/value_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/program/compiler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/program/program.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -89,6 +74,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="GO_FMT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.import.settings.migrated" value="true" />
@@ -98,6 +84,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/runtime" />
       <recent name="$PROJECT_DIR$/internal/interpreter" />
       <recent name="$PROJECT_DIR$/internal/parser" />
       <recent name="$PROJECT_DIR$/internal/compiler" />
@@ -116,7 +103,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.BUILD github.com/smackem/ylang">
+  <component name="RunManager" selected="Go Test.go test ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -209,5 +196,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
   </component>
 </project>

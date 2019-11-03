@@ -8,7 +8,7 @@ import (
 
 var falseVal = boolean(false)
 
-func baseProperty(val value, ident string) (value, error) {
+func baseProperty(val Value, ident string) (Value, error) {
 	switch ident {
 	case "__type":
 		return str(val.runtimeTypeName()), nil
@@ -23,7 +23,7 @@ func indexAt(n number, count int) int {
 	return int(n)
 }
 
-func formatValue(val value, indent string, leadingIndent bool) string {
+func formatValue(val Value, indent string, leadingIndent bool) string {
 	buf := strings.Builder{}
 	if leadingIndent {
 		buf.WriteString(indent)
@@ -80,7 +80,7 @@ func findMaxWidth(values []lang.Number) int {
 
 // implement sort.Interface for slice of values
 
-type valueSlice []value
+type valueSlice []Value
 
 func (s valueSlice) Len() int { return len(s) }
 func (s valueSlice) Less(i int, j int) bool {

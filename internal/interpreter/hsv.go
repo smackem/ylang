@@ -120,7 +120,7 @@ func (hsv colorHsv) rgb() lang.Color {
 	return lang.NewSrgba(r, g, b, 1.0)
 }
 
-func (hsv colorHsv) compare(other value) (value, error) {
+func (hsv colorHsv) compare(other Value) (Value, error) {
 	if r, ok := other.(colorHsv); ok {
 		if hsv == r {
 			return number(0), nil
@@ -129,43 +129,43 @@ func (hsv colorHsv) compare(other value) (value, error) {
 	return boolean(lang.FalseVal), nil
 }
 
-func (hsv colorHsv) add(other value) (value, error) {
+func (hsv colorHsv) add(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv + %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) sub(other value) (value, error) {
+func (hsv colorHsv) sub(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv - %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) mul(other value) (value, error) {
+func (hsv colorHsv) mul(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv * %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) div(other value) (value, error) {
+func (hsv colorHsv) div(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv / %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) mod(other value) (value, error) {
+func (hsv colorHsv) mod(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv %% %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) in(other value) (value, error) {
+func (hsv colorHsv) in(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv in %s not supported", reflect.TypeOf(other))
 }
 
-func (hsv colorHsv) neg() (value, error) {
+func (hsv colorHsv) neg() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: '-hsv' not supported")
 }
 
-func (hsv colorHsv) not() (value, error) {
+func (hsv colorHsv) not() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not hsv' not supported")
 }
 
-func (hsv colorHsv) at(bitmap BitmapContext) (value, error) {
+func (hsv colorHsv) at(bitmap BitmapContext) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: @hsv not supported")
 }
 
-func (hsv colorHsv) property(ident string) (value, error) {
+func (hsv colorHsv) property(ident string) (Value, error) {
 	switch ident {
 	case "h", "hue":
 		return number(hsv.h), nil
@@ -181,19 +181,19 @@ func (hsv colorHsv) printStr() string {
 	return fmt.Sprintf("hsv(h:%s, s:%s, v:%s)", number(hsv.h).printStr(), number(hsv.s).printStr(), number(hsv.v).printStr())
 }
 
-func (hsv colorHsv) iterate(visit func(value) error) error {
+func (hsv colorHsv) iterate(visit func(Value) error) error {
 	return fmt.Errorf("type mismatch: iteration over hsv not supported")
 }
 
-func (hsv colorHsv) index(index value) (value, error) {
+func (hsv colorHsv) index(index Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv[index] not supported")
 }
 
-func (hsv colorHsv) indexRange(lower, upper value) (value, error) {
+func (hsv colorHsv) indexRange(lower, upper Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv[lower..upper] not supported")
 }
 
-func (hsv colorHsv) indexAssign(index value, val value) error {
+func (hsv colorHsv) indexAssign(index Value, val Value) error {
 	return fmt.Errorf("type mismatch: hsv[%s] not supported", reflect.TypeOf(index))
 }
 
@@ -201,6 +201,6 @@ func (hsv colorHsv) runtimeTypeName() string {
 	return "hsv"
 }
 
-func (hsv colorHsv) concat(val value) (value, error) {
+func (hsv colorHsv) concat(val Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: hsv :: %s not supported", reflect.TypeOf(val))
 }

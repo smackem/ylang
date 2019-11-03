@@ -1,22 +1,22 @@
 package interpreter
 
-type value interface {
-	compare(other value) (value, error)
-	add(other value) (value, error)
-	sub(other value) (value, error)
-	mul(other value) (value, error)
-	div(other value) (value, error)
-	mod(other value) (value, error)
-	in(other value) (value, error)
-	neg() (value, error)
-	not() (value, error)
-	at(bitmap BitmapContext) (value, error)
-	property(ident string) (value, error)
+type Value interface {
+	compare(other Value) (Value, error)
+	add(other Value) (Value, error)
+	sub(other Value) (Value, error)
+	mul(other Value) (Value, error)
+	div(other Value) (Value, error)
+	mod(other Value) (Value, error)
+	in(other Value) (Value, error)
+	neg() (Value, error)
+	not() (Value, error)
+	at(bitmap BitmapContext) (Value, error)
+	property(ident string) (Value, error)
 	printStr() string
-	iterate(visit func(value) error) error
-	index(index value) (value, error)
-	indexRange(lower, upper value) (value, error)
-	indexAssign(index value, val value) error
+	iterate(visit func(Value) error) error
+	index(index Value) (Value, error)
+	indexRange(lower, upper Value) (Value, error)
+	indexAssign(index Value, val Value) error
 	runtimeTypeName() string
-	concat(val value) (value, error)
+	concat(val Value) (Value, error)
 }

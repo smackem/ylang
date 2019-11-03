@@ -12,7 +12,7 @@ type kernel struct {
 	values []lang.Number
 }
 
-func (k kernel) compare(other value) (value, error) {
+func (k kernel) compare(other Value) (Value, error) {
 	if r, ok := other.(kernel); ok {
 		if reflect.DeepEqual(k, r) {
 			return number(0), nil
@@ -21,43 +21,43 @@ func (k kernel) compare(other value) (value, error) {
 	return nil, nil
 }
 
-func (k kernel) add(other value) (value, error) {
+func (k kernel) add(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel + %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) sub(other value) (value, error) {
+func (k kernel) sub(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel - %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) mul(other value) (value, error) {
+func (k kernel) mul(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel * %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) div(other value) (value, error) {
+func (k kernel) div(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel / %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) mod(other value) (value, error) {
+func (k kernel) mod(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel %% %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) in(other value) (value, error) {
+func (k kernel) in(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel in %s not supported", reflect.TypeOf(other))
 }
 
-func (k kernel) neg() (value, error) {
+func (k kernel) neg() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: -kernel not supported")
 }
 
-func (k kernel) not() (value, error) {
+func (k kernel) not() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not kernel' not supported")
 }
 
-func (k kernel) at(bitmap BitmapContext) (value, error) {
+func (k kernel) at(bitmap BitmapContext) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: @kernel not supported")
 }
 
-func (k kernel) property(ident string) (value, error) {
+func (k kernel) property(ident string) (Value, error) {
 	switch ident {
 	case "w", "width":
 		return number(k.width), nil
@@ -73,7 +73,7 @@ func (k kernel) printStr() string {
 	return fmt.Sprintf("kernel(width: %d, height: %d)", k.width, k.height)
 }
 
-func (k kernel) iterate(visit func(value) error) error {
+func (k kernel) iterate(visit func(Value) error) error {
 	for _, v := range k.values {
 		if err := visit(number(v)); err != nil {
 			return err
@@ -82,7 +82,7 @@ func (k kernel) iterate(visit func(value) error) error {
 	return nil
 }
 
-func (k kernel) index(index value) (value, error) {
+func (k kernel) index(index Value) (Value, error) {
 	switch i := index.(type) {
 	case number:
 		return number(k.values[indexAt(i, len(k.values))]), nil
@@ -92,11 +92,11 @@ func (k kernel) index(index value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: expected kernel[number] or kernel[point] but found kernel[%s]", reflect.TypeOf(index))
 }
 
-func (k kernel) indexRange(lower, upper value) (value, error) {
+func (k kernel) indexRange(lower, upper Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel[lower..upper] not supported")
 }
 
-func (k kernel) indexAssign(index value, val value) error {
+func (k kernel) indexAssign(index Value, val Value) error {
 	nval, ok := val.(number)
 	if !ok {
 		return fmt.Errorf("type mismatch: expected kernel[index] = number but found kernel[index] = %s", reflect.TypeOf(val))
@@ -116,6 +116,6 @@ func (k kernel) runtimeTypeName() string {
 	return "kernel"
 }
 
-func (k kernel) concat(val value) (value, error) {
+func (k kernel) concat(val Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: kernel :: [%s] not supported", reflect.TypeOf(val))
 }

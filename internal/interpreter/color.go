@@ -8,7 +8,7 @@ import (
 
 type color lang.Color
 
-func (c color) compare(other value) (value, error) {
+func (c color) compare(other Value) (Value, error) {
 	if r, ok := other.(color); ok {
 		if c == r {
 			return number(0), nil
@@ -17,7 +17,7 @@ func (c color) compare(other value) (value, error) {
 	return nil, nil
 }
 
-func (c color) add(other value) (value, error) {
+func (c color) add(other Value) (Value, error) {
 	switch r := other.(type) {
 	case number:
 		rn := lang.Number(r)
@@ -28,7 +28,7 @@ func (c color) add(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color + %s not supported", reflect.TypeOf(other))
 }
 
-func (c color) sub(other value) (value, error) {
+func (c color) sub(other Value) (Value, error) {
 	switch r := other.(type) {
 	case number:
 		rn := lang.Number(r)
@@ -39,7 +39,7 @@ func (c color) sub(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color - %s not supported", reflect.TypeOf(other))
 }
 
-func (c color) mul(other value) (value, error) {
+func (c color) mul(other Value) (Value, error) {
 	cc := lang.Color(c)
 	switch r := other.(type) {
 	case number:
@@ -52,7 +52,7 @@ func (c color) mul(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color * %s not supported", reflect.TypeOf(other))
 }
 
-func (c color) div(other value) (value, error) {
+func (c color) div(other Value) (Value, error) {
 	cc := lang.Color(c)
 	switch r := other.(type) {
 	case number:
@@ -65,7 +65,7 @@ func (c color) div(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color / %s not supported", reflect.TypeOf(other))
 }
 
-func (c color) mod(other value) (value, error) {
+func (c color) mod(other Value) (Value, error) {
 	switch r := other.(type) {
 	case number:
 		rn := lang.Number(r)
@@ -77,23 +77,23 @@ func (c color) mod(other value) (value, error) {
 	return nil, fmt.Errorf("type mismatch: color %% %s not supported", reflect.TypeOf(other))
 }
 
-func (c color) in(other value) (value, error) {
+func (c color) in(other Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: 'color in' not supported")
 }
 
-func (c color) neg() (value, error) {
+func (c color) neg() (Value, error) {
 	return color(lang.NewRgba(255-c.R, 255-c.G, 255-c.B, c.A)), nil
 }
 
-func (c color) not() (value, error) {
+func (c color) not() (Value, error) {
 	return nil, fmt.Errorf("type mismatch: 'not color' not supported")
 }
 
-func (c color) at(bitmap BitmapContext) (value, error) {
+func (c color) at(bitmap BitmapContext) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: @color not supported")
 }
 
-func (c color) property(ident string) (value, error) {
+func (c color) property(ident string) (Value, error) {
 	switch ident {
 	case "r", "red":
 		return number(c.R), nil
@@ -123,19 +123,19 @@ func (c color) printStr() string {
 	return fmt.Sprintf("rgba(%g,%g,%g:%g)", c.R, c.G, c.B, c.A)
 }
 
-func (c color) iterate(visit func(value) error) error {
+func (c color) iterate(visit func(Value) error) error {
 	return fmt.Errorf("cannot iterate over color")
 }
 
-func (c color) index(index value) (value, error) {
+func (c color) index(index Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: color[index] not supported")
 }
 
-func (c color) indexRange(lower, upper value) (value, error) {
+func (c color) indexRange(lower, upper Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: color[lower..upper] not supported")
 }
 
-func (c color) indexAssign(index value, val value) error {
+func (c color) indexAssign(index Value, val Value) error {
 	return fmt.Errorf("type mismatch: color[%s] not supported", reflect.TypeOf(index))
 }
 
@@ -143,6 +143,6 @@ func (c color) runtimeTypeName() string {
 	return "color"
 }
 
-func (c color) concat(val value) (value, error) {
+func (c color) concat(val Value) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: color :: [%s] not supported", reflect.TypeOf(val))
 }
