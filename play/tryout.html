@@ -4,7 +4,38 @@
     <meta charset="UTF-8">
     <title>ylang tryout</title>
 </head>
-<body>
+<body onload="loadImage()">
+    <div>
+        <canvas id="canvas" width="600" height="400" style="border:1px solid #d3d3d3;"></canvas>
+    </div>
+    <div>
+        <img src="fish.jpg" id="image" />
+    </div>
+    <script src="../res/pub/script/ylang.js"></script>
+    <script src="../out.js"></script>
+    <script>
+        function loadImage() {
+            let canvas = document.getElementById('canvas');
+            let ctx = canvas.getContext('2d');
+            let imageObj = new Image();
+            ctx.font = "18px Arial";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillText("Loading...", 10, 50);
 
+            imageObj.onload = function() {
+                canvas.width = imageObj.width;
+                canvas.height = imageObj.height;
+                ctx.drawImage(imageObj, 0, 0);
+                render(ctx, canvas.width, canvas.height);
+            };
+            imageObj.src = 'fish.jpg';
+        }
+
+        function render(ctx, width, height) {
+            let surface = new Surface(ctx, width, height);
+            ylangExecute(surface);
+            ctx.putImageData(surface.getImageData(), 0, 0);
+        }
+    </script>
 </body>
 </html>

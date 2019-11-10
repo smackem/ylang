@@ -1,31 +1,3 @@
-a := 100
-b := 100
-c := a + b
-
-if c > 0 {
-    log(a, b, c, c > 0)
-}
-
-for i in 0 .. 2 .. 100 {
-    log("i:", i)
-}
-
-f := fn(x) -> a - x
-
-g := fn(y) {
-    if y > 50 {
-        return "50"
-    }
-    return 23;34
-}
-
-pt := 100;200
-@pt = #aabbcc:ff
-
-color := @(23;34)
-
-map := {
-    line: line(11;12, 55;66),
-    thickness: 4,
-    meth: fn() -> "hello",
+for pt in Bounds {
+    @pt = #00ccff * @pt.intensity01
 }

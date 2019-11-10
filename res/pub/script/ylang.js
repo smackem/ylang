@@ -21,32 +21,32 @@ function Color(r, g, b, a) {
     });
     Object.defineProperty(this, "i01", {
         get() {
-            return 255.0 / intensity();
+            return intensity() / 255.0;
         }
     });
     Object.defineProperty(this, "intensity01", {
         get() {
-            return 255.0 / intensity();
+            return intensity() / 255.0;
         }
     });
     Object.defineProperty(this, "r01", {
         get() {
-            return 255.0 / self.r;
+            return self.r / 255.0;
         }
     });
     Object.defineProperty(this, "g01", {
         get() {
-            return 255.0 / self.g;
+            return self.g / 255.0;
         }
     });
     Object.defineProperty(this, "b01", {
         get() {
-            return 255.0 / self.b;
+            return self.b / 255.0;
         }
     });
     Object.defineProperty(this, "a01", {
         get() {
-            return 255.0 / self.a;
+            return self.a / 255.0;
         }
     });
 
@@ -56,7 +56,7 @@ function Color(r, g, b, a) {
 }
 
 function color01(r01, g01, b01, a01) {
-    return new Color(r01 * 255, g01 * 255, b01 * 255, a01 * 255);
+    return new Color(r01 * 255.0, g01 * 255.0, b01 * 255.0, a01 * 255.0);
 }
 
 function Point(x, y) {
@@ -270,22 +270,44 @@ const Op = {
     },
 };
 
-function Surface(canvas, width, height) {
+function Surface(context, width, height) {
     const self = this;
-    let context = canvas.getContext('2d');
     let imgdata = context.getImageData(0, 0, width, height);
     let pixels = imgdata.data;
 
-    self.getPixel = function (pt) {
-        let i = pt.y * width + pt.x;
-        return new Color(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]);
+    self.width = function () {
+        return width;
+    };
+    self.height = function () {
+        return height;
     };
 
+    self.getPixel = function (pt) {
+        let i = 4 * (pt.y * width + pt.x);
+        return new Color(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]);
+    };
     self.setPixel = function (pt, color) {
-        let i = pt.y * width + pt.x;
+        let i = 4 * (pt.y * width + pt.x);
         pixels[i + 0] = color.r;
         pixels[i + 1] = color.g;
         pixels[i + 2] = color.b;
         pixels[i + 3] = color.a;
     };
+
+    self.getImageData = function () {
+        return imgdata;
+    };
+}
+
+function rgba(r, g, b, a) {
+    return new Color(r, g, b, a);
+}
+function rgb(r, g, b) {
+    return new Color(r, g, b, 255);
+}
+function rgba01(r01, g01, b01, a01) {
+    return color01(r01, g01, b01, a01);
+}
+function rgb01(r01, g01, b01, a01) {
+    return color01(r01, g01, b01, 1.0);
 }

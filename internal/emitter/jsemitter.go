@@ -12,6 +12,8 @@ func EmitJS(program parser.Program) string {
 	js.pushBuffer()
 	js.printf("function ylangExecute(surface) {")
 	js.println()
+	js.print("const Bounds = new Rect(0, 0, surface.width(), surface.height());")
+	js.println()
 	js.visitStmtList(program.Stmts)
 	js.print("}")
 	js.println()

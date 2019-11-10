@@ -2,41 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/emitter/jsemitter.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/play/tryout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/fish.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/emitter/emitter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/emitter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/emitter/ylang.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/ylang.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/boolean.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/circle.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/circle_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/color.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/color_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/function.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/function.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/hashmap.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/hsv.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hsv.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/kernel.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/kernel.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/line.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/line.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/list.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/nilval.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/nilval.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/number.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/number_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/point.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/point.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/polygon.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/polygon.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/rect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/rect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/str.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/str.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/util.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/value.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/value_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/emitter/jsemitter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/jsemitter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/tryout.html" beforeDir="false" afterPath="$PROJECT_DIR$/play/tryout.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/pub/script/ylang.js" beforeDir="false" afterPath="$PROJECT_DIR$/res/pub/script/ylang.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/view/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/view/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.ylang" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.ylang" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -92,10 +62,13 @@
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$APPLICATION_HOME_DIR$/bin" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/play" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/play" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/internal/runtime" />
       <recent name="$PROJECT_DIR$/internal/interpreter" />
@@ -116,7 +89,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.WEB github.com/smackem/ylang">
+  <component name="RunManager" selected="Go Build.RUN github.com/smackem/ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -223,6 +196,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
     <MESSAGE value="- exported interpreter.value&#10;- added protobuf-based emitter" />
-    <option name="LAST_COMMIT_MESSAGE" value="- exported interpreter.value&#10;- added protobuf-based emitter" />
+    <MESSAGE value="- added javascript emitter" />
+    <option name="LAST_COMMIT_MESSAGE" value="- added javascript emitter" />
   </component>
 </project>
