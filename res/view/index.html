@@ -2,6 +2,7 @@
     <head>
         <title>ylang</title>
         <script src="/pub/script/jquery-3.2.0.min.js"></script>
+        <script src="/pub/script/ylang.js"></script>
     </head>
     <body>
         <div>
@@ -13,6 +14,9 @@
             <textarea id="sourceCode"></textarea><br />
             <input type="button" id="renderBtn" value="Render!" />
         </div>
+        <div>
+            <textarea id="jsCode"></textarea>
+        </div>
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#renderBtn").click(onRender);
@@ -23,8 +27,9 @@
                     imageUri: $("#imageUri").val(),
                 }}).then(function(result) {
                     $("#image").attr({
-                        src: result
+                        src: result.imagepath
                     });
+                    $("#jsCode").val(result.jscode);
                 }).fail(function(err) {
                     $("#message").html("Error: " + err)
                 });

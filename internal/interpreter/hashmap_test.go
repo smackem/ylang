@@ -11,21 +11,21 @@ func Test_hashMap_indexAssign(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		h    hashMap
+		h    HashMap
 		args args
 	}{
 		{
 			name: "hashMap_set",
-			h:    make(hashMap),
+			h:    make(HashMap),
 			args: args{
-				key: str("key"),
-				val: number(100),
+				key: Str("key"),
+				val: Number(100),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.h.indexAssign(tt.args.key, tt.args.val)
+			tt.h.IndexAssign(tt.args.key, tt.args.val)
 			if got := tt.h[tt.args.key]; got != tt.args.val {
 				t.Errorf("hashMap[%v] = %v, want %v", tt.args.key, got, tt.args.val)
 			}

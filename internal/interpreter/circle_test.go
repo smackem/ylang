@@ -19,10 +19,10 @@ func Test_circle(t *testing.T) {
 				  ge := circle(0;0, 0) >= circle(0;0, 0)
 				  le := circle(0;0, 0) <= circle(0;0, 0)`,
 			want: scope{
-				"eq":  boolean(true),
-				"neq": boolean(true),
-				"ge":  boolean(true),
-				"le":  boolean(true),
+				"eq":  Boolean(true),
+				"neq": Boolean(true),
+				"ge":  Boolean(true),
+				"le":  Boolean(true),
 			},
 		},
 		{
@@ -36,14 +36,14 @@ func Test_circle(t *testing.T) {
 				  invalid1 := circle(0;0, 0) == "abc"
 				  invalid2 := circle(0;0, 0) > 100;200`,
 			want: scope{
-				"eq":       boolean(false),
-				"neq":      boolean(false),
-				"gt":       boolean(false),
-				"ge":       boolean(false),
-				"lt":       boolean(false),
-				"le":       boolean(false),
-				"invalid1": boolean(false),
-				"invalid2": boolean(false),
+				"eq":       Boolean(false),
+				"neq":      Boolean(false),
+				"gt":       Boolean(false),
+				"ge":       Boolean(false),
+				"lt":       Boolean(false),
+				"le":       Boolean(false),
+				"invalid1": Boolean(false),
+				"invalid2": Boolean(false),
 			},
 		},
 	}

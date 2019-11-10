@@ -1,100 +1,31 @@
-SobelX := |-1  0  1
-           -2  0  2
-           -1  0  1|
-SobelY := | 1  2  1
-            0  0  0
-           -1 -2 -1|
+a := 100
+b := 100
+c := a + b
 
-Laplace := |-1 -1 -1
-            -1  8 -1
-            -1 -1 -1|
-
-Gauss := |0  1  2  1  0
-          1  2  4  2  1
-          2  4  8  4  2
-          1  2  4  2  1
-          0  1  2  1  0|
-
-Median := kernel(5, 5, 1)
-MedianCenter := 2;2
-
-Greyscale := fn() {
-    for pos in Bounds {
-        @pos = White * @pos.sci
-    }
-    flip()
+if c > 0 {
+    log(a, b, c, c > 0)
 }
 
-Smoothen := fn() {
-    for pos in Bounds {
-        @pos = convolute(pos, Gauss)
-    }
-    flip()
+for i in 0 .. 2 .. 100 {
+    log("i:", i)
 }
 
-DetectEdges := fn() {
-    Q0   := |0 0 0
-             1 1 1
-             0 0 0|
-    Q45  := |0 0 1
-             0 1 0
-             1 0 0|
-    Q90  := |0 1 0
-             0 1 0
-             0 1 0|
-    Q135 := |1 0 0
-             0 1 0
-             0 0 1|
+f := fn(x) -> a - x
 
-    for pos in Bounds {
-        sx := convolute(pos, SobelX)
-        sy := convolute(pos, SobelY)
-        mag := sqrt(sx.r * sx.r + sy.r * sy.r)
-        k := nil
-        angle := sx.r == 0 ? 0 : atan(sy.r / sx.r) * 180 / Pi + 90
-        if angle >= 157.5 or angle < 22.5 {
-            k = Q90
-        } else if angle < 67.5 {
-            k = Q135
-        } else if angle < 112.5 {
-            k = Q0
-        } else if angle < 157.5 {
-            k = Q45
-        }
-        area := fetchRed(pos, k)
-        if max(area) != area[4] {
-            mag = 0
-        }
-        @pos = rgb(mag, mag, mag)
+g := fn(y) {
+    if y > 50 {
+        return "50"
     }
-    flip()
+    return 23;34
 }
 
-Hysteresis := fn() {
-    Neighbours := |1 1 1
-                   1 1 1
-                   1 1 1|
-    for pos in Bounds {
-        val := @pos.r
-        if val > 10 {
-            val = 255
-        } else if val < 5 {
-            val = 0
-        } else {
-            neighbours := fetchRed(pos, Neighbours)
-            if max(neighbours) > 10 {
-                val = 255
-            } else {
-                val = 0
-            }
-        }
+pt := 100;200
+@pt = #aabbcc:ff
 
-        @pos = rgb(val, val, val)
-    }
-    flip()
+color := @(23;34)
+
+map := {
+    line: line(11;12, 55;66),
+    thickness: 4,
+    meth: fn() -> "hello",
 }
-
-Greyscale()
-Smoothen()
-DetectEdges()
-Hysteresis()

@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-var falseVal = boolean(false)
+var falseVal = Boolean(false)
 
 func baseProperty(val Value, ident string) (Value, error) {
 	switch ident {
 	case "__type":
-		return str(val.runtimeTypeName()), nil
+		return Str(val.RuntimeTypeName()), nil
 	}
-	return nil, fmt.Errorf("unknown property '%s.%s'", val.runtimeTypeName(), ident)
+	return nil, fmt.Errorf("unknown Property '%s.%s'", val.RuntimeTypeName(), ident)
 }
 
-func indexAt(n number, count int) int {
+func indexAt(n Number, count int) int {
 	if n < 0 {
 		return count + int(n)
 	}
@@ -29,14 +29,14 @@ func formatValue(val Value, indent string, leadingIndent bool) string {
 		buf.WriteString(indent)
 	}
 	switch v := val.(type) {
-	case list:
+	case List:
 		buf.WriteString("[\n")
 		innerIndent := indent + "  "
-		for _, elem := range v.elements {
+		for _, elem := range v.Elements {
 			buf.WriteString(fmt.Sprintf("%s,\n", formatValue(elem, innerIndent, true)))
 		}
 		buf.WriteString(fmt.Sprintf("%s]", indent))
-	case hashMap:
+	case HashMap:
 		buf.WriteString("{\n")
 		innerIndent := indent + "  "
 		keys := v.sortedKeys()
@@ -45,12 +45,12 @@ func formatValue(val Value, indent string, leadingIndent bool) string {
 			buf.WriteString(fmt.Sprintf("%s%s: %s,\n", innerIndent, key, formatValue(elem, innerIndent, false)))
 		}
 		buf.WriteString(fmt.Sprintf("%s}", indent))
-	case kernel:
+	case Kernel:
 		buf.WriteByte('|')
 		innerIndent := indent + " "
-		width := findMaxWidth(v.values) + 3
-		for i, elem := range v.values {
-			if v.width != 0 && i > 0 && i%v.width == 0 {
+		width := findMaxWidth(v.Values) + 3
+		for i, elem := range v.Values {
+			if v.Width != 0 && i > 0 && i%v.Width == 0 {
 				buf.WriteByte('\n')
 				buf.WriteString(innerIndent)
 			}
@@ -58,7 +58,7 @@ func formatValue(val Value, indent string, leadingIndent bool) string {
 		}
 		buf.WriteString("|")
 	default:
-		buf.WriteString(v.printStr())
+		buf.WriteString(v.PrintStr())
 	}
 	return buf.String()
 }
@@ -84,11 +84,11 @@ type valueSlice []Value
 
 func (s valueSlice) Len() int { return len(s) }
 func (s valueSlice) Less(i int, j int) bool {
-	cmp, _ := s[i].compare(s[j])
+	cmp, _ := s[i].Compare(s[j])
 	if cmp == nil {
 		return false
 	}
-	n, ok := cmp.(number)
+	n, ok := cmp.(Number)
 	return ok && n < 0
 }
 func (s valueSlice) Swap(i int, j int) { s[i], s[j] = s[j], s[i] }

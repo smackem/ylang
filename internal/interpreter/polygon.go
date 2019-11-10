@@ -10,115 +10,115 @@ import (
 	"strings"
 )
 
-type polygon struct {
-	vertices []point
+type Polygon struct {
+	Vertices []Point
 }
 
-func (p polygon) compare(other Value) (Value, error) {
-	if r, ok := other.(polygon); ok {
-		if len(r.vertices) != len(p.vertices) {
-			return number(1), nil
+func (p Polygon) Compare(other Value) (Value, error) {
+	if r, ok := other.(Polygon); ok {
+		if len(r.Vertices) != len(p.Vertices) {
+			return Number(1), nil
 		}
-		for i, v := range p.vertices {
-			if v != r.vertices[i] {
-				return number(1), nil
+		for i, v := range p.Vertices {
+			if v != r.Vertices[i] {
+				return Number(1), nil
 			}
 		}
-		return number(0), nil
+		return Number(0), nil
 	}
 	return nil, nil
 }
 
-func (p polygon) add(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon + %s not supported", reflect.TypeOf(other))
+func (p Polygon) Add(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon + %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon - %s not supported", reflect.TypeOf(other))
+func (p Polygon) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon - %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon * %s not supported", reflect.TypeOf(other))
+func (p Polygon) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon * %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon / %s not supported", reflect.TypeOf(other))
+func (p Polygon) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon / %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon %% %s not supported", reflect.TypeOf(other))
+func (p Polygon) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) in(other Value) (Value, error) {
-	if r, ok := other.(rect); ok {
-		for _, pt := range p.vertices {
-			v, err := pt.in(r)
+func (p Polygon) In(other Value) (Value, error) {
+	if r, ok := other.(Rect); ok {
+		for _, pt := range p.Vertices {
+			v, err := pt.In(r)
 			if err != nil {
 				return nil, err
 			}
-			if !v.(boolean) {
-				return boolean(lang.FalseVal), nil
+			if !v.(Boolean) {
+				return Boolean(lang.FalseVal), nil
 			}
 		}
-		return boolean(true), nil
+		return Boolean(true), nil
 	}
-	return nil, fmt.Errorf("type mismatch: polygon in %s not supported", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: polygon In %s Not supported", reflect.TypeOf(other))
 }
 
-func (p polygon) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: '-polygon' not supported")
+func (p Polygon) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: '-polygon' Not supported")
 }
 
-func (p polygon) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: 'not polygon' not supported")
+func (p Polygon) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: 'Not polygon' Not supported")
 }
 
-func (p polygon) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @polygon not supported")
+func (p Polygon) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @polygon Not supported")
 }
 
-func (p polygon) property(ident string) (Value, error) {
+func (p Polygon) Property(ident string) (Value, error) {
 	switch ident {
 	case "bounds":
 		return p.bounds(), nil
 	case "vertices":
-		values := make([]Value, len(p.vertices))
-		for i, vertex := range p.vertices {
+		values := make([]Value, len(p.Vertices))
+		for i, vertex := range p.Vertices {
 			values[i] = vertex
 		}
-		return list{
-			elements: values,
+		return List{
+			Elements: values,
 		}, nil
 	}
 	return baseProperty(p, ident)
 }
 
-func (p polygon) printStr() string {
-	verts := make([]string, len(p.vertices))
-	for i, vertex := range p.vertices {
-		verts[i] = vertex.printStr()
+func (p Polygon) PrintStr() string {
+	verts := make([]string, len(p.Vertices))
+	for i, vertex := range p.Vertices {
+		verts[i] = vertex.PrintStr()
 	}
 	return fmt.Sprintf("polygon(%s)", strings.Join(verts, ", "))
 }
 
-func (p polygon) iterateHorizLine(x1, y, x2 int, visit func(Value) error) error {
+func (p Polygon) iterateHorizLine(x1, y, x2 int, visit func(Value) error) error {
 	if x1 > x2 {
 		temp := x1
 		x1 = x2
 		x2 = temp
 	}
 	for x := x1; x <= x2; x++ {
-		if err := visit(point{x, y}); err != nil {
+		if err := visit(Point{x, y}); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (p polygon) bounds() rect {
+func (p Polygon) bounds() Rect {
 	minX, minY := math.MaxInt32, math.MaxInt32
 	maxX, maxY := math.MinInt32, math.MinInt32
-	for _, pt := range p.vertices {
+	for _, pt := range p.Vertices {
 		if pt.X < minX {
 			minX = pt.X
 		}
@@ -132,15 +132,15 @@ func (p polygon) bounds() rect {
 			maxY = pt.Y
 		}
 	}
-	return rect{
+	return Rect{
 		Min: image.Point{minX, minY},
 		Max: image.Point{maxX, maxY},
 	}
 }
 
-func (p polygon) iterate(visit func(Value) error) error {
+func (p Polygon) Iterate(visit func(Value) error) error {
 	// buffer to store the x-coordinates of intersections of the polygon with some horizontal line
-	xs := make([]int, 0, len(p.vertices))
+	xs := make([]int, 0, len(p.Vertices))
 
 	// determine maxima
 	bounds := p.bounds()
@@ -158,18 +158,18 @@ func (p polygon) iterate(visit func(Value) error) error {
 	// bottom of the polygon:
 	// 1. search intersections with the border lines
 	// 2. sort intersections (x_intersect)
-	// 3. each two x-coordinates in x_intersect are then inside the polygon
+	// 3. each two x-coordinates In x_intersect are then inside the polygon
 	//    (drawhorzlineclip for a pair of two such points)
 	//
 	for y := bounds.Min.Y; y <= bounds.Max.Y; y++ {
 		intersectionXs := xs[:0] // re-use xs buffer to avoid allocations
 
-		for i, pt := range p.vertices {
+		for i, pt := range p.Vertices {
 			previ := i - 1
 			if previ < 0 {
-				previ = len(p.vertices) - 1
+				previ = len(p.Vertices) - 1
 			}
-			prevPt := p.vertices[previ]
+			prevPt := p.Vertices[previ]
 			y1, y2 := prevPt.Y, pt.Y
 			var x1, x2 int
 			if y1 < y2 {
@@ -184,7 +184,7 @@ func (p polygon) iterate(visit func(Value) error) error {
 				continue
 			}
 			if y >= y1 && y < y2 || y == bounds.Max.Y && y2 == bounds.Max.Y {
-				// add intersection if y crosses the edge (excluding the lower end), or when we are on the lowest line (maxy)
+				// Add intersection if y crosses the edge (excluding the lower end), or when we are on the lowest line (maxy)
 				intersectionXs = append(intersectionXs, (y-y1)*(x2-x1)/(y2-y1)+x1)
 			}
 		}
@@ -197,17 +197,17 @@ func (p polygon) iterate(visit func(Value) error) error {
 		}
 	}
 
-	// finally, a special case is not handled by above algorithm:
+	// finally, a special case is Not handled by above algorithm:
 	// for two border points with same height miny < y < maxy,
-	// sometimes the line between them is not colored:
+	// sometimes the line between them is Not colored:
 	// this happens when the line will be a lower border line of the polygon
 	// (eg we are inside the polygon with a smaller y, and outside with a bigger y),
 	// So we loop for border lines that are horizontal.
 	//
-	previ := len(p.vertices) - 1
-	for i, pt := range p.vertices {
-		if (bounds.Min.Y < pt.Y) && p.vertices[previ].Y == pt.Y && pt.Y <= bounds.Max.Y {
-			if err := p.iterateHorizLine(pt.X, pt.Y, p.vertices[previ].X, visit); err != nil {
+	previ := len(p.Vertices) - 1
+	for i, pt := range p.Vertices {
+		if (bounds.Min.Y < pt.Y) && p.Vertices[previ].Y == pt.Y && pt.Y <= bounds.Max.Y {
+			if err := p.iterateHorizLine(pt.X, pt.Y, p.Vertices[previ].X, visit); err != nil {
 				return err
 			}
 		}
@@ -216,22 +216,22 @@ func (p polygon) iterate(visit func(Value) error) error {
 	return nil
 }
 
-func (p polygon) index(index Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon[index] not supported")
+func (p Polygon) Index(index Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon[Index] Not supported")
 }
 
-func (p polygon) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon[lower..upper] not supported")
+func (p Polygon) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon[lower..upper] Not supported")
 }
 
-func (p polygon) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: polygon[%s] not supported", reflect.TypeOf(index))
+func (p Polygon) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: polygon[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (p polygon) runtimeTypeName() string {
+func (p Polygon) RuntimeTypeName() string {
 	return "polygon"
 }
 
-func (p polygon) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: polygon  :: [%s] not supported", reflect.TypeOf(val))
+func (p Polygon) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: polygon  :: [%s] Not supported", reflect.TypeOf(val))
 }

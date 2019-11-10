@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/smackem/ylang/internal/emitter"
 	"github.com/smackem/ylang/internal/program"
 	"io/ioutil"
 	"log"
@@ -34,6 +35,7 @@ func main() {
 	sourceImgPath := flag.String("image", "", "the source image path")
 	sourceCodePath := flag.String("code", "", "the path of the source code file")
 	targetImgPath := flag.String("out", "", "the target image path")
+	jsOutputPath := flag.String("js", "", "the javascript output path")
 	flag.Parse()
 
 	if *sourceImgPath == "" {
@@ -59,6 +61,13 @@ func main() {
 	prog, err := program.Compile(string(src))
 	if err != nil {
 		log.Fatalf("compilation error: %s", err.Error())
+	}
+
+	if jsOutputPath != nil {
+		js := emitter.EmitJS(prog)
+		if err := ioutil.WriteFile(*jsOutputPath, []byte(js), 0644); err != nil {
+			log.Fatalf("error writing javascript to '%s': %s", *jsOutputPath, err)
+		}
 	}
 
 	start := time.Now()

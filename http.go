@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/smackem/ylang/internal/emitter"
 	"github.com/smackem/ylang/internal/program"
 	"net/http"
 	"os"
@@ -55,11 +56,17 @@ func postRender(x *goobar.Exchange) goobar.Responder {
 
 	guid := uuid.New()
 	targetFileName := fmt.Sprintf("%s.png", guid.String())
-	targetFilePath := path.Join(targetImageDir, targetFileName)
+	//targetFilePath := path.Join(targetImageDir, targetFileName)
 
-	if err = saveImage(surf.target, targetFilePath); err != nil {
-		return goobar.Error(500, fmt.Sprintf("error saving image %s: %s", targetFilePath, err.Error()))
-	}
+	//if err = saveImage(surf.target, targetFilePath); err != nil {
+	//	return goobar.Error(500, fmt.Sprintf("error saving image %s: %s", targetFilePath, err.Error()))
+	//}
 
-	return goobar.PlainText(path.Join("/pub/temp", targetFileName))
+	return goobar.JSON(struct {
+		ImagePath string `json:"imagepath"`
+		JsCode    string `json:"jscode"`
+	}{
+		ImagePath: path.Join("/pub/temp", targetFileName),
+		JsCode:    emitter.EmitJS(prog),
+	})
 }

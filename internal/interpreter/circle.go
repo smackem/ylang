@@ -6,93 +6,93 @@ import (
 	"reflect"
 )
 
-type circle struct {
-	center point
-	radius number
+type Circle struct {
+	Center Point
+	Radius Number
 }
 
-func (c circle) compare(other Value) (Value, error) {
-	if r, ok := other.(circle); ok {
+func (c Circle) Compare(other Value) (Value, error) {
+	if r, ok := other.(Circle); ok {
 		if c == r {
-			return number(0), nil
+			return Number(0), nil
 		}
 	}
 	return nil, nil
 }
 
-func (c circle) add(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle + %s not supported", reflect.TypeOf(other))
+func (c Circle) Add(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle + %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle - %s not supported", reflect.TypeOf(other))
+func (c Circle) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle - %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle * %s not supported", reflect.TypeOf(other))
+func (c Circle) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle * %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle / %s not supported", reflect.TypeOf(other))
+func (c Circle) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle / %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle %% %s not supported", reflect.TypeOf(other))
+func (c Circle) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) bounds() rect {
-	radiusInt := int(c.radius + 0.5)
-	return rect{
+func (c Circle) bounds() Rect {
+	radiusInt := int(c.Radius + 0.5)
+	return Rect{
 		Min: image.Point{
-			X: c.center.X - radiusInt,
-			Y: c.center.Y - radiusInt,
+			X: c.Center.X - radiusInt,
+			Y: c.Center.Y - radiusInt,
 		},
 		Max: image.Point{
-			X: c.center.X + radiusInt,
-			Y: c.center.Y + radiusInt,
+			X: c.Center.X + radiusInt,
+			Y: c.Center.Y + radiusInt,
 		},
 	}
 }
 
-func (c circle) in(other Value) (Value, error) {
-	if r, ok := other.(rect); ok {
+func (c Circle) In(other Value) (Value, error) {
+	if r, ok := other.(Rect); ok {
 		rc := c.bounds()
-		return boolean(rc.Min.X >= r.Min.X && rc.Min.Y >= r.Min.Y && rc.Max.X < r.Max.X && rc.Max.Y < r.Max.Y), nil
+		return Boolean(rc.Min.X >= r.Min.X && rc.Min.Y >= r.Min.Y && rc.Max.X < r.Max.X && rc.Max.Y < r.Max.Y), nil
 	}
-	return nil, fmt.Errorf("type mismatch: line in %s not supported", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: line In %s Not supported", reflect.TypeOf(other))
 }
 
-func (c circle) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: '-circle' not supported")
+func (c Circle) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: '-circle' Not supported")
 }
 
-func (c circle) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: 'not circle' not supported")
+func (c Circle) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: 'Not circle' Not supported")
 }
 
-func (c circle) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @circle not supported")
+func (c Circle) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @circle Not supported")
 }
 
-func (c circle) property(ident string) (Value, error) {
+func (c Circle) Property(ident string) (Value, error) {
 	switch ident {
 	case "center":
-		return c.center, nil
+		return c.Center, nil
 	case "radius":
-		return c.radius, nil
+		return c.Radius, nil
 	case "bounds":
 		return c.bounds(), nil
 	}
 	return baseProperty(c, ident)
 }
 
-func (c circle) printStr() string {
-	return fmt.Sprintf("circle(center:%s, radius:%s)", c.center.printStr(), c.radius.printStr())
+func (c Circle) PrintStr() string {
+	return fmt.Sprintf("circle(center:%s, radius:%s)", c.Center.PrintStr(), c.Radius.PrintStr())
 }
 
-func (c circle) iterate(visit func(Value) error) error {
-	x0, y0 := c.center.X, c.center.Y
-	radius := int(c.radius + 0.5)
+func (c Circle) Iterate(visit func(Value) error) error {
+	x0, y0 := c.Center.X, c.Center.Y
+	radius := int(c.Radius + 0.5)
 	x := radius
 	y := 0
 	xChange := 1 - (radius << 1)
@@ -101,18 +101,18 @@ func (c circle) iterate(visit func(Value) error) error {
 
 	for x >= y {
 		for i := x0 - x; i <= x0+x; i++ {
-			if err := visit(point{i, y0 + y}); err != nil {
+			if err := visit(Point{i, y0 + y}); err != nil {
 				return err
 			}
-			if err := visit(point{i, y0 - y}); err != nil {
+			if err := visit(Point{i, y0 - y}); err != nil {
 				return err
 			}
 		}
 		for i := x0 - y; i <= x0+y; i++ {
-			if err := visit(point{i, y0 + x}); err != nil {
+			if err := visit(Point{i, y0 + x}); err != nil {
 				return err
 			}
-			if err := visit(point{i, y0 - x}); err != nil {
+			if err := visit(Point{i, y0 - x}); err != nil {
 				return err
 			}
 		}
@@ -129,22 +129,22 @@ func (c circle) iterate(visit func(Value) error) error {
 	return nil
 }
 
-func (c circle) index(index Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle[index] not supported")
+func (c Circle) Index(index Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle[Index] Not supported")
 }
 
-func (c circle) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle[lower..upper] not supported")
+func (c Circle) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle[lower..upper] Not supported")
 }
 
-func (c circle) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: circle[%s] not supported", reflect.TypeOf(index))
+func (c Circle) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: circle[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (c circle) runtimeTypeName() string {
+func (c Circle) RuntimeTypeName() string {
 	return "circle"
 }
 
-func (c circle) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: circle :: %s not supported", reflect.TypeOf(val))
+func (c Circle) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: circle :: %s Not supported", reflect.TypeOf(val))
 }

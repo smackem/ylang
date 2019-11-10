@@ -6,95 +6,95 @@ import (
 	"reflect"
 )
 
-type nilval lang.Nil
+type Nilval lang.Nil
 
-func (n nilval) compare(other Value) (Value, error) {
-	if _, ok := other.(nilval); ok {
-		return number(0), nil
+func (n Nilval) Compare(other Value) (Value, error) {
+	if _, ok := other.(Nilval); ok {
+		return Number(0), nil
 	}
 	return nil, nil
 }
 
-func (n nilval) greaterThan(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil > %s not supported", reflect.TypeOf(other))
+func (n Nilval) greaterThan(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil > %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) greaterThanOrEqual(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil >= %s not supported", reflect.TypeOf(other))
+func (n Nilval) greaterThanOrEqual(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil >= %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) lessThan(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil < %s not supported", reflect.TypeOf(other))
+func (n Nilval) lessThan(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil < %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) lessThanOrEqual(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil <= %s not supported", reflect.TypeOf(other))
+func (n Nilval) lessThanOrEqual(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil <= %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) add(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil + %s not supported", reflect.TypeOf(other))
+func (n Nilval) Add(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil + %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil - %s not supported", reflect.TypeOf(other))
+func (n Nilval) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil - %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil * %s not supported", reflect.TypeOf(other))
+func (n Nilval) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil * %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil / %s not supported", reflect.TypeOf(other))
+func (n Nilval) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil / %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil %% %s not supported", reflect.TypeOf(other))
+func (n Nilval) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) in(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil in %s not supported", reflect.TypeOf(other))
+func (n Nilval) In(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil In %s Not supported", reflect.TypeOf(other))
 }
 
-func (n nilval) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: -nil not supported")
+func (n Nilval) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: -nil Not supported")
 }
 
-func (n nilval) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: not nil not supported")
+func (n Nilval) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: Not nil Not supported")
 }
 
-func (n nilval) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @nil not supported")
+func (n Nilval) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @nil Not supported")
 }
 
-func (n nilval) property(ident string) (Value, error) {
+func (n Nilval) Property(ident string) (Value, error) {
 	return baseProperty(n, ident)
 }
 
-func (n nilval) printStr() string {
+func (n Nilval) PrintStr() string {
 	return "nil"
 }
 
-func (n nilval) iterate(visit func(Value) error) error {
-	return fmt.Errorf("cannot iterate over nil")
+func (n Nilval) Iterate(visit func(Value) error) error {
+	return fmt.Errorf("cannot Iterate over nil")
 }
 
-func (n nilval) index(index Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil[index] not supported")
+func (n Nilval) Index(index Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil[Index] Not supported")
 }
 
-func (n nilval) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil[lower..upper] not supported")
+func (n Nilval) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil[lower..upper] Not supported")
 }
 
-func (n nilval) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: nil[%s] not supported", reflect.TypeOf(index))
+func (n Nilval) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: nil[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (n nilval) runtimeTypeName() string {
+func (n Nilval) RuntimeTypeName() string {
 	return "nil"
 }
 
-func (n nilval) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: nil :: [%s] not supported", reflect.TypeOf(val))
+func (n Nilval) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: nil :: [%s] Not supported", reflect.TypeOf(val))
 }

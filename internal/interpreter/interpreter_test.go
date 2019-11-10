@@ -39,7 +39,7 @@ func Test_interpret(t *testing.T) {
 			name: "simple",
 			src:  "x := 1",
 			want: scope{
-				"x": number(1),
+				"x": Number(1),
 			},
 		},
 		{
@@ -47,14 +47,14 @@ func Test_interpret(t *testing.T) {
 			src: `x := 1
 			      x := 2`,
 			want: scope{
-				"x": number(2),
+				"x": Number(2),
 			},
 		},
 		{
 			name: "rect",
 			src:  "x := rect(1, 2, 3, 4)",
 			want: scope{
-				"x": rect{Min: image.Point{1, 2}, Max: image.Point{4, 6}},
+				"x": Rect{Min: image.Point{1, 2}, Max: image.Point{4, 6}},
 			},
 		},
 		{
@@ -66,12 +66,12 @@ func Test_interpret(t *testing.T) {
 				  b := c1.b
 				  a := c1.a`,
 			want: scope{
-				"c1": color(lang.NewRgba(1, 2, 3, 255)),
-				"c2": color(lang.NewRgba(1, 2, 3, 4)),
-				"r":  number(1),
-				"g":  number(2),
-				"b":  number(3),
-				"a":  number(255),
+				"c1": Color(lang.NewRgba(1, 2, 3, 255)),
+				"c2": Color(lang.NewRgba(1, 2, 3, 4)),
+				"r":  Number(1),
+				"g":  Number(2),
+				"b":  Number(3),
+				"a":  Number(255),
 			},
 		},
 		{
@@ -83,26 +83,26 @@ func Test_interpret(t *testing.T) {
 				  scb := c1.b01
 				  sca := c1.a01`,
 			want: scope{
-				"c1":  color(lang.NewSrgba(1, 2, 3, 1)),
-				"c2":  color(lang.NewSrgba(1, 2, 3, 4)),
-				"scr": number(1),
-				"scg": number(2),
-				"scb": number(3),
-				"sca": number(1),
+				"c1":  Color(lang.NewSrgba(1, 2, 3, 1)),
+				"c2":  Color(lang.NewSrgba(1, 2, 3, 4)),
+				"scr": Number(1),
+				"scg": Number(2),
+				"scb": Number(3),
+				"sca": Number(1),
 			},
 		},
 		{
 			name: "color_literal",
 			src:  "c1 := #011223:f0",
 			want: scope{
-				"c1": color(lang.NewRgba(0x01, 0x12, 0x23, 0xf0)),
+				"c1": Color(lang.NewRgba(0x01, 0x12, 0x23, 0xf0)),
 			},
 		},
 		{
 			name: "kernel",
 			src:  "k := |1 2 3 4|",
 			want: scope{
-				"k": kernel{width: 2, height: 2, values: []lang.Number{lang.Number(1), lang.Number(2), lang.Number(3), lang.Number(4)}},
+				"k": Kernel{Width: 2, Height: 2, Values: []lang.Number{lang.Number(1), lang.Number(2), lang.Number(3), lang.Number(4)}},
 			},
 		},
 		{
@@ -110,7 +110,7 @@ func Test_interpret(t *testing.T) {
 			src: `x := 0
 			      if true { x = 1 } else { x = 2 }`,
 			want: scope{
-				"x": number(1),
+				"x": Number(1),
 			},
 		},
 		{
@@ -118,7 +118,7 @@ func Test_interpret(t *testing.T) {
 			src: `x := 0
 			      if false { x = 1 } else { x = 2 }`,
 			want: scope{
-				"x": number(2),
+				"x": Number(2),
 			},
 		},
 		{
@@ -126,7 +126,7 @@ func Test_interpret(t *testing.T) {
 			src: `p := 0
 			      for pos in rect(0,0,1,1) { p = pos }`,
 			want: scope{
-				"p": point{0, 0},
+				"p": Point{0, 0},
 			},
 		},
 		{
@@ -134,31 +134,31 @@ func Test_interpret(t *testing.T) {
 			src: `p := 0
 			      for pos in rect(0,0,2,2) { p = pos }`,
 			want: scope{
-				"p": point{1, 1},
+				"p": Point{1, 1},
 			},
 		},
 		{
 			name: "kernel_index",
 			src:  "n := |1 2 3 4|[1]",
 			want: scope{
-				"n": number(2),
+				"n": Number(2),
 			},
 		},
 		{
 			name: "kernel_index_2",
 			src:  "n := |1 2 3 4|[0;1]",
 			want: scope{
-				"n": number(3),
+				"n": Number(3),
 			},
 		},
 		{
 			name: "sort_kernel",
 			src:  "k := sort(|4 1 3 2|)",
 			want: scope{
-				"k": kernel{
-					width:  2,
-					height: 2,
-					values: []lang.Number{1, 2, 3, 4},
+				"k": Kernel{
+					Width:  2,
+					Height: 2,
+					Values: []lang.Number{1, 2, 3, 4},
 				},
 			},
 		},
@@ -167,16 +167,16 @@ func Test_interpret(t *testing.T) {
 			src: `min := min(|4 1 3 2|)
 			      max := max(|4 1 3 2|)`,
 			want: scope{
-				"min": number(1),
-				"max": number(4),
+				"min": Number(1),
+				"max": Number(4),
 			},
 		},
 		{
 			name: "list_func",
 			src:  "l := list(4, 123)",
 			want: scope{
-				"l": list{
-					elements: []Value{number(123), number(123), number(123), number(123)},
+				"l": List{
+					Elements: []Value{Number(123), Number(123), Number(123), Number(123)},
 				},
 			},
 		},
@@ -184,10 +184,10 @@ func Test_interpret(t *testing.T) {
 			name: "kernel_func",
 			src:  "k := kernel(2, 3, 1)",
 			want: scope{
-				"k": kernel{
-					width:  2,
-					height: 3,
-					values: []lang.Number{1, 1, 1, 1, 1, 1},
+				"k": Kernel{
+					Width:  2,
+					Height: 3,
+					Values: []lang.Number{1, 1, 1, 1, 1, 1},
 				},
 			},
 		},
@@ -195,9 +195,9 @@ func Test_interpret(t *testing.T) {
 			name: "line_func",
 			src:  "l := line(0;0, 100;100)",
 			want: scope{
-				"l": line{
-					point1: point{0, 0},
-					point2: point{100, 100},
+				"l": Line{
+					Point1: Point{0, 0},
+					Point2: Point{100, 100},
 				},
 			},
 		},
@@ -206,19 +206,19 @@ func Test_interpret(t *testing.T) {
 			src: `p1 := line(0;1, 100;101).p1
 			      p2 := line(0;1, 100;101).p2`,
 			want: scope{
-				"p1": point{0, 1},
-				"p2": point{100, 101},
+				"p1": Point{0, 1},
+				"p2": Point{100, 101},
 			},
 		},
 		{
 			name: "polygon_func",
 			src:  "p := polygon(0;0, 100;0, 100;100, 0;0)",
 			want: scope{
-				"p": polygon{
-					vertices: []point{
-						point{0, 0},
-						point{100, 0},
-						point{100, 100},
+				"p": Polygon{
+					Vertices: []Point{
+						Point{0, 0},
+						Point{100, 0},
+						Point{100, 100},
 					},
 				},
 			},
@@ -227,7 +227,7 @@ func Test_interpret(t *testing.T) {
 			name: "polygon_bounds",
 			src:  "b := polygon(0;0, 100;0, 100;100, 0;0).bounds",
 			want: scope{
-				"b": rect{
+				"b": Rect{
 					Min: image.Point{0, 0},
 					Max: image.Point{100, 100},
 				},
@@ -237,11 +237,11 @@ func Test_interpret(t *testing.T) {
 			name: "polygon_vertices",
 			src:  "vs := polygon(0;0, 100;0, 100;100).vertices",
 			want: scope{
-				"vs": list{
-					elements: []Value{
-						point{0, 0},
-						point{100, 0},
-						point{100, 100},
+				"vs": List{
+					Elements: []Value{
+						Point{0, 0},
+						Point{100, 0},
+						Point{100, 100},
 					},
 				},
 			},
@@ -250,7 +250,7 @@ func Test_interpret(t *testing.T) {
 			name: "polygon_vertices_count",
 			src:  "c := polygon(0;0, 100;0, 100;100).vertices.count",
 			want: scope{
-				"c": number(3),
+				"c": Number(3),
 			},
 		},
 		{
@@ -258,7 +258,7 @@ func Test_interpret(t *testing.T) {
 			src: `k := |1 2 3 4|
 				  k[0] = 0`,
 			want: scope{
-				"k": kernel{width: 2, height: 2, values: []lang.Number{0, 2, 3, 4}},
+				"k": Kernel{Width: 2, Height: 2, Values: []lang.Number{0, 2, 3, 4}},
 			},
 		},
 		{
@@ -266,14 +266,14 @@ func Test_interpret(t *testing.T) {
 			src: `k := |1 2 3 4|
 				  k[-1] = 0`,
 			want: scope{
-				"k": kernel{width: 2, height: 2, values: []lang.Number{1, 2, 3, 0}},
+				"k": Kernel{Width: 2, Height: 2, Values: []lang.Number{1, 2, 3, 0}},
 			},
 		},
 		{
 			name: "hashmap",
 			src:  `m := {a: 1, b: 2, c: 3}`,
 			want: scope{
-				"m": hashMap{str("a"): number(1), str("b"): number(2), str("c"): number(3)},
+				"m": HashMap{Str("a"): Number(1), Str("b"): Number(2), Str("c"): Number(3)},
 			},
 		},
 		{
@@ -283,10 +283,10 @@ func Test_interpret(t *testing.T) {
 				  b := m.b
 				  c := m["c"]`,
 			want: scope{
-				"m": hashMap{str("a"): number(1), str("b"): number(2), str("c"): number(3)},
-				"a": number(1),
-				"b": number(2),
-				"c": number(3),
+				"m": HashMap{Str("a"): Number(1), Str("b"): Number(2), Str("c"): Number(3)},
+				"a": Number(1),
+				"b": Number(2),
+				"c": Number(3),
 			},
 		},
 		{
@@ -296,10 +296,10 @@ func Test_interpret(t *testing.T) {
 				  a1 := m["a"]
 				  b := m["b"]`,
 			want: scope{
-				"m":  hashMap{str("a"): number(1)},
-				"a":  number(1),
-				"a1": number(1),
-				"b":  nilval{},
+				"m":  HashMap{Str("a"): Number(1)},
+				"a":  Number(1),
+				"a1": Number(1),
+				"b":  Nilval{},
 			},
 		},
 		{
@@ -307,15 +307,15 @@ func Test_interpret(t *testing.T) {
 			src: `m := {}
 				  m["a"] = 123`,
 			want: scope{
-				"m": hashMap{str("a"): number(123)},
+				"m": HashMap{Str("a"): Number(123)},
 			},
 		},
 		{
 			name: "list",
 			src:  `l := [1, 2, 3]`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2), number(3)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2), Number(3)},
 				},
 			},
 		},
@@ -323,8 +323,8 @@ func Test_interpret(t *testing.T) {
 			name: "list_empty",
 			src:  `l := []`,
 			want: scope{
-				"l": list{
-					elements: []Value{},
+				"l": List{
+					Elements: []Value{},
 				},
 			},
 		},
@@ -333,10 +333,10 @@ func Test_interpret(t *testing.T) {
 			src: `l := [1, 2, 3]
 				  v := l[0]`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2), number(3)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2), Number(3)},
 				},
-				"v": number(1),
+				"v": Number(1),
 			},
 		},
 		{
@@ -344,10 +344,10 @@ func Test_interpret(t *testing.T) {
 			src: `l := [1, 2, 3]
 				  v := l[-1]`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2), number(3)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2), Number(3)},
 				},
-				"v": number(3),
+				"v": Number(3),
 			},
 		},
 		{
@@ -358,20 +358,20 @@ func Test_interpret(t *testing.T) {
 				  s3 := l[0..0]
 				  s4 := l[l.count-2 .. l.count-1]`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2), number(3), number(4)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2), Number(3), Number(4)},
 				},
-				"s1": list{
-					elements: []Value{number(1), number(2), number(3)},
+				"s1": List{
+					Elements: []Value{Number(1), Number(2), Number(3)},
 				},
-				"s2": list{
-					elements: []Value{number(3), number(4)},
+				"s2": List{
+					Elements: []Value{Number(3), Number(4)},
 				},
-				"s3": list{
-					elements: []Value{number(1)},
+				"s3": List{
+					Elements: []Value{Number(1)},
 				},
-				"s4": list{
-					elements: []Value{number(3), number(4)},
+				"s4": List{
+					Elements: []Value{Number(3), Number(4)},
 				},
 			},
 		},
@@ -380,8 +380,8 @@ func Test_interpret(t *testing.T) {
 			src: `l := [0]
 				  l[0] = 1`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1)},
+				"l": List{
+					Elements: []Value{Number(1)},
 				},
 			},
 		},
@@ -390,8 +390,8 @@ func Test_interpret(t *testing.T) {
 			src: `l := []
 				  l = l :: 1 :: 2`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2)},
 				},
 			},
 		},
@@ -400,8 +400,8 @@ func Test_interpret(t *testing.T) {
 			src: `l := [1, 2]
 				  l = l :: [3, 4]`,
 			want: scope{
-				"l": list{
-					elements: []Value{number(1), number(2), number(3), number(4)},
+				"l": List{
+					Elements: []Value{Number(1), Number(2), Number(3), Number(4)},
 				},
 			},
 		},
@@ -410,9 +410,9 @@ func Test_interpret(t *testing.T) {
 			src: `f := fn() -> 123
 			      ret := f()`,
 			want: scope{
-				"f": function{
-					parameterNames: nil,
-					body: []parser.Statement{
+				"f": Function{
+					ParameterNames: nil,
+					Body: []parser.Statement{
 						parser.ReturnStmt{
 							StmtBase: parser.StmtBase{},
 							Result:   lang.Number(123),
@@ -420,7 +420,7 @@ func Test_interpret(t *testing.T) {
 					},
 					closure: []scope{},
 				},
-				"ret": number(123),
+				"ret": Number(123),
 			},
 		},
 		{
@@ -428,9 +428,9 @@ func Test_interpret(t *testing.T) {
 			src: `f := fn(x) -> x
 			      ret := f(5)`,
 			want: scope{
-				"f": function{
-					parameterNames: []string{"x"},
-					body: []parser.Statement{
+				"f": Function{
+					ParameterNames: []string{"x"},
+					Body: []parser.Statement{
 						parser.ReturnStmt{
 							StmtBase: parser.StmtBase{},
 							Result:   parser.IdentExpr("x"),
@@ -438,7 +438,7 @@ func Test_interpret(t *testing.T) {
 					},
 					closure: []scope{},
 				},
-				"ret": number(5),
+				"ret": Number(5),
 			},
 		},
 		{
@@ -450,38 +450,38 @@ func Test_interpret(t *testing.T) {
 					 y := 2
 				  }`,
 			want: scope{
-				"x": number(2),
-				"y": number(1),
+				"x": Number(2),
+				"y": Number(1),
 			},
 		},
 		{
 			name: "compare_func",
-			src: `a := compare(10, 10)
-				  b := compare(10, 11)`,
+			src: `a := Compare(10, 10)
+				  b := Compare(10, 11)`,
 			want: scope{
-				"a": number(0),
-				"b": number(-1),
+				"a": Number(0),
+				"b": Number(-1),
 			},
 		},
 		{
 			name: "sort_list_fn",
 			src: `ls1 := [150;10, 12;102, 200;23, 1;404]
-				  ls2 := sort(ls1, fn(a, b) -> compare(a.x, b.x))`,
+				  ls2 := sort(ls1, fn(a, b) -> Compare(a.x, b.x))`,
 			want: scope{
-				"ls1": list{
-					elements: []Value{
-						point{150, 10},
-						point{12, 102},
-						point{200, 23},
-						point{1, 404},
+				"ls1": List{
+					Elements: []Value{
+						Point{150, 10},
+						Point{12, 102},
+						Point{200, 23},
+						Point{1, 404},
 					},
 				},
-				"ls2": list{
-					elements: []Value{
-						point{1, 404},
-						point{12, 102},
-						point{150, 10},
-						point{200, 23},
+				"ls2": List{
+					Elements: []Value{
+						Point{1, 404},
+						Point{12, 102},
+						Point{150, 10},
+						Point{200, 23},
 					},
 				},
 			},
@@ -490,7 +490,7 @@ func Test_interpret(t *testing.T) {
 			name: "pipeline",
 			src:  `a := 1 | $ + 1 | $ + 2 | $ + 3 | "a" + $`,
 			want: scope{
-				"a": str("a7"),
+				"a": Str("a7"),
 			},
 		},
 	}
@@ -517,9 +517,9 @@ func Test_newInterpreter(t *testing.T) {
 }
 
 func Test_validateArguments(t *testing.T) {
-	numberType := reflect.TypeOf(number(0))
-	boolType := reflect.TypeOf(boolean(false))
-	numberSliceType := reflect.TypeOf([]number{})
+	numberType := reflect.TypeOf(Number(0))
+	boolType := reflect.TypeOf(Boolean(false))
+	numberSliceType := reflect.TypeOf([]Number{})
 	type args struct {
 		arguments []Value
 		params    []reflect.Type
@@ -536,7 +536,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_ok",
 			args: args{
-				arguments: []Value{number(1), number(2)},
+				arguments: []Value{Number(1), Number(2)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: false,
@@ -544,7 +544,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_any_ok",
 			args: args{
-				arguments: []Value{number(1), number(2)},
+				arguments: []Value{Number(1), Number(2)},
 				params:    []reflect.Type{numberType, valueType},
 			},
 			wantErr: false,
@@ -552,7 +552,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_error_toofew",
 			args: args{
-				arguments: []Value{number(1)},
+				arguments: []Value{Number(1)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -560,7 +560,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "two_numbers_error_toomany",
 			args: args{
-				arguments: []Value{number(1), number(2), number(3)},
+				arguments: []Value{Number(1), Number(2), Number(3)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -568,7 +568,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "type_mismatch",
 			args: args{
-				arguments: []Value{number(1), boolean(false)},
+				arguments: []Value{Number(1), Boolean(false)},
 				params:    []reflect.Type{numberType, numberType},
 			},
 			wantErr: true,
@@ -576,7 +576,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "mixed_types",
 			args: args{
-				arguments: []Value{number(1), boolean(false)},
+				arguments: []Value{Number(1), Boolean(false)},
 				params:    []reflect.Type{numberType, boolType},
 			},
 			wantErr: false,
@@ -584,7 +584,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_ok",
 			args: args{
-				arguments: []Value{number(1), number(2), number(3)},
+				arguments: []Value{Number(1), Number(2), Number(3)},
 				params:    []reflect.Type{numberSliceType},
 			},
 			wantErr: false,
@@ -600,7 +600,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_ok",
 			args: args{
-				arguments: []Value{boolean(true), number(1), number(2)},
+				arguments: []Value{Boolean(true), Number(1), Number(2)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -608,7 +608,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_single_ok",
 			args: args{
-				arguments: []Value{boolean(true), number(1)},
+				arguments: []Value{Boolean(true), Number(1)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -616,7 +616,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_empty_ok",
 			args: args{
-				arguments: []Value{boolean(true)},
+				arguments: []Value{Boolean(true)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: false,
@@ -632,7 +632,7 @@ func Test_validateArguments(t *testing.T) {
 		{
 			name: "varargs_trailing_type_mismatch",
 			args: args{
-				arguments: []Value{boolean(true), number(1), number(2), boolean(false)},
+				arguments: []Value{Boolean(true), Number(1), Number(2), Boolean(false)},
 				params:    []reflect.Type{boolType, numberSliceType},
 			},
 			wantErr: true,
@@ -660,7 +660,7 @@ func Test_hasMatchingType(t *testing.T) {
 		{
 			name: "number_any",
 			args: args{
-				v:   number(1),
+				v:   Number(1),
 				typ: valueType,
 			},
 			want: true,
@@ -668,7 +668,7 @@ func Test_hasMatchingType(t *testing.T) {
 		{
 			name: "point_any",
 			args: args{
-				v:   point{},
+				v:   Point{},
 				typ: valueType,
 			},
 			want: true,
@@ -676,7 +676,7 @@ func Test_hasMatchingType(t *testing.T) {
 		{
 			name: "number_number",
 			args: args{
-				v:   number(1),
+				v:   Number(1),
 				typ: numberType,
 			},
 			want: true,
@@ -684,7 +684,7 @@ func Test_hasMatchingType(t *testing.T) {
 		{
 			name: "number_point",
 			args: args{
-				v:   number(1),
+				v:   Number(1),
 				typ: pointType,
 			},
 			want: false,

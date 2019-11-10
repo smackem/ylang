@@ -2,14 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/emitter/emitter.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/emitter/ylang.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/emitter/ylang.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/emitter/jsemitter.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/tryout.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ylang.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ylang.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/emitter/emitter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/emitter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/emitter/ylang.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/ylang.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/boolean.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/boolean_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/circle.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/circle_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/circle_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/color.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/color_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/color_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/function.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/function.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/hashmap.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/hashmap.go" afterDir="false" />
@@ -22,6 +26,7 @@
       <change beforePath="$PROJECT_DIR$/internal/interpreter/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/list.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/nilval.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/nilval.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/number.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/number_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/number_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/point.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/point.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/polygon.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/polygon.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/rect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/rect.go" afterDir="false" />
@@ -29,7 +34,10 @@
       <change beforePath="$PROJECT_DIR$/internal/interpreter/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/util.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/value.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/value_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/value_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/program/compiler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/program/program.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/pub/script/ylang.js" beforeDir="false" afterPath="$PROJECT_DIR$/res/pub/script/ylang.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/view/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/view/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/sample.ylang" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.ylang" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,11 +59,15 @@
     <expand />
     <select />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="ylang" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
         <option value="Go File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -74,13 +86,14 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="GO_FMT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$APPLICATION_HOME_DIR$/bin" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -103,7 +116,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.go test ylang">
+  <component name="RunManager" selected="Go Build.WEB github.com/smackem/ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -117,7 +130,16 @@
     <configuration name="RUN github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
-      <parameters value="-image res/pub/_A03.png -code res/sample.ylang -out out.png" />
+      <parameters value="-image res/pub/_A03.png -code samples/sample.ylang -out out.png -js out.js" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/" />
+      <package value="github.com/smackem/ylang" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="WEB github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="ylang" />
+      <working_directory value="$PROJECT_DIR$/" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
       <package value="github.com/smackem/ylang" />
@@ -146,14 +168,15 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Go Build.WEB github.com/smackem/ylang" />
       <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
       <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
       <item itemvalue="Go Test.go test ylang" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
         <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
+        <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
       </list>
     </recent_temporary>
   </component>
@@ -199,6 +222,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
+    <MESSAGE value="- exported interpreter.value&#10;- added protobuf-based emitter" />
+    <option name="LAST_COMMIT_MESSAGE" value="- exported interpreter.value&#10;- added protobuf-based emitter" />
   </component>
 </project>

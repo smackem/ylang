@@ -6,90 +6,90 @@ import (
 	"reflect"
 )
 
-type boolean lang.Boolean
+type Boolean lang.Boolean
 
-func (b boolean) compare(other Value) (Value, error) {
-	if r, ok := other.(boolean); ok {
+func (b Boolean) Compare(other Value) (Value, error) {
+	if r, ok := other.(Boolean); ok {
 		if b && !r {
-			return number(1), nil
+			return Number(1), nil
 		}
 		if b == r {
-			return number(0), nil
+			return Number(0), nil
 		}
 		if !b && r {
-			return number(-1), nil
+			return Number(-1), nil
 		}
 	}
 	return nil, nil
 }
 
-func (b boolean) add(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool + %s not supported", reflect.TypeOf(other))
+func (b Boolean) Add(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool + %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool - %s not supported", reflect.TypeOf(other))
+func (b Boolean) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool - %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool * %s not supported", reflect.TypeOf(other))
+func (b Boolean) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool * %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool / %s not supported", reflect.TypeOf(other))
+func (b Boolean) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool / %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool %% %s not supported", reflect.TypeOf(other))
+func (b Boolean) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) in(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool in %s not supported", reflect.TypeOf(other))
+func (b Boolean) In(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool In %s Not supported", reflect.TypeOf(other))
 }
 
-func (b boolean) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: -bool not supported")
+func (b Boolean) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: -bool Not supported")
 }
 
-func (b boolean) not() (Value, error) {
+func (b Boolean) Not() (Value, error) {
 	return !b, nil
 }
 
-func (b boolean) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @bool not supported")
+func (b Boolean) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @bool Not supported")
 }
 
-func (b boolean) property(ident string) (Value, error) {
+func (b Boolean) Property(ident string) (Value, error) {
 	return baseProperty(b, ident)
 }
 
-func (b boolean) printStr() string {
+func (b Boolean) PrintStr() string {
 	if b {
 		return "true"
 	}
 	return "false"
 }
 
-func (b boolean) iterate(visit func(Value) error) error {
-	return fmt.Errorf("cannot iterate over bool")
+func (b Boolean) Iterate(visit func(Value) error) error {
+	return fmt.Errorf("cannot Iterate over bool")
 }
 
-func (b boolean) index(index Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool[index] not supported")
+func (b Boolean) Index(index Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool[Index] Not supported")
 }
 
-func (b boolean) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool[lower..upper] not supported")
+func (b Boolean) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool[lower..upper] Not supported")
 }
 
-func (b boolean) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: bool[%s] not supported", reflect.TypeOf(index))
+func (b Boolean) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: bool[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (b boolean) runtimeTypeName() string {
+func (b Boolean) RuntimeTypeName() string {
 	return "boolean"
 }
 
-func (b boolean) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: bool :: [%s] not supported", reflect.TypeOf(val))
+func (b Boolean) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: bool :: [%s] Not supported", reflect.TypeOf(val))
 }

@@ -46,22 +46,23 @@ func (rs returnSignal) Error() string {
 const returnSig returnSignal = returnSignal("RET")
 const initialScopeCount int = 2
 
+//noinspection ALL
 func newInterpreter(bitmap BitmapContext) *interpreter {
 	ir := &interpreter{
 		idents: []scope{make(scope)},
 		bitmap: bitmap,
 	}
-	ir.newIdent(lastRectIdent, rect{})
-	ir.newIdent("Black", color(lang.NewRgba(0, 0, 0, 255)))
-	ir.newIdent("White", color(lang.NewRgba(255, 255, 255, 255)))
-	ir.newIdent("Transparent", color(lang.NewRgba(255, 255, 255, 0)))
-	ir.newIdent("Pi", number(math.Pi))
-	ir.newIdent("Rad2Deg", number(180/math.Pi))
-	ir.newIdent("Deg2Rad", number(math.Pi/180))
+	ir.newIdent(lastRectIdent, Rect{})
+	ir.newIdent("Black", Color(lang.NewRgba(0, 0, 0, 255)))
+	ir.newIdent("White", Color(lang.NewRgba(255, 255, 255, 255)))
+	ir.newIdent("Transparent", Color(lang.NewRgba(255, 255, 255, 0)))
+	ir.newIdent("Pi", Number(math.Pi))
+	ir.newIdent("Rad2Deg", Number(180/math.Pi))
+	ir.newIdent("Deg2Rad", Number(math.Pi/180))
 	if bitmap != nil {
 		ir.assignBounds(true)
-		ir.newIdent("W", number(bitmap.SourceWidth()))
-		ir.newIdent("H", number(bitmap.SourceHeight()))
+		ir.newIdent("W", Number(bitmap.SourceWidth()))
+		ir.newIdent("H", Number(bitmap.SourceHeight()))
 	}
 	ir.pushScope()
 	return ir
@@ -126,11 +127,11 @@ func (ir *interpreter) assignIdent(ident string, val Value) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("identifier '%s' not found", ident)
+	return fmt.Errorf("identifier '%s' Not found", ident)
 }
 
-func (ir *interpreter) assignBounds(new boolean) error {
-	bounds := rect{image.Point{0, 0}, image.Point{ir.bitmap.SourceWidth(), ir.bitmap.SourceHeight()}}
+func (ir *interpreter) assignBounds(new Boolean) error {
+	bounds := Rect{image.Point{0, 0}, image.Point{ir.bitmap.SourceWidth(), ir.bitmap.SourceHeight()}}
 	if new {
 		return ir.newIdent("Bounds", bounds)
 	}
@@ -151,7 +152,7 @@ func (ir *interpreter) visitStmtList(stmts []parser.Statement) error {
 	return nil
 }
 
-const lastRectIdent string = "@:R" // this is safe because its not a valid ident
+const lastRectIdent string = "@:R" // this is safe because its Not a valid ident
 
 func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 	switch s := stmt.(type) {
@@ -188,7 +189,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		if err := lval.indexAssign(ival, rval); err != nil {
+		if err := lval.IndexAssign(ival, rval); err != nil {
 			return err
 		}
 
@@ -197,7 +198,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		pos, ok := left.(point)
+		pos, ok := left.(Point)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected @point = color")
 		}
@@ -205,7 +206,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		color, ok := right.(color)
+		color, ok := right.(Color)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected @point = color")
 		}
@@ -221,7 +222,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		b, ok := condVal.(boolean)
+		b, ok := condVal.(Boolean)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected if(boolean)")
 		}
@@ -241,14 +242,14 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		rect, ok := collVal.(rect)
+		rect, ok := collVal.(Rect)
 		if ok {
 			ir.assignIdent(lastRectIdent, rect)
 		}
 		ir.pushScope()
 		defer ir.popScope()
 		ir.newIdent(s.Ident, nil)
-		return collVal.iterate(func(val Value) error {
+		return collVal.Iterate(func(val Value) error {
 			ir.assignIdent(s.Ident, val)
 			if err := ir.visitStmtList(s.Stmts); err != nil {
 				return err
@@ -261,7 +262,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		lowerN, ok := lowerVal.(number)
+		lowerN, ok := lowerVal.(Number)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected lower number")
 		}
@@ -269,7 +270,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		upperN, ok := upperVal.(number)
+		upperN, ok := upperVal.(Number)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected upper number")
 		}
@@ -277,7 +278,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		if err != nil {
 			return err
 		}
-		stepN, ok := stepVal.(number)
+		stepN, ok := stepVal.(Number)
 		if !ok {
 			return fmt.Errorf("type mismatch: expected upper number")
 		}
@@ -297,7 +298,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 			if err != nil {
 				return err
 			}
-			b, ok := condVal.(boolean)
+			b, ok := condVal.(Boolean)
 			if !ok {
 				return fmt.Errorf("type mismatch: expected while(boolean)")
 			}
@@ -311,7 +312,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 		}
 
 	case parser.YieldStmt:
-		return fmt.Errorf("yield not yet implemented")
+		return fmt.Errorf("yield Not yet implemented")
 
 	case parser.LogStmt:
 		buf := strings.Builder{}
@@ -333,7 +334,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 			ir.functionScopes[len(ir.functionScopes)-1].retval = result
 			return returnSig
 		}
-		if _, isNil := result.(nilval); isNil {
+		if _, isNil := result.(Nilval); isNil {
 			return returnSig
 		}
 		return fmt.Errorf("A script can only return 'nil' from root level")
@@ -362,7 +363,7 @@ func (ir *interpreter) visitExpr(expr parser.Expression) (Value, error) {
 		return nil, err
 	}
 	if v == nil {
-		return nilval{}, nil
+		return Nilval{}, nil
 	}
 	return v, nil
 }
@@ -374,7 +375,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, ok := condVal.(boolean)
+		b, ok := condVal.(Boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool?x:x")
 		}
@@ -388,138 +389,138 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, ok := leftVal.(boolean)
+		b, ok := leftVal.(Boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
 		if b {
-			return boolean(true), nil
+			return Boolean(true), nil
 		}
 		rightVal, err := ir.visitExpr(e.Right)
 		if err != nil {
 			return nil, err
 		}
-		b, ok = rightVal.(boolean)
+		b, ok = rightVal.(Boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
-		return boolean(b), nil
+		return Boolean(b), nil
 
 	case parser.AndExpr:
 		leftVal, err := ir.visitExpr(e.Left)
 		if err != nil {
 			return nil, err
 		}
-		b, ok := leftVal.(boolean)
+		b, ok := leftVal.(Boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
 		if !b {
-			return boolean(false), nil
+			return Boolean(false), nil
 		}
 		rightVal, err := ir.visitExpr(e.Right)
 		if err != nil {
 			return nil, err
 		}
-		b, ok = rightVal.(boolean)
+		b, ok = rightVal.(Boolean)
 		if !ok {
 			return nil, fmt.Errorf("type mismatch: expected bool")
 		}
-		return boolean(b), nil
+		return Boolean(b), nil
 
 	case parser.EqExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.FalseVal), nil
+				return Boolean(lang.FalseVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(ok && n == 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(ok && n == 0), nil
 		})
 
 	case parser.NeqExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.TrueVal), nil
+				return Boolean(lang.TrueVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(!ok || n != 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(!ok || n != 0), nil
 		})
 
 	case parser.GtExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.FalseVal), nil
+				return Boolean(lang.FalseVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(ok && n > 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(ok && n > 0), nil
 		})
 
 	case parser.GeExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.FalseVal), nil
+				return Boolean(lang.FalseVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(ok && n >= 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(ok && n >= 0), nil
 		})
 
 	case parser.LtExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.FalseVal), nil
+				return Boolean(lang.FalseVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(ok && n < 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(ok && n < 0), nil
 		})
 
 	case parser.LeExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			cmp, _ := left.compare(right)
+			cmp, _ := left.Compare(right)
 			if cmp == nil {
-				return boolean(lang.FalseVal), nil
+				return Boolean(lang.FalseVal), nil
 			}
-			n, ok := cmp.(number)
-			return boolean(ok && n <= 0), nil
+			n, ok := cmp.(Number)
+			return Boolean(ok && n <= 0), nil
 		})
 
 	case parser.ConcatExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.concat(right)
+			return left.Concat(right)
 		})
 
 	case parser.AddExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.add(right)
+			return left.Add(right)
 		})
 
 	case parser.SubExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.sub(right)
+			return left.Sub(right)
 		})
 
 	case parser.MulExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.mul(right)
+			return left.Mul(right)
 		})
 
 	case parser.DivExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.div(right)
+			return left.Div(right)
 		})
 
 	case parser.ModExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.mod(right)
+			return left.Mod(right)
 		})
 
 	case parser.InExpr:
 		return ir.visitBinaryExpr(e.Left, e.Right, func(left Value, right Value) (Value, error) {
-			return left.in(right)
+			return left.In(right)
 		})
 
 	case parser.NegExpr:
@@ -527,26 +528,26 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		return leftVal.neg()
+		return leftVal.Neg()
 
 	case parser.NotExpr:
 		leftVal, err := ir.visitExpr(e.Inner)
 		if err != nil {
 			return nil, err
 		}
-		return leftVal.not()
+		return leftVal.Not()
 
 	case parser.PosExpr:
 		return ir.visitBinaryExpr(e.X, e.Y, func(xVal Value, yVal Value) (Value, error) {
-			x, ok := xVal.(number)
+			x, ok := xVal.(Number)
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: expected pos(Number, Number)")
 			}
-			y, ok := yVal.(number)
+			y, ok := yVal.(Number)
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: expected pos(Number, Number)")
 			}
-			return point{int(x + 0.5), int(y + 0.5)}, nil
+			return Point{int(x + 0.5), int(y + 0.5)}, nil
 		})
 
 	case parser.MemberExpr:
@@ -554,7 +555,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		return recvrVal.property(e.Member)
+		return recvrVal.Property(e.Member)
 
 	case parser.IndexExpr:
 		recvr, err := ir.visitExpr(e.Recvr)
@@ -565,7 +566,7 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		return recvr.index(index)
+		return recvr.Index(index)
 
 	case parser.IndexRangeExpr:
 		recvr, err := ir.visitExpr(e.Recvr)
@@ -580,27 +581,27 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		return recvr.indexRange(lower, upper)
+		return recvr.IndexRange(lower, upper)
 
 	case lang.Str:
-		return str(e), nil
+		return Str(e), nil
 
 	case lang.Boolean:
-		return boolean(e), nil
+		return Boolean(e), nil
 
 	case lang.Number:
-		return number(e), nil
+		return Number(e), nil
 
 	case lang.Color:
-		return color(e), nil
+		return Color(e), nil
 
 	case lang.Nil:
-		return nilval(e), nil
+		return Nilval(e), nil
 
 	case parser.IdentExpr:
 		val, ok := ir.findIdent(string(e))
 		if !ok {
-			return nil, fmt.Errorf("identifier '%s' not found", e)
+			return nil, fmt.Errorf("identifier '%s' Not found", e)
 		}
 		return val, nil
 
@@ -609,11 +610,11 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		pos, ok := val.(point)
+		pos, ok := val.(Point)
 		if !ok {
 			return nil, fmt.Errorf("")
 		}
-		return color(ir.bitmap.GetPixel(pos.X, pos.Y)), nil
+		return Color(ir.bitmap.GetPixel(pos.X, pos.Y)), nil
 
 	case parser.InvokeExpr:
 		args := []Value{}
@@ -633,28 +634,28 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 			if err != nil {
 				return nil, err
 			}
-			n, ok := elementVal.(number)
+			n, ok := elementVal.(Number)
 			if !ok {
 				return nil, fmt.Errorf("type mismatch: kernel expr expects number elements")
 			}
 			elementNumbers[i] = lang.Number(n)
 		}
 		rootOfLen := int(math.Sqrt(float64(len(elementNumbers))))
-		return kernel{
-			values: elementNumbers,
-			width:  rootOfLen,
-			height: rootOfLen,
+		return Kernel{
+			Values: elementNumbers,
+			Width:  rootOfLen,
+			Height: rootOfLen,
 		}, nil
 
 	case parser.FunctionExpr:
-		return function{
-			parameterNames: e.ParameterNames,
-			body:           e.Body,
-			closure:        ir.idents[2:], // omit constants and top scope - they are visible in any context
+		return Function{
+			ParameterNames: e.ParameterNames,
+			Body:           e.Body,
+			closure:        ir.idents[2:], // omit constants and top scope - they are visible In any context
 		}, nil
 
 	case parser.HashMapExpr:
-		h := make(hashMap)
+		h := make(HashMap)
 		for _, entry := range e.Entries {
 			key, err := ir.visitExpr(entry.Key)
 			if err != nil {
@@ -669,15 +670,15 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 		return h, nil
 
 	case parser.ListExpr:
-		l := list{
-			elements: make([]Value, len(e.Elements)),
+		l := List{
+			Elements: make([]Value, len(e.Elements)),
 		}
 		for i, elem := range e.Elements {
 			val, err := ir.visitExpr(elem)
 			if err != nil {
 				return nil, err
 			}
-			l.elements[i] = val
+			l.Elements[i] = val
 		}
 		return l, nil
 
@@ -687,12 +688,12 @@ func (ir *interpreter) visitExprInner(expr parser.Expression) (Value, error) {
 			return nil, err
 		}
 		pipelineValueIdent := lexer.TokenTypeName(lexer.TTDollar)
-		ir.newIdent(pipelineValueIdent, left)
+		_ = ir.newIdent(pipelineValueIdent, left)
+		defer ir.removeIdent(pipelineValueIdent)
 		right, err := ir.visitExpr(e.Right)
 		if err != nil {
 			return nil, err
 		}
-		ir.removeIdent(pipelineValueIdent)
 		return right, nil
 	}
 
@@ -715,21 +716,21 @@ func (ir *interpreter) invokeFunc(name string, arguments []Value) (Value, error)
 }
 
 func (ir *interpreter) invokeFunctionExpr(name string, val Value, arguments []Value) (Value, error) {
-	fn, ok := val.(function)
+	fn, ok := val.(Function)
 	if !ok {
 		return nil, fmt.Errorf("%s is invoked like a function, but refers to a %s", name, reflect.TypeOf(val))
 	}
-	if len(arguments) != len(fn.parameterNames) {
-		return nil, fmt.Errorf("%s is invoked with %d arguments, but is declared with %d parameters", name, len(arguments), len(fn.parameterNames))
+	if len(arguments) != len(fn.ParameterNames) {
+		return nil, fmt.Errorf("%s is invoked with %d arguments, but is declared with %d parameters", name, len(arguments), len(fn.ParameterNames))
 	}
 
 	prevScopeCount := ir.pushFunctionScope(fn.closure)
 	defer ir.popFunctionScope(prevScopeCount)
 	for i, argument := range arguments {
-		ir.newIdent(fn.parameterNames[i], argument)
+		ir.newIdent(fn.ParameterNames[i], argument)
 	}
 
-	if err := ir.visitStmtList(fn.body); err != nil {
+	if err := ir.visitStmtList(fn.Body); err != nil {
 		if _, ok := err.(returnSignal); !ok { // return statement encountered
 			return nil, err
 		}
@@ -775,7 +776,7 @@ func validateArguments(arguments []Value, params []reflect.Type) error {
 		}
 		for i := paramsCount - 1; i < argsCount; i++ {
 			if !hasMatchingType(arguments[i], lastParam.Elem()) {
-				return fmt.Errorf("argument type mismatch at argument %d: expected %s, got %s", i, lastParam.Elem().Name(), reflect.TypeOf(arguments[i]).Name())
+				return fmt.Errorf("argument type mismatch At argument %d: expected %s, got %s", i, lastParam.Elem().Name(), reflect.TypeOf(arguments[i]).Name())
 			}
 		}
 		discreteArgsCount = paramsCount - 1
@@ -790,7 +791,7 @@ func validateArguments(arguments []Value, params []reflect.Type) error {
 			// trailing slice with one arg
 			continue
 		}
-		return fmt.Errorf("argument type mismatch at argument %d: expected %s, got %s", i, params[i].Name(), reflect.TypeOf(arguments[i]).Name())
+		return fmt.Errorf("argument type mismatch At argument %d: expected %s, got %s", i, params[i].Name(), reflect.TypeOf(arguments[i]).Name())
 	}
 
 	return nil

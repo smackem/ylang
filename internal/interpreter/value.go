@@ -1,22 +1,23 @@
 package interpreter
 
+// Value represents a ylang value at runtime
 type Value interface {
-	compare(other Value) (Value, error)
-	add(other Value) (Value, error)
-	sub(other Value) (Value, error)
-	mul(other Value) (Value, error)
-	div(other Value) (Value, error)
-	mod(other Value) (Value, error)
-	in(other Value) (Value, error)
-	neg() (Value, error)
-	not() (Value, error)
-	at(bitmap BitmapContext) (Value, error)
-	property(ident string) (Value, error)
-	printStr() string
-	iterate(visit func(Value) error) error
-	index(index Value) (Value, error)
-	indexRange(lower, upper Value) (Value, error)
-	indexAssign(index Value, val Value) error
-	runtimeTypeName() string
-	concat(val Value) (Value, error)
+	Compare(other Value) (Value, error)
+	Add(other Value) (Value, error)
+	Sub(other Value) (Value, error)
+	Mul(other Value) (Value, error)
+	Div(other Value) (Value, error)
+	Mod(other Value) (Value, error)
+	In(other Value) (Value, error)
+	Neg() (Value, error)
+	Not() (Value, error)
+	At(bitmap BitmapContext) (Value, error)
+	Property(ident string) (Value, error)
+	PrintStr() string
+	Iterate(visit func(Value) error) error
+	Index(index Value) (Value, error)
+	IndexRange(lower, upper Value) (Value, error)
+	IndexAssign(index Value, val Value) error
+	RuntimeTypeName() string
+	Concat(val Value) (Value, error)
 }

@@ -8,88 +8,88 @@ import (
 	"unicode/utf8"
 )
 
-type str lang.Str
+type Str lang.Str
 
-func (s str) compare(other Value) (Value, error) {
-	if r, ok := other.(str); ok {
-		return number(strings.Compare(string(s), string(r))), nil
+func (s Str) Compare(other Value) (Value, error) {
+	if r, ok := other.(Str); ok {
+		return Number(strings.Compare(string(s), string(r))), nil
 	}
 	return nil, nil
 }
 
-func (s str) add(other Value) (Value, error) {
-	return str(fmt.Sprintf("%s%s", s, other.printStr())), nil
+func (s Str) Add(other Value) (Value, error) {
+	return Str(fmt.Sprintf("%s%s", s, other.PrintStr())), nil
 }
 
-func (s str) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string - %s not supported", reflect.TypeOf(other))
+func (s Str) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string - %s Not supported", reflect.TypeOf(other))
 }
 
-func (s str) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string * %s not supported", reflect.TypeOf(other))
+func (s Str) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string * %s Not supported", reflect.TypeOf(other))
 }
 
-func (s str) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string / %s not supported", reflect.TypeOf(other))
+func (s Str) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string / %s Not supported", reflect.TypeOf(other))
 }
 
-func (s str) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string %% %s not supported", reflect.TypeOf(other))
+func (s Str) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (s str) in(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string in %s not supported", reflect.TypeOf(other))
+func (s Str) In(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string In %s Not supported", reflect.TypeOf(other))
 }
 
-func (s str) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: -string not supported")
+func (s Str) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: -string Not supported")
 }
 
-func (s str) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: not string not supported")
+func (s Str) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: Not string Not supported")
 }
 
-func (s str) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @string not supported")
+func (s Str) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @string Not supported")
 }
 
-func (s str) property(ident string) (Value, error) {
+func (s Str) Property(ident string) (Value, error) {
 	switch ident {
 	case "len", "length":
-		return number(len(s)), nil
+		return Number(len(s)), nil
 	}
 	return baseProperty(s, ident)
 }
 
-func (s str) printStr() string {
+func (s Str) PrintStr() string {
 	return string(s)
 }
 
-func (s str) iterate(visit func(Value) error) error {
-	return fmt.Errorf("cannot iterate over string")
+func (s Str) Iterate(visit func(Value) error) error {
+	return fmt.Errorf("cannot Iterate over string")
 }
 
-func (s str) index(index Value) (Value, error) {
-	if n, ok := index.(number); ok {
+func (s Str) Index(index Value) (Value, error) {
+	if n, ok := index.(Number); ok {
 		i := int(n)
 		runeVal, _ := utf8.DecodeRuneInString(string(s[i:]))
-		return str(fmt.Sprint(runeVal)), nil
+		return Str(fmt.Sprint(runeVal)), nil
 	}
-	return nil, fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
+	return nil, fmt.Errorf("type mismatch: str[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (s str) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string[lower..upper] not supported")
+func (s Str) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string[lower..upper] Not supported")
 }
 
-func (s str) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: str[%s] not supported", reflect.TypeOf(index))
+func (s Str) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: str[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (s str) runtimeTypeName() string {
+func (s Str) RuntimeTypeName() string {
 	return "string"
 }
 
-func (s str) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: string :: [%s] not supported", reflect.TypeOf(val))
+func (s Str) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: string :: [%s] Not supported", reflect.TypeOf(val))
 }

@@ -6,135 +6,135 @@ import (
 	"reflect"
 )
 
-type number lang.Number
+type Number lang.Number
 
-func (n number) compare(other Value) (Value, error) {
-	if r, ok := other.(number); ok {
+func (n Number) Compare(other Value) (Value, error) {
+	if r, ok := other.(Number); ok {
 		return n - r, nil
 	}
 	return nil, nil
 }
 
-func (n number) add(other Value) (Value, error) {
+func (n Number) Add(other Value) (Value, error) {
 	switch r := other.(type) {
-	case number:
-		return number(n + r), nil
-	case point:
-		return point{int(n + number(r.X) + 0.5), int(n + number(r.Y) + 0.5)}, nil
-	case color:
+	case Number:
+		return Number(n + r), nil
+	case Point:
+		return Point{int(n + Number(r.X) + 0.5), int(n + Number(r.Y) + 0.5)}, nil
+	case Color:
 		nn := lang.Number(n)
-		return color(lang.NewRgba(nn+r.R, nn+r.G, nn+r.B, r.A)), nil
+		return Color(lang.NewRgba(nn+r.R, nn+r.G, nn+r.B, r.A)), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number + number or number + color, found number + %s", reflect.TypeOf(other))
 }
 
-func (n number) sub(other Value) (Value, error) {
+func (n Number) Sub(other Value) (Value, error) {
 	switch r := other.(type) {
-	case number:
-		return number(n - r), nil
-	case point:
-		return point{int(n - number(r.X) + 0.5), int(n - number(r.Y) + 0.5)}, nil
-	case color:
+	case Number:
+		return Number(n - r), nil
+	case Point:
+		return Point{int(n - Number(r.X) + 0.5), int(n - Number(r.Y) + 0.5)}, nil
+	case Color:
 		nn := lang.Number(n)
-		return color(lang.NewRgba(nn-r.R, nn-r.G, nn-r.B, r.A)), nil
+		return Color(lang.NewRgba(nn-r.R, nn-r.G, nn-r.B, r.A)), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number - number or number - color, found number - %s", reflect.TypeOf(other))
 }
 
-func (n number) mul(other Value) (Value, error) {
+func (n Number) Mul(other Value) (Value, error) {
 	switch r := other.(type) {
-	case number:
-		return number(n * r), nil
-	case point:
-		return point{int(n*number(r.X) + 0.5), int(n*number(r.Y) + 0.5)}, nil
-	case color:
+	case Number:
+		return Number(n * r), nil
+	case Point:
+		return Point{int(n*Number(r.X) + 0.5), int(n*Number(r.Y) + 0.5)}, nil
+	case Color:
 		rc := lang.Color(r)
 		nn := lang.Number(n)
-		return color(lang.NewSrgba(nn*rc.ScR(), nn*rc.ScG(), nn*rc.ScB(), rc.ScA())), nil
+		return Color(lang.NewSrgba(nn*rc.ScR(), nn*rc.ScG(), nn*rc.ScB(), rc.ScA())), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number * number or number * color, found number + %s", reflect.TypeOf(other))
 }
 
-func (n number) div(other Value) (Value, error) {
+func (n Number) Div(other Value) (Value, error) {
 	switch r := other.(type) {
-	case number:
-		return number(n / r), nil
-	case point:
-		return point{int(n/number(r.X) + 0.5), int(n/number(r.Y) + 0.5)}, nil
-	case color:
+	case Number:
+		return Number(n / r), nil
+	case Point:
+		return Point{int(n/Number(r.X) + 0.5), int(n/Number(r.Y) + 0.5)}, nil
+	case Color:
 		nn := lang.Number(n)
-		return color(lang.NewRgba(nn/r.R, nn/r.G, nn/r.B, r.A)), nil
+		return Color(lang.NewRgba(nn/r.R, nn/r.G, nn/r.B, r.A)), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number / number, found number / %s", reflect.TypeOf(other))
 }
 
-func (n number) mod(other Value) (Value, error) {
-	if r, ok := other.(number); ok {
-		return number(int(n+0.5) % int(r+0.5)), nil
+func (n Number) Mod(other Value) (Value, error) {
+	if r, ok := other.(Number); ok {
+		return Number(int(n+0.5) % int(r+0.5)), nil
 	}
 	return nil, fmt.Errorf("type mismatch: expected number / number, found number / %s", reflect.TypeOf(other))
 }
 
-func (n number) in(other Value) (Value, error) {
-	if k, ok := other.(kernel); ok {
-		for _, kn := range k.values {
+func (n Number) In(other Value) (Value, error) {
+	if k, ok := other.(Kernel); ok {
+		for _, kn := range k.Values {
 			if kn == lang.Number(n) {
-				return boolean(true), nil
+				return Boolean(true), nil
 			}
 		}
 		return falseVal, nil
 	}
-	return nil, fmt.Errorf("type mismatch: 'number in %s' not supported", reflect.TypeOf(other))
+	return nil, fmt.Errorf("type mismatch: 'number In %s' Not supported", reflect.TypeOf(other))
 }
 
-func (n number) neg() (Value, error) {
-	return number(-n), nil
+func (n Number) Neg() (Value, error) {
+	return Number(-n), nil
 }
 
-func (n number) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: found 'not number' instead of 'not bool'")
+func (n Number) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: found 'Not number' instead of 'Not bool'")
 }
 
-func (n number) at(bitmap BitmapContext) (Value, error) {
+func (n Number) At(bitmap BitmapContext) (Value, error) {
 	return nil, fmt.Errorf("type mismatch: found '@number' instead of '@point'")
 }
 
-func (n number) property(ident string) (Value, error) {
+func (n Number) Property(ident string) (Value, error) {
 	return baseProperty(n, ident)
 }
 
-func (n number) printStr() string {
+func (n Number) PrintStr() string {
 	return fmt.Sprintf("%g", n)
 }
 
-func (n number) iterate(visit func(Value) error) error {
-	return fmt.Errorf("cannot iterate over number")
+func (n Number) Iterate(visit func(Value) error) error {
+	return fmt.Errorf("cannot Iterate over number")
 }
 
-func (n number) index(index Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: number[index] not supported")
+func (n Number) Index(index Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: number[Index] Not supported")
 }
 
-func (n number) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: number[lower..upper] not supported")
+func (n Number) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: number[lower..upper] Not supported")
 }
 
 // implement sort.Interface for number slice
 
-type numberSlice []number
+type numberSlice []Number
 
 func (p numberSlice) Len() int           { return len(p) }
 func (p numberSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p numberSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func (n number) indexAssign(index Value, val Value) error {
-	return fmt.Errorf("type mismatch: number[%s] not supported", reflect.TypeOf(index))
+func (n Number) IndexAssign(index Value, val Value) error {
+	return fmt.Errorf("type mismatch: number[%s] Not supported", reflect.TypeOf(index))
 }
 
-func (n number) runtimeTypeName() string {
+func (n Number) RuntimeTypeName() string {
 	return "number"
 }
 
-func (n number) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: number :: [%s] not supported", reflect.TypeOf(val))
+func (n Number) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: number :: [%s] Not supported", reflect.TypeOf(val))
 }

@@ -1,6 +1,9 @@
 syntax = "proto3";
 package emitter;
 
+option java_package = "net.smackem.ylang.emitter";
+option java_outer_classname = "YLangProtos";
+
 enum OpCode {
     NOP = 0;            // do nothing
     PUSH = 1;           // push arg

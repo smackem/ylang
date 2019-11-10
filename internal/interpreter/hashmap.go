@@ -7,9 +7,9 @@ import (
 	"sort"
 )
 
-type hashMap map[Value]Value
+type HashMap map[Value]Value
 
-func (h hashMap) sortedKeys() []Value {
+func (h HashMap) sortedKeys() []Value {
 	keys := make([]Value, 0, len(h))
 	for key := range h {
 		keys = append(keys, key)
@@ -20,67 +20,67 @@ func (h hashMap) sortedKeys() []Value {
 
 // implement value
 
-func (h hashMap) compare(other Value) (Value, error) {
-	return boolean(lang.FalseVal), nil
+func (h HashMap) Compare(other Value) (Value, error) {
+	return Boolean(lang.FalseVal), nil
 }
 
-func (h hashMap) add(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap + %s not supported", reflect.TypeOf(other))
+func (h HashMap) Add(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap + %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) sub(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap - %s not supported", reflect.TypeOf(other))
+func (h HashMap) Sub(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap - %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) mul(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap * %s not supported", reflect.TypeOf(other))
+func (h HashMap) Mul(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap * %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) div(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap / %s not supported", reflect.TypeOf(other))
+func (h HashMap) Div(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap / %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) mod(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap %% %s not supported", reflect.TypeOf(other))
+func (h HashMap) Mod(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap %% %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) in(other Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap in %s not supported", reflect.TypeOf(other))
+func (h HashMap) In(other Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap In %s Not supported", reflect.TypeOf(other))
 }
 
-func (h hashMap) neg() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: -hashMap not supported")
+func (h HashMap) Neg() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: -hashMap Not supported")
 }
 
-func (h hashMap) not() (Value, error) {
-	return nil, fmt.Errorf("type mismatch: not hashMap not supported")
+func (h HashMap) Not() (Value, error) {
+	return nil, fmt.Errorf("type mismatch: Not hashMap Not supported")
 }
 
-func (h hashMap) at(bitmap BitmapContext) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: @hashMap not supported")
+func (h HashMap) At(bitmap BitmapContext) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: @hashMap Not supported")
 }
 
-func (h hashMap) property(ident string) (Value, error) {
+func (h HashMap) Property(ident string) (Value, error) {
 	switch ident {
 	case "count":
-		return number(len(h)), nil
+		return Number(len(h)), nil
 	default:
-		if val, ok := h[str(ident)]; ok {
+		if val, ok := h[Str(ident)]; ok {
 			return val, nil
 		}
 	}
 	return baseProperty(h, ident)
 }
 
-func (h hashMap) printStr() string {
+func (h HashMap) PrintStr() string {
 	return fmt.Sprintf("hashMap(count: %d)", len(h))
 }
 
-func (h hashMap) iterate(visit func(Value) error) error {
+func (h HashMap) Iterate(visit func(Value) error) error {
 	for key, val := range h {
-		entry := hashMap{
-			str("key"): key,
-			str("val"): val,
+		entry := HashMap{
+			Str("key"): key,
+			Str("val"): val,
 		}
 		if err := visit(entry); err != nil {
 			return err
@@ -89,26 +89,26 @@ func (h hashMap) iterate(visit func(Value) error) error {
 	return nil
 }
 
-func (h hashMap) index(index Value) (Value, error) {
+func (h HashMap) Index(index Value) (Value, error) {
 	if val, ok := h[index]; ok {
 		return val, nil
 	}
 	return nil, nil
 }
 
-func (h hashMap) indexRange(lower, upper Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap[lower..upper] not supported")
+func (h HashMap) IndexRange(lower, upper Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap[lower..upper] Not supported")
 }
 
-func (h hashMap) indexAssign(index Value, val Value) error {
+func (h HashMap) IndexAssign(index Value, val Value) error {
 	h[index] = val
 	return nil
 }
 
-func (h hashMap) runtimeTypeName() string {
+func (h HashMap) RuntimeTypeName() string {
 	return "hashmap"
 }
 
-func (h hashMap) concat(val Value) (Value, error) {
-	return nil, fmt.Errorf("type mismatch: hashMap :: [%s] not supported", reflect.TypeOf(val))
+func (h HashMap) Concat(val Value) (Value, error) {
+	return nil, fmt.Errorf("type mismatch: hashMap :: [%s] Not supported", reflect.TypeOf(val))
 }
