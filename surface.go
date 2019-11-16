@@ -242,6 +242,10 @@ func saveImage(ymg *ymage, targetPath string) error {
 	}
 	defer targetFile.Close()
 
+	return writeImage(ymg, targetFile)
+}
+
+func writeImage(ymg *ymage, writer io.Writer) error {
 	img := image.NewNRGBA(image.Rect(0, 0, ymg.width, ymg.height))
 	byteCount := len(img.Pix)
 	j := 0
@@ -254,8 +258,5 @@ func saveImage(ymg *ymage, targetPath string) error {
 		j++
 	}
 
-	if err = png.Encode(targetFile, img); err != nil {
-		return fmt.Errorf("error encoding target image: %s", err)
-	}
-	return nil
+	return png.Encode(writer, img)
 }

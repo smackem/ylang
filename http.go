@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/smackem/ylang/internal/emitter"
 	"github.com/smackem/ylang/internal/program"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -12,19 +13,28 @@ import (
 	"github.com/smackem/ylang/internal/goobar"
 )
 
-func initHTTP() error {
+const (
+	httpPort       = 9090
+	targetImageDir = "res/pub/temp"
+)
+
+func httpMain() {
 	err := os.Mkdir(targetImageDir, os.ModeDir)
-	if err != nil && os.IsExist(err) == false {
-		return err // ignore "already exists" error
+	if err != nil && os.IsExist(err) == false { // ignore "already exists" error
+		log.Fatalf("error initializing http server: %s", err.Error())
 	}
 	goobar.SetViewFolder("res/view")
 	http.Handle("/", goobar.Get(getIndex))
 	http.Handle("/render", goobar.Post(postRender))
 	http.Handle("/pub/", http.FileServer(http.Dir("res")))
-	return nil
-}
 
-const targetImageDir string = "res/pub/temp"
+	srv := http.Server{
+		Addr: fmt.Sprintf(":%d", httpPort),
+	}
+	if err = srv.ListenAndServe(); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+}
 
 func getIndex(x *goobar.Exchange) goobar.Responder {
 	return goobar.View("index.html", nil)

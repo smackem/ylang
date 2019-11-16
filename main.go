@@ -1,35 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"github.com/smackem/ylang/internal/emitter"
 	"github.com/smackem/ylang/internal/program"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"time"
 )
-
-const (
-	port = 9090
-)
-
-func webMain() {
-	err := initHTTP()
-	if err != nil {
-		log.Fatalf("error initializing http server: %s", err.Error())
-	}
-
-	srv := http.Server{
-		Addr: fmt.Sprintf(":%d", port),
-	}
-
-	fmt.Printf("Running on port %d. Press Ctrl+C to quit...", port)
-	err = srv.ListenAndServe()
-	log.Print(err)
-}
 
 func main() {
 	sourceImgPath := flag.String("image", "", "the source image path")
@@ -39,7 +20,7 @@ func main() {
 	flag.Parse()
 
 	if *sourceImgPath == "" {
-		webMain()
+		serverMain()
 		return
 	}
 
@@ -47,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not load %s: %s", *sourceImgPath, err.Error())
 	}
-	defer sourceFile.Close()
+	defer func() { _ = sourceFile.Close() }()
 
 	surf, err := loadSurface(sourceFile)
 	if err != nil {
@@ -82,4 +63,12 @@ func main() {
 	}
 
 	log.Printf("Saved image to '%s' as png", *targetImgPath)
+}
+
+func serverMain() {
+	go httpMain()
+	go listenerMain()
+	fmt.Printf("Running on port %d (HTTP) and %s (gRPC). Press Enter to quit...", httpPort, listenerPort)
+	reader := bufio.NewReader(os.Stdin)
+	_, _ = reader.ReadString('\n')
 }

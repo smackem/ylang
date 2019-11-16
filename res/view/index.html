@@ -20,7 +20,8 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#renderBtn").click(onRender);
-            })
+            });
+
             function onRender(){
                 $.ajax({url: "/render", method: "POST", data: {
                     sourceCode: $("#sourceCode").val(),
@@ -33,7 +34,15 @@
                 }).fail(function(err) {
                     $("#message").html("Error: " + err)
                 });
-            };
+            }
+
+            function render() {
+                let image = document.getElementById("image");
+                image.src = $("#imageUri").val();
+                image.onload = function () {
+
+                }
+            }
         </script>
     </body>
 </html>

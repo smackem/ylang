@@ -1,0 +1,30 @@
+syntax = "proto3";
+package listener;
+
+option java_package = "net.smackem.ylang.listener";
+option java_outer_classname = "YLangProtos";
+
+service ImageProc {
+    rpc ProcessImage (ProcessImageRequest) returns (ProcessImageResponse) {}
+    rpc SayHello (SimpleMsg) returns (SimpleMsg) {}
+}
+
+message SimpleMsg {
+    string text = 1;
+}
+
+message ProcessImageRequest {
+    string sourceCode = 1;
+    bytes imageDataPng = 2;
+}
+
+message ProcessImageResponse {
+    enum CompilationResult {
+        UNDEFINED = 0;
+        OK = 1;
+        ERROR = 2;
+    }
+    CompilationResult result = 1;
+    string message = 2;
+    bytes imageDataPng = 3;
+}

@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/play/fish.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/listener/listener.pb.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/listener/listener.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/listener/proto.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/listener.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/emitter/jsemitter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/emitter/jsemitter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/tryout.html" beforeDir="false" afterPath="$PROJECT_DIR$/play/tryout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/pub/script/ylang.js" beforeDir="false" afterPath="$PROJECT_DIR$/res/pub/script/ylang.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/sample.ylang" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.ylang" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/view/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/res/view/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,8 +39,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="Go File" />
         <option value="HTML File" />
+        <option value="Go File" />
       </list>
     </option>
   </component>
@@ -63,7 +66,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/play" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
+    <property name="settings.editor.selected.configurable" value="goland.project.structure" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -89,7 +92,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.RUN github.com/smackem/ylang">
+  <component name="RunManager" selected="Go Build.SRV github.com/smackem/ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -110,7 +113,7 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="WEB github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <configuration name="SRV github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
       <kind value="PACKAGE" />
@@ -141,7 +144,7 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Go Build.WEB github.com/smackem/ylang" />
+      <item itemvalue="Go Build.SRV github.com/smackem/ylang" />
       <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
       <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
       <item itemvalue="Go Test.go test ylang" />
@@ -197,6 +200,7 @@
     <MESSAGE value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
     <MESSAGE value="- exported interpreter.value&#10;- added protobuf-based emitter" />
     <MESSAGE value="- added javascript emitter" />
-    <option name="LAST_COMMIT_MESSAGE" value="- added javascript emitter" />
+    <MESSAGE value="- first working emitted javascript" />
+    <option name="LAST_COMMIT_MESSAGE" value="- first working emitted javascript" />
   </component>
 </project>
