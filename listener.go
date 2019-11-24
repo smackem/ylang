@@ -7,6 +7,7 @@ import (
 	pb "github.com/smackem/ylang/internal/listener"
 	"github.com/smackem/ylang/internal/program"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	"net"
 )
@@ -19,14 +20,65 @@ type server struct {
 	pb.UnimplementedImageProcServer
 }
 
-func (s *server) SayHello(ctx context.Context, in *pb.SimpleMsg) (*pb.SimpleMsg, error) {
-	log.Print("Received SayHello")
-	return &pb.SimpleMsg{
-		Text: in.Text + " jupp",
-	}, nil
+func (s *server) ProcessImage(srv pb.ImageProc_ProcessImageServer) error {
+	request, err := s.readRequest(srv)
+	if err != nil {
+		return err
+	}
+	response, err := s.processImage(srv.Context(), request)
+	if err != nil {
+		return err
+	}
+	return s.writeResponse(response, srv)
 }
 
-func (s *server) ProcessImage(ctx context.Context, in *pb.ProcessImageRequest) (*pb.ProcessImageResponse, error) {
+func (s *server) writeResponse(response *pb.ProcessImageResponse, srv pb.ImageProc_ProcessImageServer) error {
+	resp := pb.ProcessImageResponse{}
+	const chunkSize = 64 * 1024
+	index := 0
+	for remaining := len(response.ImageDataPng); remaining > 0; {
+		toWrite := chunkSize
+		if toWrite > remaining {
+			toWrite = remaining
+		}
+		resp.ImageDataPng = response.ImageDataPng[index : index+toWrite]
+		if index == 0 {
+			resp.Result = response.Result
+			resp.Message = response.Message
+		}
+		if err := srv.Send(&resp); err != nil {
+			return err
+		}
+		remaining -= toWrite
+		index += toWrite
+	}
+	return nil
+}
+
+func (s *server) readRequest(srv pb.ImageProc_ProcessImageServer) (*pb.ProcessImageRequest, error) {
+	var fullRequest pb.ProcessImageRequest
+	first := true
+
+	// read streamed requests up to end
+	for {
+		request, err := srv.Recv()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, err
+		}
+		if first {
+			fullRequest.SourceCode = request.SourceCode
+		}
+		fullRequest.ImageDataPng = append(fullRequest.ImageDataPng, request.ImageDataPng...)
+		first = false
+	}
+
+	return &fullRequest, nil
+}
+
+func (s *server) processImage(ctx context.Context, in *pb.ProcessImageRequest) (*pb.ProcessImageResponse, error) {
 	surf, err := loadSurface(bytes.NewBuffer(in.ImageDataPng))
 	if err != nil {
 		return nil, fmt.Errorf("error decoding imageData: %s", err)

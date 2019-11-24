@@ -49,46 +49,7 @@ func (x ProcessImageResponse_CompilationResult) String() string {
 }
 
 func (ProcessImageResponse_CompilationResult) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_f75aade3a9f7de9c, []int{2, 0}
-}
-
-type SimpleMsg struct {
-	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SimpleMsg) Reset()         { *m = SimpleMsg{} }
-func (m *SimpleMsg) String() string { return proto.CompactTextString(m) }
-func (*SimpleMsg) ProtoMessage()    {}
-func (*SimpleMsg) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f75aade3a9f7de9c, []int{0}
-}
-
-func (m *SimpleMsg) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SimpleMsg.Unmarshal(m, b)
-}
-func (m *SimpleMsg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SimpleMsg.Marshal(b, m, deterministic)
-}
-func (m *SimpleMsg) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SimpleMsg.Merge(m, src)
-}
-func (m *SimpleMsg) XXX_Size() int {
-	return xxx_messageInfo_SimpleMsg.Size(m)
-}
-func (m *SimpleMsg) XXX_DiscardUnknown() {
-	xxx_messageInfo_SimpleMsg.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SimpleMsg proto.InternalMessageInfo
-
-func (m *SimpleMsg) GetText() string {
-	if m != nil {
-		return m.Text
-	}
-	return ""
+	return fileDescriptor_f75aade3a9f7de9c, []int{1, 0}
 }
 
 type ProcessImageRequest struct {
@@ -103,7 +64,7 @@ func (m *ProcessImageRequest) Reset()         { *m = ProcessImageRequest{} }
 func (m *ProcessImageRequest) String() string { return proto.CompactTextString(m) }
 func (*ProcessImageRequest) ProtoMessage()    {}
 func (*ProcessImageRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f75aade3a9f7de9c, []int{1}
+	return fileDescriptor_f75aade3a9f7de9c, []int{0}
 }
 
 func (m *ProcessImageRequest) XXX_Unmarshal(b []byte) error {
@@ -151,7 +112,7 @@ func (m *ProcessImageResponse) Reset()         { *m = ProcessImageResponse{} }
 func (m *ProcessImageResponse) String() string { return proto.CompactTextString(m) }
 func (*ProcessImageResponse) ProtoMessage()    {}
 func (*ProcessImageResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f75aade3a9f7de9c, []int{2}
+	return fileDescriptor_f75aade3a9f7de9c, []int{1}
 }
 
 func (m *ProcessImageResponse) XXX_Unmarshal(b []byte) error {
@@ -195,7 +156,6 @@ func (m *ProcessImageResponse) GetImageDataPng() []byte {
 
 func init() {
 	proto.RegisterEnum("listener.ProcessImageResponse_CompilationResult", ProcessImageResponse_CompilationResult_name, ProcessImageResponse_CompilationResult_value)
-	proto.RegisterType((*SimpleMsg)(nil), "listener.SimpleMsg")
 	proto.RegisterType((*ProcessImageRequest)(nil), "listener.ProcessImageRequest")
 	proto.RegisterType((*ProcessImageResponse)(nil), "listener.ProcessImageResponse")
 }
@@ -203,28 +163,25 @@ func init() {
 func init() { proto.RegisterFile("listener.proto", fileDescriptor_f75aade3a9f7de9c) }
 
 var fileDescriptor_f75aade3a9f7de9c = []byte{
-	// 326 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xcf, 0x4e, 0xc2, 0x40,
-	0x10, 0xc6, 0x29, 0x2a, 0xd2, 0x11, 0x09, 0x0e, 0x1e, 0x08, 0x89, 0x48, 0x7a, 0xc2, 0x4b, 0x63,
-	0x30, 0xfa, 0x00, 0xfc, 0x31, 0x10, 0x15, 0xc8, 0x12, 0x0f, 0x1c, 0x57, 0x9c, 0x34, 0x8d, 0xdb,
-	0xdd, 0xda, 0x59, 0x12, 0x79, 0x0f, 0x5f, 0xcd, 0xf7, 0x31, 0x54, 0x40, 0x08, 0xe8, 0x6d, 0xe7,
-	0xcb, 0xf7, 0x4d, 0x7e, 0xb3, 0x33, 0x50, 0x54, 0x21, 0x5b, 0xd2, 0x94, 0xf8, 0x71, 0x62, 0xac,
-	0xc1, 0xfc, 0xaa, 0xf6, 0x2e, 0xc1, 0x1d, 0x87, 0x51, 0xac, 0xe8, 0x89, 0x03, 0x44, 0x38, 0xb4,
-	0xf4, 0x61, 0x2b, 0x4e, 0xdd, 0x69, 0xb8, 0x22, 0x7d, 0x7b, 0x13, 0x28, 0x8f, 0x12, 0x33, 0x25,
-	0xe6, 0x7e, 0x24, 0x03, 0x12, 0xf4, 0x3e, 0x23, 0xb6, 0x58, 0x03, 0x60, 0x33, 0x4b, 0xa6, 0xd4,
-	0x36, 0xaf, 0xb4, 0x0c, 0x6c, 0x28, 0xe8, 0x41, 0x21, 0x5c, 0xf8, 0x3b, 0xd2, 0xca, 0x91, 0x0e,
-	0x2a, 0xd9, 0xba, 0xd3, 0x28, 0x88, 0x2d, 0xcd, 0xfb, 0x72, 0xe0, 0x7c, 0xbb, 0x37, 0xc7, 0x46,
-	0x33, 0x61, 0x0f, 0x72, 0x09, 0xf1, 0x4c, 0xfd, 0x90, 0x14, 0x9b, 0xd7, 0xfe, 0x9a, 0x7f, 0x9f,
-	0xdf, 0x6f, 0x9b, 0x28, 0x0e, 0x95, 0xb4, 0xa1, 0xd1, 0x22, 0xcd, 0x89, 0x65, 0x1e, 0x2b, 0x70,
-	0x1c, 0x11, 0xb3, 0x0c, 0x28, 0x25, 0x70, 0xc5, 0xaa, 0xdc, 0x01, 0x3c, 0xd8, 0x03, 0x78, 0x0b,
-	0x67, 0x3b, 0xad, 0xf1, 0x14, 0xdc, 0xe7, 0x41, 0xa7, 0x7b, 0xdf, 0x1f, 0x74, 0x3b, 0xa5, 0x0c,
-	0xe6, 0x20, 0x3b, 0x7c, 0x28, 0x39, 0xe8, 0xc2, 0x51, 0x57, 0x88, 0xa1, 0x28, 0x65, 0x9b, 0x9f,
-	0x0e, 0xb8, 0x29, 0xe0, 0x02, 0x16, 0x87, 0x50, 0xd8, 0x84, 0xc6, 0x8b, 0xbf, 0x86, 0x49, 0x3f,
-	0xb6, 0x5a, 0xfb, 0x7f, 0x56, 0x2f, 0x83, 0x77, 0x90, 0x1f, 0xcb, 0x79, 0x8f, 0x94, 0x32, 0x58,
-	0xfe, 0x75, 0xaf, 0xd7, 0x58, 0xdd, 0x27, 0x7a, 0x99, 0xd6, 0x15, 0x54, 0x35, 0x59, 0x9f, 0x23,
-	0x39, 0x7d, 0xa3, 0xc8, 0x9f, 0x2b, 0xa9, 0x83, 0xb5, 0xb3, 0x75, 0x32, 0x79, 0x94, 0x3a, 0x18,
-	0x2d, 0xce, 0x83, 0x5f, 0x72, 0xe9, 0x99, 0xdc, 0x7c, 0x07, 0x00, 0x00, 0xff, 0xff, 0x86, 0x15,
-	0x8c, 0x50, 0x38, 0x02, 0x00, 0x00,
+	// 288 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x91, 0x41, 0x4b, 0xc3, 0x40,
+	0x10, 0x85, 0xbb, 0x15, 0xab, 0x19, 0x6b, 0xa9, 0xab, 0x87, 0x50, 0xb0, 0x94, 0x9c, 0xe2, 0x25,
+	0x94, 0x8a, 0x7f, 0xa0, 0x4d, 0xc4, 0xa2, 0xb4, 0x61, 0xc5, 0x43, 0x6f, 0xae, 0x71, 0x08, 0xc1,
+	0x64, 0x37, 0x66, 0x36, 0x07, 0x7f, 0xa8, 0xff, 0x47, 0xb2, 0xd8, 0xd2, 0xd2, 0xea, 0x71, 0x86,
+	0x79, 0x8f, 0xef, 0xcd, 0x83, 0x5e, 0x9e, 0x91, 0x41, 0x85, 0x55, 0x50, 0x56, 0xda, 0x68, 0x7e,
+	0xba, 0x9e, 0xbd, 0x15, 0x5c, 0xc6, 0x95, 0x4e, 0x90, 0x68, 0x5e, 0xc8, 0x14, 0x05, 0x7e, 0xd6,
+	0x48, 0x86, 0x0f, 0x01, 0x48, 0xd7, 0x55, 0x82, 0x33, 0xfd, 0x8e, 0x2e, 0x1b, 0x31, 0xdf, 0x11,
+	0x5b, 0x1b, 0xee, 0x41, 0x37, 0x6b, 0xee, 0x43, 0x69, 0x64, 0xac, 0x52, 0xb7, 0x3d, 0x62, 0x7e,
+	0x57, 0xec, 0xec, 0xbc, 0x6f, 0x06, 0x57, 0xbb, 0xde, 0x54, 0x6a, 0x45, 0xc8, 0x1f, 0xa0, 0x53,
+	0x21, 0xd5, 0xb9, 0xb1, 0xc6, 0xbd, 0xc9, 0x38, 0xd8, 0xe0, 0x1d, 0xba, 0x0f, 0x66, 0xba, 0x28,
+	0xb3, 0x5c, 0x9a, 0x4c, 0x2b, 0x61, 0x75, 0xe2, 0x57, 0xcf, 0x5d, 0x38, 0x29, 0x90, 0x48, 0xa6,
+	0x68, 0x09, 0x1c, 0xb1, 0x1e, 0xf7, 0x00, 0x8f, 0x0e, 0x00, 0xde, 0xc1, 0xc5, 0x9e, 0x35, 0x3f,
+	0x07, 0xe7, 0x65, 0x11, 0x46, 0xf7, 0xf3, 0x45, 0x14, 0xf6, 0x5b, 0xbc, 0x03, 0xed, 0xe5, 0x63,
+	0x9f, 0x71, 0x07, 0x8e, 0x23, 0x21, 0x96, 0xa2, 0xdf, 0x9e, 0xbc, 0x82, 0x63, 0xf9, 0x1a, 0x56,
+	0xfe, 0x0c, 0xdd, 0x6d, 0x66, 0x7e, 0xfd, 0x57, 0x16, 0xfb, 0xd7, 0xc1, 0xf0, 0xff, 0xa8, 0x5e,
+	0xcb, 0x67, 0x63, 0x36, 0xbd, 0x81, 0x81, 0x42, 0x13, 0x50, 0x21, 0x93, 0x0f, 0x2c, 0x82, 0xaf,
+	0x5c, 0xaa, 0x74, 0x23, 0x9c, 0x9e, 0xad, 0x9e, 0xa4, 0x4a, 0xe3, 0xa6, 0x48, 0x7a, 0xeb, 0xd8,
+	0x42, 0x6f, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x4a, 0x08, 0x3f, 0x47, 0xe2, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -239,8 +196,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ImageProcClient interface {
-	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*ProcessImageResponse, error)
-	SayHello(ctx context.Context, in *SimpleMsg, opts ...grpc.CallOption) (*SimpleMsg, error)
+	ProcessImage(ctx context.Context, opts ...grpc.CallOption) (ImageProc_ProcessImageClient, error)
 }
 
 type imageProcClient struct {
@@ -251,94 +207,91 @@ func NewImageProcClient(cc *grpc.ClientConn) ImageProcClient {
 	return &imageProcClient{cc}
 }
 
-func (c *imageProcClient) ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*ProcessImageResponse, error) {
-	out := new(ProcessImageResponse)
-	err := c.cc.Invoke(ctx, "/listener.ImageProc/ProcessImage", in, out, opts...)
+func (c *imageProcClient) ProcessImage(ctx context.Context, opts ...grpc.CallOption) (ImageProc_ProcessImageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ImageProc_serviceDesc.Streams[0], "/listener.ImageProc/ProcessImage", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &imageProcProcessImageClient{stream}
+	return x, nil
 }
 
-func (c *imageProcClient) SayHello(ctx context.Context, in *SimpleMsg, opts ...grpc.CallOption) (*SimpleMsg, error) {
-	out := new(SimpleMsg)
-	err := c.cc.Invoke(ctx, "/listener.ImageProc/SayHello", in, out, opts...)
-	if err != nil {
+type ImageProc_ProcessImageClient interface {
+	Send(*ProcessImageRequest) error
+	Recv() (*ProcessImageResponse, error)
+	grpc.ClientStream
+}
+
+type imageProcProcessImageClient struct {
+	grpc.ClientStream
+}
+
+func (x *imageProcProcessImageClient) Send(m *ProcessImageRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *imageProcProcessImageClient) Recv() (*ProcessImageResponse, error) {
+	m := new(ProcessImageResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
 // ImageProcServer is the server API for ImageProc service.
 type ImageProcServer interface {
-	ProcessImage(context.Context, *ProcessImageRequest) (*ProcessImageResponse, error)
-	SayHello(context.Context, *SimpleMsg) (*SimpleMsg, error)
+	ProcessImage(ImageProc_ProcessImageServer) error
 }
 
 // UnimplementedImageProcServer can be embedded to have forward compatible implementations.
 type UnimplementedImageProcServer struct {
 }
 
-func (*UnimplementedImageProcServer) ProcessImage(ctx context.Context, req *ProcessImageRequest) (*ProcessImageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ProcessImage not implemented")
-}
-func (*UnimplementedImageProcServer) SayHello(ctx context.Context, req *SimpleMsg) (*SimpleMsg, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+func (*UnimplementedImageProcServer) ProcessImage(srv ImageProc_ProcessImageServer) error {
+	return status.Errorf(codes.Unimplemented, "method ProcessImage not implemented")
 }
 
 func RegisterImageProcServer(s *grpc.Server, srv ImageProcServer) {
 	s.RegisterService(&_ImageProc_serviceDesc, srv)
 }
 
-func _ImageProc_ProcessImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProcessImageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ImageProcServer).ProcessImage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/listener.ImageProc/ProcessImage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ImageProcServer).ProcessImage(ctx, req.(*ProcessImageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _ImageProc_ProcessImage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ImageProcServer).ProcessImage(&imageProcProcessImageServer{stream})
 }
 
-func _ImageProc_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SimpleMsg)
-	if err := dec(in); err != nil {
+type ImageProc_ProcessImageServer interface {
+	Send(*ProcessImageResponse) error
+	Recv() (*ProcessImageRequest, error)
+	grpc.ServerStream
+}
+
+type imageProcProcessImageServer struct {
+	grpc.ServerStream
+}
+
+func (x *imageProcProcessImageServer) Send(m *ProcessImageResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *imageProcProcessImageServer) Recv() (*ProcessImageRequest, error) {
+	m := new(ProcessImageRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(ImageProcServer).SayHello(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/listener.ImageProc/SayHello",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ImageProcServer).SayHello(ctx, req.(*SimpleMsg))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 var _ImageProc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "listener.ImageProc",
 	HandlerType: (*ImageProcServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "ProcessImage",
-			Handler:    _ImageProc_ProcessImage_Handler,
-		},
-		{
-			MethodName: "SayHello",
-			Handler:    _ImageProc_SayHello_Handler,
+			StreamName:    "ProcessImage",
+			Handler:       _ImageProc_ProcessImage_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "listener.proto",
 }

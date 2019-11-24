@@ -1,0 +1,17 @@
+Kx := |-1 0 1
+       -2 0 2
+       -1 0 1|
+Ky := |-1 -2 -1
+        0  0  0
+        1  2  1|
+G := gauss(3)
+
+for p in Bounds {
+	@p = convolute(p, G)
+}
+
+flip() //----------------------------------------
+
+for p in Bounds {
+	@p = hypot(convolute(p, Kx), convolute(p, Ky))
+}
