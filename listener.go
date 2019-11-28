@@ -36,21 +36,23 @@ func (s *server) writeResponse(response *pb.ProcessImageResponse, srv pb.ImagePr
 	resp := pb.ProcessImageResponse{}
 	const chunkSize = 64 * 1024
 	index := 0
-	for remaining := len(response.ImageDataPng); remaining > 0; {
+	isFirstMessage := true
+	for remaining := len(response.ImageDataPng); remaining > 0 || isFirstMessage; {
 		toWrite := chunkSize
 		if toWrite > remaining {
 			toWrite = remaining
 		}
 		resp.ImageDataPng = response.ImageDataPng[index : index+toWrite]
-		if index == 0 {
+		if isFirstMessage {
 			resp.Result = response.Result
 			resp.Message = response.Message
+			isFirstMessage = false
 		}
 		if err := srv.Send(&resp); err != nil {
 			return err
 		}
-		remaining -= toWrite
 		index += toWrite
+		remaining -= toWrite
 	}
 	return nil
 }
@@ -59,7 +61,6 @@ func (s *server) readRequest(srv pb.ImageProc_ProcessImageServer) (*pb.ProcessIm
 	var fullRequest pb.ProcessImageRequest
 	first := true
 
-	// read streamed requests up to end
 	for {
 		request, err := srv.Recv()
 		if err != nil {
