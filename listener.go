@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strings"
 )
 
 const (
@@ -46,6 +47,7 @@ func (s *server) writeResponse(response *pb.ProcessImageResponse, srv pb.ImagePr
 		if isFirstMessage {
 			resp.Result = response.Result
 			resp.Message = response.Message
+			resp.LogOutput = response.LogOutput
 			isFirstMessage = false
 		}
 		if err := srv.Send(&resp); err != nil {
@@ -94,12 +96,19 @@ func (s *server) processImage(ctx context.Context, in *pb.ProcessImageRequest) (
 		}, nil
 	}
 
+	logOutput := strings.Builder{}
+	surf.log = func(message string) {
+		logOutput.WriteString(message)
+		logOutput.WriteRune('\n')
+	}
+
 	err = program.Execute(prog, surf)
 	if err != nil {
 		return &pb.ProcessImageResponse{
 			Result:       pb.ProcessImageResponse_ERROR,
 			Message:      fmt.Sprintf("execution error: %s", err),
 			ImageDataPng: nil,
+			LogOutput:    logOutput.String(),
 		}, nil
 	}
 
@@ -113,6 +122,7 @@ func (s *server) processImage(ctx context.Context, in *pb.ProcessImageRequest) (
 		Result:       pb.ProcessImageResponse_OK,
 		Message:      "",
 		ImageDataPng: buf.Bytes(),
+		LogOutput:    logOutput.String(),
 	}, nil
 }
 

@@ -22,4 +22,5 @@ message ProcessImageResponse {
     CompilationResult result = 1;
     string message = 2;
     bytes imageDataPng = 3;
+    string logOutput = 4;
 }

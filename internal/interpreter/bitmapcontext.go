@@ -24,4 +24,5 @@ type BitmapContext interface {
 	Recall(imageID int) error
 	SetClipRect(rect image.Rectangle)
 	ClipRect() image.Rectangle
+	Log(message string)
 }

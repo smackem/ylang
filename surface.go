@@ -19,6 +19,7 @@ type surface struct {
 	target        *ymage
 	sourceHistory []*ymage
 	clipRect      image.Rectangle
+	log           func(string)
 }
 
 type ymage struct {
@@ -204,6 +205,13 @@ func (surf *surface) ClipRect() image.Rectangle {
 
 func (surf *surface) SetClipRect(rect image.Rectangle) {
 	surf.clipRect = rect
+}
+func (surf *surface) Log(message string) {
+	if surf.log == nil {
+		fmt.Println(message)
+		return
+	}
+	surf.log(message)
 }
 
 func loadImage(reader io.Reader) (*ymage, error) {

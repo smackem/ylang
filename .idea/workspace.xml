@@ -3,7 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/listener/listener.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/listener/listener.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/listener/listener.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/listener/listener.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/listener.go" beforeDir="false" afterPath="$PROJECT_DIR$/listener.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -207,6 +212,7 @@
     <MESSAGE value="- added javascript emitter" />
     <MESSAGE value="- first working emitted javascript" />
     <MESSAGE value="- changed listener grpc interface to full duplex streaming" />
-    <option name="LAST_COMMIT_MESSAGE" value="- changed listener grpc interface to full duplex streaming" />
+    <MESSAGE value="- fixed: error response is now correctly sent back" />
+    <option name="LAST_COMMIT_MESSAGE" value="- fixed: error response is now correctly sent back" />
   </component>
 </project>

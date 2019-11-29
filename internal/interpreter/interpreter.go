@@ -323,7 +323,7 @@ func (ir *interpreter) visitStmt(stmt parser.Statement) error {
 			}
 			buf.WriteString(formatValue(v, "", false))
 		}
-		fmt.Println(buf.String())
+		ir.bitmap.Log(buf.String())
 
 	case parser.ReturnStmt:
 		result, err := ir.visitExpr(s.Result)
