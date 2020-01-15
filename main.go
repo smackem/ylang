@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/smackem/ylang/internal/emitter"
+	"github.com/smackem/ylang/internal/interpreter"
 	"github.com/smackem/ylang/internal/program"
 	"io/ioutil"
 	"log"
@@ -17,10 +18,22 @@ func main() {
 	sourceCodePath := flag.String("code", "", "the path of the source code file")
 	targetImgPath := flag.String("out", "", "the target image path")
 	jsOutputPath := flag.String("js", "", "the javascript output path")
+	showHelp := flag.Bool("help", false, "display all ylang functions")
+	server := flag.Bool("server", false, "run as server")
 	flag.Parse()
 
-	if *sourceImgPath == "" {
+	if *showHelp {
+		fmt.Printf("%s", interpreter.PrintFunctions())
+		return
+	}
+
+	if *server {
 		serverMain()
+		return
+	}
+
+	if *sourceCodePath == "" {
+		flag.Usage()
 		return
 	}
 
@@ -44,7 +57,7 @@ func main() {
 		log.Fatalf("compilation error: %s", err.Error())
 	}
 
-	if jsOutputPath != nil {
+	if *jsOutputPath != "" {
 		js := emitter.EmitJS(prog)
 		if err := ioutil.WriteFile(*jsOutputPath, []byte(js), 0644); err != nil {
 			log.Fatalf("error writing javascript to '%s': %s", *jsOutputPath, err)

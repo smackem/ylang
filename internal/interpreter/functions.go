@@ -16,6 +16,25 @@ type FunctionDecl struct {
 	params []reflect.Type
 }
 
+func PrintFunctions() string {
+	names := make([]string, 0, len(functions))
+	for name := range functions {
+		names = append(names, name)
+	}
+	sort.Sort(sort.StringSlice(names))
+	buf := strings.Builder{}
+	for _, name := range names {
+		buf.WriteString(name)
+		buf.WriteString("\n")
+		for _, decl := range functions[name] {
+			buf.WriteString("  ")
+			buf.WriteString(signature(name, decl))
+			buf.WriteString("\n")
+		}
+	}
+	return buf.String()
+}
+
 var numberType = reflect.TypeOf(Number(0))
 var pointType = reflect.TypeOf(Point{})
 var kernelType = reflect.TypeOf(Kernel{})
@@ -228,6 +247,12 @@ func initFunctions() {
 				params: []reflect.Type{numberType},
 			},
 		},
+		"trunc": {
+			{
+				body:   invokeTrunc,
+				params: []reflect.Type{numberType},
+			},
+		},
 		"hypot": {
 			{
 				body:   invokeHypot,
@@ -408,7 +433,7 @@ func initFunctions() {
 				params: []reflect.Type{colorType},
 			},
 		},
-		"Compare": {
+		"compare": {
 			{
 				body:   invokeCompare,
 				params: []reflect.Type{valueType, valueType},
@@ -643,6 +668,10 @@ func invokeFloor(ir *interpreter, args []Value) (Value, error) {
 
 func invokeCeil(ir *interpreter, args []Value) (Value, error) {
 	return Number(math.Ceil(float64(args[0].(Number)))), nil
+}
+
+func invokeTrunc(ir *interpreter, args []Value) (Value, error) {
+	return Number(math.Trunc(float64(args[0].(Number)))), nil
 }
 
 func invokeHypot(ir *interpreter, args []Value) (Value, error) {

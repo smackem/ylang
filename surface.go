@@ -85,7 +85,7 @@ func (surf *surface) Convolute(x, y, width, height int, kernel []lang.Number) la
 	w := surf.SourceWidth()
 	h := surf.SourceHeight()
 
-	for kernelY := 0; kernelY < width; kernelY++ {
+	for kernelY := 0; kernelY < height; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
 			sourceY := y - (height / 2) + kernelY
 			sourceX := x - (width / 2) + kernelX
@@ -117,10 +117,10 @@ func (surf *surface) mapChannel(x, y, width, height int, kernel []lang.Number, m
 	w := surf.SourceWidth()
 	h := surf.SourceHeight()
 
-	for kernelY := 0; kernelY < width; kernelY++ {
+	for kernelY := 0; kernelY < height; kernelY++ {
 		for kernelX := 0; kernelX < width; kernelX++ {
-			sourceY := y - (width / 2) + kernelY
-			sourceX := x - (height / 2) + kernelX
+			sourceY := y - (height / 2) + kernelY
+			sourceX := x - (width / 2) + kernelX
 			if sourceX >= 0 && sourceX < w && sourceY >= 0 && sourceY < h {
 				px := surf.GetPixel(sourceX, sourceY)
 				result[kernelIndex] = kernel[kernelIndex] * mapper(px)
