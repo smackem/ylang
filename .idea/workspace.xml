@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
-    </list>
+    <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,7 +75,7 @@
       <recent name="$PROJECT_DIR$/internal/lexer" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.RUN github.com/smackem/ylang">
+  <component name="RunManager" selected="Go Build.SRV github.com/smackem/ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -104,6 +99,7 @@
     <configuration name="SRV github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
+      <parameters value="-server" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
       <package value="github.com/smackem/ylang" />
@@ -215,29 +211,38 @@
     <MESSAGE value="- changed listener grpc interface to full duplex streaming" />
     <MESSAGE value="- fixed: error response is now correctly sent back" />
     <MESSAGE value="- resolved #23: log through BitmapContext" />
-    <option name="LAST_COMMIT_MESSAGE" value="- resolved #23: log through BitmapContext" />
+    <MESSAGE value="- resolved #51 Function inline help" />
+    <option name="LAST_COMMIT_MESSAGE" value="- resolved #51 Function inline help" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579114926608">
+    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579120468898">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1579114926608" />
-    <state width="1398" height="252" key="GridCell.Tab.0.bottom" timestamp="1579119841440">
+    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1579120468898" />
+    <state x="303" y="50" key="CommitChangelistDialog2" timestamp="1579120449018">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="252" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1579119841440" />
-    <state width="1398" height="252" key="GridCell.Tab.0.center" timestamp="1579119841439">
+    <state x="303" y="50" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1579120449018" />
+    <state width="1398" height="252" key="GridCell.Tab.0.bottom" timestamp="1579120471689">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="252" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1579119841439" />
-    <state width="1398" height="252" key="GridCell.Tab.0.left" timestamp="1579119841438">
+    <state width="1398" height="252" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1579120471689" />
+    <state width="1398" height="252" key="GridCell.Tab.0.center" timestamp="1579120471687">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="252" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1579119841438" />
-    <state width="1398" height="252" key="GridCell.Tab.0.right" timestamp="1579119841439">
+    <state width="1398" height="252" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1579120471687" />
+    <state width="1398" height="252" key="GridCell.Tab.0.left" timestamp="1579120471686">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="252" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1579119841439" />
+    <state width="1398" height="252" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1579120471686" />
+    <state width="1398" height="252" key="GridCell.Tab.0.right" timestamp="1579120471688">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="252" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1579120471688" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1579120452336">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1579120452336" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1579120177105">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
