@@ -445,6 +445,12 @@ func initFunctions() {
 				params: []reflect.Type{valueType, colorType},
 			},
 		},
+		"clip": {
+			{
+				body:   invokeClip,
+				params: []reflect.Type{rectType},
+			},
+		},
 	}
 }
 
@@ -1182,6 +1188,12 @@ func invokePlot(ir *interpreter, args []Value) (Value, error) {
 	})
 
 	return nil, err
+}
+
+func invokeClip(ir *interpreter, args []Value) (Value, error) {
+	old := Rect(ir.bitmap.ClipRect())
+	ir.bitmap.SetClipRect(image.Rectangle(args[0].(Rect)))
+	return old, nil
 }
 
 func convertNumbersToLangNumbers(numbers []Number) []lang.Number {

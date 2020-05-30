@@ -81,7 +81,16 @@ func (s *server) readRequest(srv pb.ImageProc_ProcessImageServer) (*pb.ProcessIm
 	return &fullRequest, nil
 }
 
-func (s *server) processImage(ctx context.Context, in *pb.ProcessImageRequest) (*pb.ProcessImageResponse, error) {
+func (s *server) processImage(ctx context.Context, in *pb.ProcessImageRequest) (resp *pb.ProcessImageResponse, err error) {
+	defer func() {
+		if p := recover(); p != nil {
+			resp, err = &pb.ProcessImageResponse{
+				Result:       pb.ProcessImageResponse_ERROR,
+				Message:      fmt.Sprintf("panic error: %s", p),
+				ImageDataPng: nil,
+			}, nil
+		}
+	}()
 	surf, err := loadSurface(bytes.NewBuffer(in.ImageDataPng))
 	if err != nil {
 		return nil, fmt.Errorf("error decoding imageData: %s", err)
