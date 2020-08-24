@@ -215,6 +215,10 @@ func (surf *surface) Log(message string) {
 	surf.log(message)
 }
 
+func (surf *surface) InterpolatePixel(x float32, y float32) lang.Color {
+	return lang.Color{}
+}
+
 func loadImage(reader io.Reader) (*ymage, error) {
 	source, encoding, err := image.Decode(reader)
 	if err != nil {

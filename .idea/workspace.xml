@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/listener.go" beforeDir="false" afterPath="$PROJECT_DIR$/listener.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,9 +25,6 @@
     </option>
     <expand />
     <select />
-  </component>
-  <component name="FavoritesManager">
-    <favorites_list name="ylang" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -53,7 +50,6 @@
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -80,7 +76,7 @@
       <recent name="$PROJECT_DIR$/internal/lexer" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.SRV github.com/smackem/ylang">
+  <component name="RunManager" selected="Go Test.go test ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -156,20 +152,9 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -186,9 +171,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -207,6 +190,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="- Refactored the single lang package into multiple packages: lang, lexer, parser, interpreter, program" />
@@ -261,9 +245,10 @@
     </state>
     <state width="1398" height="209" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1590844977333" />
     <state width="1398" height="194" key="GridCell.Tab.1.right/0.23.1440.819@0.23.1440.819" timestamp="1590844487659" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1590845210095">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup" timestamp="1598280108382">
+      <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1590845210095" />
+    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup/70.27.2490.1308@70.27.2490.1308" timestamp="1598280108382" />
   </component>
 </project>

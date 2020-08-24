@@ -25,4 +25,5 @@ type BitmapContext interface {
 	SetClipRect(rect image.Rectangle)
 	ClipRect() image.Rectangle
 	Log(message string)
+	InterpolatePixel(x float32, y float32) lang.Color
 }

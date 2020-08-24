@@ -456,8 +456,8 @@ func Test_interpret(t *testing.T) {
 		},
 		{
 			name: "compare_func",
-			src: `a := Compare(10, 10)
-				  b := Compare(10, 11)`,
+			src: `a := compare(10, 10)
+				  b := compare(10, 11)`,
 			want: scope{
 				"a": Number(0),
 				"b": Number(-1),
@@ -466,7 +466,7 @@ func Test_interpret(t *testing.T) {
 		{
 			name: "sort_list_fn",
 			src: `ls1 := [150;10, 12;102, 200;23, 1;404]
-				  ls2 := sort(ls1, fn(a, b) -> Compare(a.x, b.x))`,
+				  ls2 := sort(ls1, fn(a, b) -> compare(a.x, b.x))`,
 			want: scope{
 				"ls1": List{
 					Elements: []Value{
