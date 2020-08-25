@@ -4,27 +4,14 @@
     <list default="true" id="645d04a2-19a2-4583-bd59-9b2b8871725c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/bitmapcontext.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/interpreter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/interpreter/functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/interpreter/functions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/debug.ylang" beforeDir="false" afterPath="$PROJECT_DIR$/samples/debug.ylang" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/surface.go" beforeDir="false" afterPath="$PROJECT_DIR$/surface.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand />
-    <select />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -76,7 +63,7 @@
       <recent name="$PROJECT_DIR$/internal/lexer" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.go test ylang">
+  <component name="RunManager" selected="Go Build.RUN github.com/smackem/ylang">
     <configuration name="BUILD github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -87,10 +74,10 @@
       <option name="run" value="false" />
       <method v="2" />
     </configuration>
-    <configuration name="RUN github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+    <configuration name="RUN github.com/smackem/ylang" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
-      <parameters value="-help -image res/pub/_A03.png -code samples/sample.ylang -out out.png -js out.js" />
+      <parameters value="-image res/pub/_A03.png -code samples/debug.ylang -out out.png -js out.js" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
       <package value="github.com/smackem/ylang" />
@@ -117,15 +104,6 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build scratch.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="ylang" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <kind value="FILE" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
-      <package value="github.com/smackem/ylang" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
     <configuration name="go test ylang" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
       <module name="ylang" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -141,14 +119,11 @@
       <item itemvalue="Go Build.SRV github.com/smackem/ylang" />
       <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
       <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
-      <item itemvalue="Go Build.go build scratch.go" />
       <item itemvalue="Go Test.go test ylang" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.RUN github.com/smackem/ylang" />
         <item itemvalue="Go Build.BUILD github.com/smackem/ylang" />
-        <item itemvalue="Go Build.go build scratch.go" />
       </list>
     </recent_temporary>
   </component>
@@ -202,29 +177,42 @@
     <MESSAGE value="- resolved #23: log through BitmapContext" />
     <MESSAGE value="- resolved #51 Function inline help" />
     <MESSAGE value="- added server command line flag" />
-    <option name="LAST_COMMIT_MESSAGE" value="- added server command line flag" />
+    <MESSAGE value="- added interpolate method to BitmapContext" />
+    <option name="LAST_COMMIT_MESSAGE" value="- added interpolate method to BitmapContext" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="773" y="339" width="1084" height="711" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1598366135185">
+      <screen x="70" y="27" width="2490" height="1308" />
+    </state>
+    <state x="773" y="339" width="1084" height="711" key="#com.intellij.execution.impl.EditConfigurationsDialog/70.27.2490.1308@70.27.2490.1308" timestamp="1598366135185" />
+    <state x="854" y="227" width="912" height="914" key="CommitChangelistDialog2" timestamp="1598282444971">
+      <screen x="70" y="27" width="2490" height="1308" />
+    </state>
+    <state x="854" y="227" width="912" height="914" key="CommitChangelistDialog2/70.27.2490.1308@70.27.2490.1308" timestamp="1598282444971" />
     <state width="510" height="466" key="DebuggerActiveHint" timestamp="1590844528627">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="510" height="466" key="DebuggerActiveHint/0.0.1440.900@0.0.1440.900" timestamp="1590844528627" />
-    <state width="1398" height="252" key="GridCell.Tab.0.bottom" timestamp="1590845540764">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="2444" height="346" key="GridCell.Tab.0.bottom" timestamp="1598366596579">
+      <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state width="1398" height="252" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1590845540764" />
-    <state width="1398" height="252" key="GridCell.Tab.0.center" timestamp="1590845540762">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="2444" height="346" key="GridCell.Tab.0.bottom/70.27.2490.1308@70.27.2490.1308" timestamp="1598366596579" />
+    <state width="2444" height="346" key="GridCell.Tab.0.center" timestamp="1598366596576">
+      <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state width="1398" height="252" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1590845540762" />
-    <state width="1398" height="252" key="GridCell.Tab.0.left" timestamp="1590845540762">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="2444" height="346" key="GridCell.Tab.0.center/70.27.2490.1308@70.27.2490.1308" timestamp="1598366596576" />
+    <state width="2444" height="346" key="GridCell.Tab.0.left" timestamp="1598366596575">
+      <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state width="1398" height="252" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1590845540762" />
-    <state width="1398" height="252" key="GridCell.Tab.0.right" timestamp="1590845540763">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="2444" height="346" key="GridCell.Tab.0.left/70.27.2490.1308@70.27.2490.1308" timestamp="1598366596575" />
+    <state width="2444" height="346" key="GridCell.Tab.0.right" timestamp="1598366596577">
+      <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state width="1398" height="252" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1590845540763" />
+    <state width="2444" height="346" key="GridCell.Tab.0.right/70.27.2490.1308@70.27.2490.1308" timestamp="1598366596577" />
     <state width="1398" height="209" key="GridCell.Tab.1.bottom" timestamp="1590844977334">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -245,10 +233,14 @@
     </state>
     <state width="1398" height="209" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1590844977333" />
     <state width="1398" height="194" key="GridCell.Tab.1.right/0.23.1440.819@0.23.1440.819" timestamp="1590844487659" />
-    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup" timestamp="1598280108382">
+    <state x="910" y="417" width="800" height="535" key="Vcs.Push.Dialog.v2" timestamp="1598282447570">
+      <screen x="70" y="27" width="2490" height="1308" />
+    </state>
+    <state x="910" y="417" width="800" height="535" key="Vcs.Push.Dialog.v2/70.27.2490.1308@70.27.2490.1308" timestamp="1598282447570" />
+    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup" timestamp="1598365952070">
       <screen x="70" y="27" width="2490" height="1308" />
     </state>
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1590845210095" />
-    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup/70.27.2490.1308@70.27.2490.1308" timestamp="1598280108382" />
+    <state x="736" y="312" width="1159" height="983" key="search.everywhere.popup/70.27.2490.1308@70.27.2490.1308" timestamp="1598365952070" />
   </component>
 </project>

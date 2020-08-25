@@ -1,3 +1,24 @@
+W := 200
+H := 100
+B := resize(W, H)
+RatioX := Bounds.w / W
+RatioY := Bounds.h / H
+for p in B {
+    sourceX := p.x * RatioX
+    sourceY := p.y * RatioY
+    if sourceX < 0 or sourceX >= Bounds.w or sourceY < 0 or sourceY >= Bounds.h {
+        @p = Transparent
+    } else {
+        @p = @(sourceX;sourceY)
+    }
+    //c := interpolate(p.x * RatioX, p.y * RatioY)
+    //@p = c != nil ? c : Transparent
+}
+
+return nil
+
+// =========================================================================================
+
 for p in Bounds {
     @p = @p.i > 127 ? White : Black
 }

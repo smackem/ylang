@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"io"
 	"log"
+	"math"
 	"os"
 
 	"github.com/smackem/ylang/internal/lang"
@@ -215,8 +216,32 @@ func (surf *surface) Log(message string) {
 	surf.log(message)
 }
 
-func (surf *surface) InterpolatePixel(x float32, y float32) lang.Color {
-	return lang.Color{}
+func (surf *surface) InterpolatePixel(x float32, y float32) *lang.Color {
+	if x >= float32(surf.source.width) || y >= float32(surf.source.height) {
+		return nil
+	}
+	x -= 0.5
+	y -= 0.5
+	if x < 0.0 || y < 0.0 {
+		return nil
+	}
+	baseX, baseY := int(x), int(y)
+	ratioX, ratioY := x-float32(baseX), y-float32(baseY)
+	baseColor := surf.GetPixel(baseX, baseY)
+	rightColor := surf.GetPixel(baseX+1, baseY)
+	bottomColor := surf.GetPixel(baseX, baseY+1)
+	return &lang.Color{
+		A: baseColor.A,
+		R: interpolate(baseColor.R, rightColor.R, bottomColor.R, ratioX, ratioY),
+		G: interpolate(baseColor.G, rightColor.G, bottomColor.G, ratioX, ratioY),
+		B: interpolate(baseColor.B, rightColor.B, bottomColor.B, ratioX, ratioY),
+	}
+}
+
+func interpolate(orig lang.Number, right lang.Number, bottom lang.Number, ratioX float32, ratioY float32) lang.Number {
+	dx := float64(right-orig) * float64(ratioX)
+	dy := float64(bottom-orig) * float64(ratioY)
+	return orig + lang.Number(math.Sqrt(dx*dx+dy*dy))
 }
 
 func loadImage(reader io.Reader) (*ymage, error) {

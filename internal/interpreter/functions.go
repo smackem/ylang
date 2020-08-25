@@ -451,6 +451,12 @@ func initFunctions() {
 				params: []reflect.Type{rectType},
 			},
 		},
+		"interpolate": {
+			{
+				body:   invokeInterpolate,
+				params: []reflect.Type{numberType, numberType},
+			},
+		},
 	}
 }
 
@@ -1194,6 +1200,14 @@ func invokeClip(ir *interpreter, args []Value) (Value, error) {
 	old := Rect(ir.bitmap.ClipRect())
 	ir.bitmap.SetClipRect(image.Rectangle(args[0].(Rect)))
 	return old, nil
+}
+
+func invokeInterpolate(ir *interpreter, args []Value) (Value, error) {
+	color := ir.bitmap.InterpolatePixel(float32(args[0].(Number)), float32(args[1].(Number)))
+	if color == nil {
+		return Nilval(lang.NilVal), nil
+	}
+	return Color(*color), nil
 }
 
 func convertNumbersToLangNumbers(numbers []Number) []lang.Number {
